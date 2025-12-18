@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
@@ -167,8 +168,35 @@ authRouter.post('/logout', (req, res) => {
   res.json({ data: { message: 'Logged out successfully' } });
 });
 
-authRouter.get('/me', authenticate, async (req: AuthRequest, res) => {
-  const { passwordHash: _, ...userWithoutPassword } = req.user!;
-  res.json({ data: { user: userWithoutPassword } });
-});
+// IMPORTANT: This endpoint returns 200 with null user instead of 401
+// This prevents browser console errors when user is not logged in
+authRouter.get('/me', async (req: AuthRequest, res) => {
+  try {
+    const token = req.cookies?.accessToken;
+    
+    // No token = not logged in, return 200 with null user (not 401)
+    if (!token) {
+      return res.status(200).json({ data: { user: null } });
+    }
 
+    // Verify token
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+      const [user] = await db.select().from(users).where(eq(users.id, decoded.userId)).limit(1);
+
+      if (!user) {
+        return res.status(200).json({ data: { user: null } });
+      }
+
+      const { passwordHash: _, ...userWithoutPassword } = user;
+      return res.status(200).json({ data: { user: userWithoutPassword } });
+    } catch (jwtError) {
+      // Invalid token, return 200 with null user (not 401)
+      return res.status(200).json({ data: { user: null } });
+    }
+  } catch (error) {
+    // Any error, return 200 with null user (not 401)
+    console.error('Auth /me error:', error);
+    return res.status(200).json({ data: { user: null } });
+  }
+});

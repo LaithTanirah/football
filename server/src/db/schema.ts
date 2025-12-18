@@ -5,7 +5,7 @@ export const userRoleEnum = pgEnum('user_role', ['USER', 'ADMIN', 'PITCH_OWNER']
 
 export const bookingStatusEnum = pgEnum('booking_status', ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']);
 
-export const teamMemberRoleEnum = pgEnum('team_member_role', ['CAPTAIN', 'MEMBER']);
+export const teamMemberRoleEnum = pgEnum('team_member_role', ['OWNER', 'ADMIN', 'MEMBER', 'CAPTAIN']); // CAPTAIN kept for backward compatibility
 
 export const leagueStatusEnum = pgEnum('league_status', ['DRAFT', 'ACTIVE', 'COMPLETED']);
 

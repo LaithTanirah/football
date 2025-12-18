@@ -17,12 +17,43 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+// Helper function to translate error messages
+const getTranslatedError = (error: any, t: (key: string) => string): string => {
+  const errorCode = error?.response?.data?.code;
+  const errorMessage = error?.response?.data?.message;
+
+  // Map error codes to translation keys
+  const errorCodeMap: Record<string, string> = {
+    INVALID_CREDENTIALS: 'auth.invalidCredentials',
+    USER_NOT_FOUND: 'auth.invalidCredentials',
+    NO_TOKEN: 'auth.loginError',
+    INVALID_TOKEN: 'auth.loginError',
+  };
+
+  // Check if we have a translation key for this error code
+  if (errorCode && errorCodeMap[errorCode]) {
+    return t(errorCodeMap[errorCode]);
+  }
+
+  // Check if the error message matches common patterns
+  if (errorMessage) {
+    const lowerMessage = errorMessage.toLowerCase();
+    if (lowerMessage.includes('invalid credentials') || lowerMessage.includes('invalid credential')) {
+      return t('auth.invalidCredentials');
+    }
+  }
+
+  // Fallback to generic error
+  return t('auth.loginError');
+};
+
 export function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { setUser, fetchUser } = useAuthStore();
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
 
   const mutation = useMutation({
     mutationFn: authApi.login,
@@ -37,11 +68,17 @@ export function Login() {
     onError: (error: any) => {
       toast({
         title: t("common.error"),
-        description: error.response?.data?.message || t("auth.loginError"),
+        description: getTranslatedError(error, t),
         variant: "destructive",
       });
     },
   });
+
+  // Quick login for development
+  const handleQuickLogin = (username: string, password: string) => {
+    setFormData({ username, password });
+    mutation.mutate({ username, password });
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,6 +160,58 @@ export function Login() {
                   >
                     {mutation.isPending ? t("common.loading") : t("auth.login")}
                   </Button>
+                  
+                  {/* Quick Login Buttons for Development */}
+                  {isDevelopment && (
+                    <div className="w-full space-y-2 pt-2 border-t">
+                      <p className="text-xs text-muted-foreground text-center mb-2">
+                        🛠️ Development Quick Login
+                      </p>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuickLogin("admin", "admin123")}
+                          disabled={mutation.isPending}
+                          className="text-xs"
+                        >
+                          Admin
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuickLogin("user1", "password123")}
+                          disabled={mutation.isPending}
+                          className="text-xs"
+                        >
+                          User 1
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuickLogin("user2", "password123")}
+                          disabled={mutation.isPending}
+                          className="text-xs"
+                        >
+                          User 2
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuickLogin("nazzal", "password123")}
+                          disabled={mutation.isPending}
+                          className="text-xs"
+                        >
+                          Nazzal
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+
                   <p className="text-center text-sm text-muted-foreground">
                     {t("auth.dontHaveAccount")}{" "}
                     <Link

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { Toaster } from '@/components/ui/toaster';
 import { Navbar } from '@/components/Navbar';
@@ -20,12 +20,20 @@ import { Leagues } from '@/pages/Leagues';
 import { LeagueDetail } from '@/pages/LeagueDetail';
 import { CreateLeague } from '@/pages/CreateLeague';
 
-function App() {
-  const { fetchUser, isLoading } = useAuthStore();
+function AppContent() {
+  const { fetchUser, isLoading, setLoading } = useAuthStore();
+  const location = useLocation();
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    // Don't fetch user on login/register pages to avoid unnecessary /auth/me calls
+    const isAuthPage = location.pathname === '/auth/login' || location.pathname === '/auth/register';
+    if (isAuthPage) {
+      // Set loading to false immediately on auth pages to avoid loading screen
+      setLoading(false);
+    } else {
+      fetchUser();
+    }
+  }, [fetchUser, location.pathname, setLoading]);
 
   if (isLoading) {
     return (
@@ -36,10 +44,9 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen">
-        <Navbar />
-        <Routes>
+    <div className="min-h-screen">
+      <Navbar />
+      <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/register" element={<Register />} />
@@ -98,9 +105,16 @@ function App() {
           />
           <Route path="/leagues/:id" element={<LeagueDetail />} />
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-        <Toaster />
-      </div>
+      </Routes>
+      <Toaster />
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
     </BrowserRouter>
   );
 }

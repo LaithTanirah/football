@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { teamsApi, pitchesApi } from '@/lib/api';
@@ -13,6 +14,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { useAuthStore } from '@/store/authStore';
 
 export function CreateTeam() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -38,8 +40,8 @@ export function CreateTeam() {
       queryClient.invalidateQueries({ queryKey: ['teams'] });
       
       toast({
-        title: 'Success',
-        description: 'Team created successfully!',
+        title: t('teams.teamCreatedSuccess'),
+        description: t('teams.teamCreatedSuccessDesc'),
       });
       
       // Navigate to the team detail page
@@ -56,8 +58,8 @@ export function CreateTeam() {
     onError: (error: any) => {
       console.error('Create team error:', error);
       toast({
-        title: 'Error',
-        description: error.response?.data?.message || 'Failed to create team',
+        title: t('common.error'),
+        description: error.response?.data?.message || t('teams.teamCreateError'),
         variant: 'destructive',
       });
     },
@@ -67,8 +69,8 @@ export function CreateTeam() {
     e.preventDefault();
     if (!formData.name || !formData.city) {
       toast({
-        title: 'Validation Error',
-        description: 'Please fill in all required fields',
+        title: t('teams.validationError'),
+        description: t('teams.fillRequiredFields'),
         variant: 'destructive',
       });
       return;
@@ -86,63 +88,63 @@ export function CreateTeam() {
     <div className="container mx-auto max-w-2xl px-4 py-8 page-section">
       <Breadcrumbs
         items={[
-          { label: 'Teams', href: '/teams' },
-          { label: 'Create Team' },
+          { label: t('teams.title'), href: '/teams' },
+          { label: t('teams.createTeam') },
         ]}
         className="mb-6"
       />
 
       <Card className="card-elevated">
         <CardHeader>
-          <CardTitle>Create New Team</CardTitle>
-          <CardDescription>Start a new team to compete in leagues</CardDescription>
+          <CardTitle>{t('teams.createNewTeam')}</CardTitle>
+          <CardDescription>{t('teams.createTeamSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Team Name *</Label>
+              <Label htmlFor="name">{t('teams.teamName')} *</Label>
               <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter team name"
+                placeholder={t('teams.teamNamePlaceholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="city">City *</Label>
+              <Label htmlFor="city">{t('teams.city')} *</Label>
               <Input
                 id="city"
                 value={formData.city}
                 onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                placeholder="Enter city"
+                placeholder={t('teams.cityPlaceholder')}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="logoUrl">Logo URL (Optional)</Label>
+              <Label htmlFor="logoUrl">{t('teams.logoUrl')}</Label>
               <Input
                 id="logoUrl"
                 type="url"
                 value={formData.logoUrl}
                 onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                placeholder="https://example.com/logo.png"
+                placeholder={t('teams.logoUrlPlaceholder')}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="preferredPitch">Preferred Pitch (Optional)</Label>
+              <Label htmlFor="preferredPitch">{t('teams.preferredPitch')}</Label>
               <Select
                 value={formData.preferredPitchId || 'none'}
                 onValueChange={(value) => setFormData({ ...formData, preferredPitchId: value === 'none' ? '' : value })}
               >
                 <SelectTrigger id="preferredPitch">
-                  <SelectValue placeholder="Select a pitch" />
+                  <SelectValue placeholder={t('teams.selectPitch')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="none">{t('teams.none')}</SelectItem>
                   {pitches.map((pitch: any) => (
                     <SelectItem key={pitch.id} value={pitch.id}>
                       {pitch.name} - {pitch.city}
@@ -159,10 +161,10 @@ export function CreateTeam() {
                 onClick={() => navigate('/teams')}
                 className="flex-1"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={createMutation.isPending} className="flex-1">
-                {createMutation.isPending ? 'Creating...' : 'Create Team'}
+                {createMutation.isPending ? t('teams.creating') : t('teams.createTeam')}
               </Button>
             </div>
           </form>

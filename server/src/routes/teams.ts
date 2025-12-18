@@ -2,8 +2,8 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import { teams, teamMembers, users, pitches } from '../db/schema.js';
-import { authenticate, AuthRequest } from '../middleware/auth.js';
-import { eq, and, or, like } from 'drizzle-orm';
+import { authenticate, AuthRequest, requireTeamOwner } from '../middleware/auth.js';
+import { eq, and, or, like, notInArray, sql, inArray } from 'drizzle-orm';
 
 export const teamsRouter = Router();
 
@@ -15,11 +15,7 @@ const createTeamSchema = z.object({
 });
 
 const addMemberSchema = z.object({
-  userId: z.string().uuid().optional(),
-  username: z.string().optional(),
-  email: z.string().email().optional(),
-}).refine(data => data.userId || data.username || data.email, {
-  message: 'Must provide userId, username, or email',
+  userId: z.string().uuid(),
 });
 
 // Create team
@@ -60,11 +56,11 @@ teamsRouter.post('/', authenticate, async (req: AuthRequest, res) => {
       })
       .returning();
 
-    // Add captain as team member
+    // Add captain as team member with OWNER role
     await db.insert(teamMembers).values({
       teamId: newTeam.id,
       userId: userId,
-      role: 'CAPTAIN',
+      role: 'OWNER',
     });
 
     // Fetch full team with relations
@@ -210,12 +206,131 @@ teamsRouter.get('/:id', async (req, res) => {
   }
 });
 
+// Get team suggestions
+teamsRouter.get('/:id/suggestions', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const teamId = req.params.id;
+    const userId = req.userId!;
+
+    // Verify team exists
+    const [team] = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
+    if (!team) {
+      return res.status(404).json({ message: 'Team not found', code: 'NOT_FOUND' });
+    }
+
+    // Get current team members to exclude
+    const currentMembers = await db
+      .select({ userId: teamMembers.userId })
+      .from(teamMembers)
+      .where(eq(teamMembers.teamId, teamId));
+
+    const excludedIds = [userId, ...currentMembers.map((m) => m.userId)];
+
+    // Get users from same city (priority 1)
+    const sameCityUsers = team.city
+      ? await db
+          .select({
+            id: users.id,
+            name: users.name,
+            username: users.username,
+            email: users.email,
+            phone: users.phone,
+            city: users.city,
+            createdAt: users.createdAt,
+            priority: sql<number>`1`,
+          })
+          .from(users)
+          .where(
+            and(
+              eq(users.city, team.city),
+              notInArray(users.id, excludedIds)
+            )
+          )
+          .limit(10)
+      : [];
+
+    // Get users who were in previous teams with current user (priority 2)
+    // Find teams where current user is a member, then find other members of those teams
+    const userTeams = await db
+      .select({ teamId: teamMembers.teamId })
+      .from(teamMembers)
+      .where(eq(teamMembers.userId, userId));
+
+    const userTeamIds = userTeams.map((t) => t.teamId);
+
+    const previousTeammates =
+      userTeamIds.length > 0
+        ? await db
+            .select({
+              id: users.id,
+              name: users.name,
+              username: users.username,
+              email: users.email,
+              phone: users.phone,
+              city: users.city,
+              createdAt: users.createdAt,
+              priority: sql<number>`2`,
+            })
+            .from(users)
+            .innerJoin(teamMembers, eq(teamMembers.userId, users.id))
+            .where(
+              and(
+                inArray(teamMembers.teamId, userTeamIds),
+                notInArray(users.id, excludedIds)
+              )
+            )
+            .groupBy(users.id)
+            .limit(10)
+        : [];
+
+    // Combine and deduplicate
+    let allSuggestions = [...sameCityUsers, ...previousTeammates];
+    let uniqueSuggestions = Array.from(
+      new Map(allSuggestions.map((u) => [u.id, u])).values()
+    )
+      .sort((a, b) => (a.priority || 3) - (b.priority || 3));
+
+    // If we don't have enough suggestions, add random users from database (priority 3)
+    if (uniqueSuggestions.length < 12) {
+      const randomUsers = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          email: users.email,
+          phone: users.phone,
+          city: users.city,
+          createdAt: users.createdAt,
+          priority: sql<number>`3`,
+        })
+        .from(users)
+        .where(notInArray(users.id, excludedIds))
+        .orderBy(sql`RANDOM()`)
+        .limit(12 - uniqueSuggestions.length);
+
+      allSuggestions = [...allSuggestions, ...randomUsers];
+      uniqueSuggestions = Array.from(
+        new Map(allSuggestions.map((u) => [u.id, u])).values()
+      )
+        .sort((a, b) => (a.priority || 3) - (b.priority || 3));
+    }
+
+    const finalSuggestions = uniqueSuggestions
+      .slice(0, 12)
+      .map(({ priority, ...user }) => user);
+
+    res.json({ data: finalSuggestions });
+  } catch (error) {
+    console.error('Get suggestions error:', error);
+    res.status(500).json({ message: 'Internal server error', code: 'INTERNAL_ERROR' });
+  }
+});
+
 // Add member to team
-teamsRouter.post('/:id/members', authenticate, async (req: AuthRequest, res) => {
+teamsRouter.post('/:id/members', authenticate, requireTeamOwner, async (req: AuthRequest, res) => {
   try {
     const teamId = req.params.id;
     const data = addMemberSchema.parse(req.body);
-    const userId = req.userId!;
 
     // Get team
     const [team] = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
@@ -224,26 +339,17 @@ teamsRouter.post('/:id/members', authenticate, async (req: AuthRequest, res) => 
       return res.status(404).json({ message: 'Team not found', code: 'NOT_FOUND' });
     }
 
-    // Check if user is captain
-    if (team.captainId !== userId) {
-      return res.status(403).json({ message: 'Only the captain can add members', code: 'FORBIDDEN' });
-    }
+    const targetUserId = data.userId;
 
-    // Find user by userId, username, or email
-    let targetUserId: string | null = null;
-
-    if (data.userId) {
-      targetUserId = data.userId;
-    } else if (data.username) {
-      const [user] = await db.select().from(users).where(eq(users.username, data.username)).limit(1);
-      if (user) targetUserId = user.id;
-    } else if (data.email) {
-      const [user] = await db.select().from(users).where(eq(users.email, data.email)).limit(1);
-      if (user) targetUserId = user.id;
-    }
-
-    if (!targetUserId) {
+    // Verify user exists
+    const [targetUser] = await db.select().from(users).where(eq(users.id, targetUserId)).limit(1);
+    if (!targetUser) {
       return res.status(404).json({ message: 'User not found', code: 'USER_NOT_FOUND' });
+    }
+
+    // Cannot add yourself
+    if (targetUserId === req.userId) {
+      return res.status(400).json({ message: 'Cannot add yourself to the team', code: 'CANNOT_ADD_SELF' });
     }
 
     // Check if already a member
@@ -298,11 +404,10 @@ teamsRouter.post('/:id/members', authenticate, async (req: AuthRequest, res) => 
 });
 
 // Remove member from team
-teamsRouter.delete('/:id/members/:memberId', authenticate, async (req: AuthRequest, res) => {
+teamsRouter.delete('/:id/members/:userId', authenticate, requireTeamOwner, async (req: AuthRequest, res) => {
   try {
     const teamId = req.params.id;
-    const memberId = req.params.memberId;
-    const userId = req.userId!;
+    const targetUserId = req.params.userId;
 
     // Get team
     const [team] = await db.select().from(teams).where(eq(teams.id, teamId)).limit(1);
@@ -315,31 +420,53 @@ teamsRouter.delete('/:id/members/:memberId', authenticate, async (req: AuthReque
     const [member] = await db
       .select()
       .from(teamMembers)
-      .where(eq(teamMembers.id, memberId))
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          eq(teamMembers.userId, targetUserId)
+        )
+      )
       .limit(1);
 
-    if (!member || member.teamId !== teamId) {
+    if (!member) {
       return res.status(404).json({ message: 'Member not found', code: 'NOT_FOUND' });
     }
 
-    // Check permissions: captain can remove anyone, members can remove themselves
-    if (team.captainId !== userId && member.userId !== userId) {
-      return res.status(403).json({
-        message: 'You can only remove yourself or be removed by the captain',
-        code: 'FORBIDDEN',
+    // Cannot remove owner (captain)
+    if (member.role === 'OWNER' || member.role === 'CAPTAIN') {
+      return res.status(400).json({
+        message: 'Cannot remove the team owner',
+        code: 'CANNOT_REMOVE_OWNER',
       });
     }
 
-    // Cannot remove captain
-    if (member.role === 'CAPTAIN') {
+    // Check if this is the last owner (shouldn't happen but safety check)
+    const owners = await db
+      .select()
+      .from(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          or(eq(teamMembers.role, 'OWNER'), eq(teamMembers.role, 'CAPTAIN'))
+        )
+      );
+
+    if (owners.length <= 1 && (member.role === 'OWNER' || member.role === 'CAPTAIN')) {
       return res.status(400).json({
-        message: 'Cannot remove the captain',
-        code: 'CANNOT_REMOVE_CAPTAIN',
+        message: 'Cannot remove the last owner',
+        code: 'CANNOT_REMOVE_LAST_OWNER',
       });
     }
 
     // Remove member
-    await db.delete(teamMembers).where(eq(teamMembers.id, memberId));
+    await db
+      .delete(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          eq(teamMembers.userId, targetUserId)
+        )
+      );
 
     res.json({ data: { message: 'Member removed successfully' } });
   } catch (error) {

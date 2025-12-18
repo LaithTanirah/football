@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -9,10 +10,19 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { useAuthStore } from '@/store/authStore';
-import { MapPin, Users, Crown, User, Trash2 } from 'lucide-react';
+import { MapPin, Users, Crown, User, Trash2, UserCog, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { useLocaleStore } from '@/store/localeStore';
+import { ManagePlayers } from '@/components/ManagePlayers';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 export function TeamDetail() {
   const { t } = useTranslation();
@@ -22,6 +32,9 @@ export function TeamDetail() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
+  const [managePlayersOpen, setManagePlayersOpen] = useState(false);
+  const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
+  const [memberToRemove, setMemberToRemove] = useState<{ id: string; name: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ['team', id],
@@ -30,14 +43,16 @@ export function TeamDetail() {
   });
 
   const removeMemberMutation = useMutation({
-    mutationFn: ({ teamId, memberId }: { teamId: string; memberId: string }) =>
-      teamsApi.removeMember(teamId, memberId),
+    mutationFn: ({ teamId, userId }: { teamId: string; userId: string }) =>
+      teamsApi.removeMember(teamId, userId),
     onSuccess: () => {
       toast({
         title: t("common.success"),
         description: t("teams.memberRemovedSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ['team', id] });
+      setRemoveConfirmOpen(false);
+      setMemberToRemove(null);
     },
     onError: (error: any) => {
       toast({
@@ -48,8 +63,28 @@ export function TeamDetail() {
     },
   });
 
+  const handleRemoveClick = (member: { user?: { id: string; name: string } }) => {
+    if (!member.user) return;
+    setMemberToRemove({ id: member.user.id, name: member.user.name });
+    setRemoveConfirmOpen(true);
+  };
+
+  const handleConfirmRemove = () => {
+    if (!memberToRemove || !id) return;
+    removeMemberMutation.mutate({
+      teamId: id,
+      userId: memberToRemove.id,
+    });
+  };
+
   const team = data?.data.data;
-  const isCaptain = user && team && team.captain?.id === user.id;
+  // Check if user is owner (captainId or has OWNER/ADMIN role)
+  const isOwner = user && team && (
+    team.captain?.id === user.id ||
+    team.members?.some((m: any) => 
+      m.user?.id === user.id && (m.role === 'OWNER' || m.role === 'ADMIN' || m.role === 'CAPTAIN')
+    )
+  );
 
   if (isLoading) {
     return (
@@ -117,10 +152,10 @@ export function TeamDetail() {
                     {team.city}
                   </CardDescription>
                 </div>
-                {isCaptain && (
+                {isOwner && (
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <Crown className="h-3 w-3" />
-                    {t("teams.captain")}
+                    {t("teams.owner")}
                   </Badge>
                 )}
               </div>
@@ -147,13 +182,27 @@ export function TeamDetail() {
         <div>
           <Card className="card-elevated">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                {t("teams.teamRoster")}
-              </CardTitle>
-              <CardDescription>
-                {team.members?.length || 0} {t("teams.members")}
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="h-5 w-5" />
+                    {t("teams.teamRoster")}
+                  </CardTitle>
+                  <CardDescription>
+                    {team.members?.length || 0} {t("teams.members")}
+                  </CardDescription>
+                </div>
+                {isOwner && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setManagePlayersOpen(true)}
+                  >
+                    <UserCog className="mr-2 h-4 w-4" />
+                    {t("teams.managePlayers")}
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-2">
               {team.members?.map((member: any) => (
@@ -168,10 +217,10 @@ export function TeamDetail() {
                     <div>
                       <p className="font-medium">{member.user?.name || 'Unknown'}</p>
                       <div className="flex items-center gap-2">
-                        {member.role === 'CAPTAIN' && (
+                        {(member.role === 'OWNER' || member.role === 'CAPTAIN') && (
                           <Badge variant="secondary" className="text-xs">
                             <Crown className="mr-1 h-3 w-3" />
-                            {t("teams.captain")}
+                            {t("teams.owner")}
                           </Badge>
                         )}
                         <span className="text-xs text-muted-foreground">
@@ -180,20 +229,14 @@ export function TeamDetail() {
                       </div>
                     </div>
                   </div>
-                  {isCaptain &&
+                  {isOwner &&
+                    member.role !== 'OWNER' &&
                     member.role !== 'CAPTAIN' &&
                     member.user?.id !== user?.id && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => {
-                          if (confirm(t("teams.removeMemberConfirm"))) {
-                            removeMemberMutation.mutate({
-                              teamId: id!,
-                              memberId: member.id,
-                            });
-                          }
-                        }}
+                        onClick={() => handleRemoveClick(member)}
                         disabled={removeMemberMutation.isPending}
                       >
                         <Trash2 className="h-4 w-4 text-destructive" />
@@ -205,6 +248,47 @@ export function TeamDetail() {
           </Card>
         </div>
       </div>
+
+      {/* Manage Players Drawer */}
+      {team && (
+        <ManagePlayers
+          teamId={id!}
+          open={managePlayersOpen}
+          onOpenChange={setManagePlayersOpen}
+          currentMembers={team.members || []}
+        />
+      )}
+
+      {/* Remove Member Confirmation Dialog */}
+      <Dialog open={removeConfirmOpen} onOpenChange={setRemoveConfirmOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('teams.removeMemberConfirmTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('teams.removeMemberConfirm', { name: memberToRemove?.name })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRemoveConfirmOpen(false)}>
+              {t('common.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmRemove}
+              disabled={removeMemberMutation.isPending}
+            >
+              {removeMemberMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('common.loading')}
+                </>
+              ) : (
+                t('common.confirm')
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

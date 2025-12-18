@@ -1,5 +1,7 @@
 import { db } from './index.js';
-import { pitches, pitchImages, pitchWorkingHours } from './schema.js';
+import { pitches, pitchImages, pitchWorkingHours, users } from './schema.js';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -101,6 +103,84 @@ const jordanPitches = [
 async function seed() {
   try {
     console.log('Seeding database...');
+
+    // Seed development users for quick login
+    const devUsers = [
+      {
+        name: 'Admin User',
+        username: 'admin',
+        email: 'admin@example.com',
+        password: 'admin123',
+        role: 'ADMIN' as const,
+        city: 'Amman',
+      },
+      {
+        name: 'Test User 1',
+        username: 'user1',
+        email: 'user1@example.com',
+        password: 'password123',
+        role: 'USER' as const,
+        city: 'Amman',
+      },
+      {
+        name: 'Test User 2',
+        username: 'user2',
+        email: 'user2@example.com',
+        password: 'password123',
+        role: 'USER' as const,
+        city: 'Zarqa',
+      },
+      {
+        name: 'Nazzal',
+        username: 'nazzal',
+        email: 'nazzal@example.com',
+        password: 'password123',
+        role: 'USER' as const,
+        city: 'Amman',
+      },
+    ];
+
+    console.log('Seeding development users...');
+    for (const userData of devUsers) {
+      // Check if user already exists
+      const existing = await db
+        .select()
+        .from(users)
+        .where(eq(users.username, userData.username))
+        .limit(1);
+
+      const passwordHash = await bcrypt.hash(userData.password, 10);
+
+      if (existing.length === 0) {
+        // Create new user
+        await db.insert(users).values({
+          name: userData.name,
+          username: userData.username,
+          email: userData.email,
+          passwordHash,
+          role: userData.role,
+          city: userData.city,
+        });
+        console.log(`✓ Seeded user: ${userData.username}`);
+      } else {
+        // Update existing user's password to match quick login credentials
+        // Only update password, name, role, and city (skip email to avoid conflicts)
+        try {
+          await db
+            .update(users)
+            .set({
+              passwordHash,
+              name: userData.name,
+              role: userData.role,
+              city: userData.city,
+            })
+            .where(eq(users.username, userData.username));
+          console.log(`✓ Updated password for user: ${userData.username}`);
+        } catch (error) {
+          console.error(`Error updating user ${userData.username}:`, error);
+        }
+      }
+    }
 
     // Clear existing data (optional - comment out if you want to keep existing data)
     // await db.delete(pitchImages);

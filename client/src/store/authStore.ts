@@ -16,10 +16,11 @@ interface AuthState {
   isLoading: boolean;
   setUser: (user: User | null) => void;
   fetchUser: () => Promise<void>;
+  setLoading: (loading: boolean) => void;
   logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: null,
   isLoading: true,
   setUser: (user) => set({ user }),
@@ -27,11 +28,16 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       set({ isLoading: true });
       const response = await authApi.me();
-      set({ user: response.data.data.user, isLoading: false });
-    } catch (error) {
+      // Response will have null user if not authenticated (handled by interceptor)
+      set({ user: response.data.data.user || null, isLoading: false });
+    } catch (error: any) {
+      // This should rarely happen now since interceptor handles 401s
+      console.error('Fetch user error:', error);
       set({ user: null, isLoading: false });
     }
   },
+  // Method to set loading state directly (for auth pages)
+  setLoading: (loading: boolean) => set({ isLoading: loading }),
   logout: async () => {
     try {
       await authApi.logout();

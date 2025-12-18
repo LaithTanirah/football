@@ -8,6 +8,7 @@ import { adminRouter } from './routes/admin.js';
 import { teamsRouter } from './routes/teams.js';
 import { leaguesRouter } from './routes/leagues.js';
 import { matchesRouter } from './routes/matches.js';
+import { usersRouter } from './routes/users.js';
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/teams', teamsRouter);
 app.use('/api/leagues', leaguesRouter);
 app.use('/api/matches', matchesRouter);
+app.use('/api/users', usersRouter);
 
 // Error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

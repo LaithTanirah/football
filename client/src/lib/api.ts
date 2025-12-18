@@ -5,6 +5,59 @@ const api = axios.create({
   withCredentials: true,
 });
 
+// Handle expected 401 errors for /auth/me (user not logged in)
+// This works as a fallback even if backend still returns 401
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // For /auth/me 401 errors, return a successful response with null user
+    // This prevents browser console errors for expected "not logged in" state
+    if (error.config?.url?.includes('/auth/me') && error.response?.status === 401) {
+      // Return successful response with null user
+      return Promise.resolve({
+        data: {
+          data: {
+            user: null,
+          },
+        },
+        status: 200,
+        statusText: 'OK',
+        headers: error.response?.headers || {},
+        config: error.config,
+      });
+    }
+    
+    // For login 401 errors, suppress console logging but still reject the promise
+    // (so the UI can show the error message)
+    if (error.config?.url?.includes('/auth/login') && error.response?.status === 401) {
+      // Mark error to suppress console logging
+      error.suppressConsoleError = true;
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
+// Suppress axios network errors in console for expected 401s
+if (typeof window !== 'undefined') {
+  const originalError = console.error;
+  console.error = (...args: any[]) => {
+    // Filter out expected 401 errors
+    const firstArg = args[0];
+    if (
+      (firstArg?.config?.url?.includes('/auth/me') && firstArg?.response?.status === 401) ||
+      (firstArg?.config?.url?.includes('/auth/login') && firstArg?.response?.status === 401 && firstArg?.suppressConsoleError)
+    ) {
+      return; // Don't log expected errors
+    }
+    originalError.apply(console, args);
+  };
+}
+
+// Note: Browser Network tab will still show HTTP status codes
+// This is expected and cannot be suppressed (it's a browser feature)
+// The interceptor above handles the error gracefully in JavaScript
+
 export interface ApiResponse<T> {
   data: T;
 }
@@ -51,10 +104,17 @@ export const teamsApi = {
   getById: (id: string) => api.get<ApiResponse<any>>(`/teams/${id}`),
   update: (id: string, data: { name?: string; city?: string; logoUrl?: string; preferredPitchId?: string }) =>
     api.patch<ApiResponse<any>>(`/teams/${id}`, data),
-  addMember: (id: string, data: { userId?: string; username?: string; email?: string }) =>
+  getSuggestions: (id: string) => api.get<ApiResponse<any[]>>(`/teams/${id}/suggestions`),
+  addMember: (id: string, data: { userId: string }) =>
     api.post<ApiResponse<any>>(`/teams/${id}/members`, data),
-  removeMember: (id: string, memberId: string) =>
-    api.delete<ApiResponse<any>>(`/teams/${id}/members/${memberId}`),
+  removeMember: (id: string, userId: string) =>
+    api.delete<ApiResponse<any>>(`/teams/${id}/members/${userId}`),
+};
+
+// Users
+export const usersApi = {
+  search: (params: { q: string; excludeTeamId?: string; limit?: number }) =>
+    api.get<ApiResponse<any[]>>('/users/search', { params }),
 };
 
 // Leagues

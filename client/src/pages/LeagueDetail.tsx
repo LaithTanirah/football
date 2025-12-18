@@ -142,7 +142,11 @@ export function LeagueDetail() {
         title: t("common.success"),
         description: t("leagueDetail.addTeamSuccess"),
       });
+      // Invalidate all related queries
       queryClient.invalidateQueries({ queryKey: ["league", id] });
+      queryClient.invalidateQueries({ queryKey: ["standings", id] });
+      queryClient.invalidateQueries({ queryKey: ["matches", id] });
+      queryClient.invalidateQueries({ queryKey: ["leagues"] });
       setAddTeamDialogOpen(false);
       setSelectedTeamId("");
     },

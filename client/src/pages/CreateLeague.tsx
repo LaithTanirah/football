@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { leaguesApi } from '@/lib/api';
 import { useToast } from '@/components/ui/use-toast';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { useAuthStore } from '@/store/authStore';
 export function CreateLeague() {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const { user } = useAuthStore();
   const [formData, setFormData] = useState({
     name: '',
@@ -24,11 +25,18 @@ export function CreateLeague() {
   const createMutation = useMutation({
     mutationFn: leaguesApi.create,
     onSuccess: (response) => {
+      const leagueId = response.data.data.league.id;
+      
+      // Invalidate league queries to ensure fresh data
+      queryClient.invalidateQueries({ queryKey: ['leagues'] });
+      queryClient.invalidateQueries({ queryKey: ['league', leagueId] });
+      queryClient.invalidateQueries({ queryKey: ['standings', leagueId] });
+      
       toast({
         title: 'Success',
         description: 'League created successfully!',
       });
-      navigate(`/leagues/${response.data.data.league.id}`);
+      navigate(`/leagues/${leagueId}`);
     },
     onError: (error: any) => {
       toast({
