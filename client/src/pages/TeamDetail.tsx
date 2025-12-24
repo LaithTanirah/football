@@ -1,22 +1,37 @@
-import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { teamsApi } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { useAuthStore } from '@/store/authStore';
-import { MapPin, Users, Crown, User, Trash2, UserCog, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { enUS } from 'date-fns/locale';
-import { useLocaleStore } from '@/store/localeStore';
-import { ManagePlayers } from '@/components/ManagePlayers';
-import { SquadTab } from '@/components/SquadTab';
+import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { teamsApi } from "@/lib/api";
+import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useAuthStore } from "@/store/authStore";
+import {
+  MapPin,
+  Users,
+  Crown,
+  User,
+  Trash2,
+  UserCog,
+  Loader2,
+  Pencil,
+} from "lucide-react";
+import { format } from "date-fns";
+import { enUS } from "date-fns/locale";
+import { ManagePlayers } from "@/components/ManagePlayers";
+import { SquadTab } from "@/components/SquadTab";
+import { TeamLogoUpload } from "@/components/team/TeamLogoUpload";
 import {
   Dialog,
   DialogContent,
@@ -24,11 +39,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
+import { ImageIcon } from "lucide-react";
 
 export function TeamDetail() {
   const { t } = useTranslation();
-  const { locale } = useLocaleStore();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -36,10 +51,14 @@ export function TeamDetail() {
   const { user } = useAuthStore();
   const [managePlayersOpen, setManagePlayersOpen] = useState(false);
   const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
-  const [memberToRemove, setMemberToRemove] = useState<{ id: string; name: string } | null>(null);
+  const [memberToRemove, setMemberToRemove] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [updateLogoOpen, setUpdateLogoOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['team', id],
+    queryKey: ["team", id],
     queryFn: () => teamsApi.getById(id!),
     enabled: !!id,
   });
@@ -52,20 +71,46 @@ export function TeamDetail() {
         title: t("common.success"),
         description: t("teams.memberRemovedSuccess"),
       });
-      queryClient.invalidateQueries({ queryKey: ['team', id] });
+      queryClient.invalidateQueries({ queryKey: ["team", id] });
       setRemoveConfirmOpen(false);
       setMemberToRemove(null);
     },
     onError: (error: any) => {
       toast({
         title: t("common.error"),
-        description: error.response?.data?.message || t("teams.removeMemberError"),
-        variant: 'destructive',
+        description:
+          error.response?.data?.message || t("teams.removeMemberError"),
+        variant: "destructive",
       });
     },
   });
 
-  const handleRemoveClick = (member: { user?: { id: string; name: string } }) => {
+  const updateLogoMutation = useMutation({
+    mutationFn: (logoUrl: string) => {
+      if (!id) throw new Error("Team ID is required");
+      return teamsApi.update(id, { logoUrl });
+    },
+    onSuccess: () => {
+      toast({
+        title: t("teams.logoUpdatedSuccess"),
+        description: t("teams.logoUpdatedSuccessDesc"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["team", id] });
+      setUpdateLogoOpen(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: t("common.error"),
+        description:
+          error.response?.data?.message || t("teams.logoUpdateError"),
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleRemoveClick = (member: {
+    user?: { id: string; name: string };
+  }) => {
     if (!member.user) return;
     setMemberToRemove({ id: member.user.id, name: member.user.name });
     setRemoveConfirmOpen(true);
@@ -81,12 +126,15 @@ export function TeamDetail() {
 
   const team = data?.data.data;
   // Check if user is owner (captainId or has OWNER/ADMIN role)
-  const isOwner = user && team && (
-    team.captain?.id === user.id ||
-    team.members?.some((m: any) => 
-      m.user?.id === user.id && (m.role === 'OWNER' || m.role === 'ADMIN' || m.role === 'CAPTAIN')
-    )
-  );
+  const isOwner =
+    user &&
+    team &&
+    (team.captain?.id === user.id ||
+      team.members?.some(
+        (m: any) =>
+          m.user?.id === user.id &&
+          (m.role === "OWNER" || m.role === "ADMIN" || m.role === "CAPTAIN")
+      ));
 
   if (isLoading) {
     return (
@@ -111,7 +159,7 @@ export function TeamDetail() {
         <Card>
           <CardContent className="py-12 text-center">
             <p className="text-muted-foreground">{t("teams.teamNotFound")}</p>
-            <Button onClick={() => navigate('/teams')} className="mt-4">
+            <Button onClick={() => navigate("/teams")} className="mt-4">
               {t("teams.backToTeams")}
             </Button>
           </CardContent>
@@ -124,7 +172,7 @@ export function TeamDetail() {
     <div className="container mx-auto max-w-[1200px] px-4 py-6 page-section">
       <Breadcrumbs
         items={[
-          { label: t("teams.title"), href: '/teams' },
+          { label: t("teams.title"), href: "/teams" },
           { label: team.name },
         ]}
         className="mb-6"
@@ -132,19 +180,47 @@ export function TeamDetail() {
 
       {/* Team Header */}
       <Card className="card-elevated mb-6">
-        {team.logoUrl && (
-          <div className="aspect-video w-full overflow-hidden rounded-t-lg bg-muted">
-            <img
-              src={team.logoUrl}
-              alt={team.name}
-              className="h-full w-full object-cover"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
-          </div>
-        )}
         <CardHeader>
+          <div className="mb-4 flex justify-center">
+            {team.logoUrl ? (
+              <div className="group relative h-32 w-32 overflow-hidden rounded-full border-4 border-border bg-muted">
+                <img
+                  src={team.logoUrl}
+                  alt={team.name}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+                {isOwner && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 rounded-full">
+                    <Button
+                      type="button"
+                      variant="default"
+                      size="icon"
+                      className="h-10 w-10 rounded-full shadow-lg"
+                      onClick={() => setUpdateLogoOpen(true)}
+                      title={t("teams.updateLogo")}
+                    >
+                      <Pencil className="h-5 w-5" />
+                    </Button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              isOwner && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setUpdateLogoOpen(true)}
+                  className="h-32 w-32 rounded-full flex flex-col items-center justify-center gap-2 border-dashed hover:border-solid"
+                >
+                  <ImageIcon className="h-8 w-8" />
+                  <span className="text-sm">{t("teams.addLogo")}</span>
+                </Button>
+              )
+            )}
+          </div>
           <div className="flex items-start justify-between">
             <div>
               <CardTitle className="text-2xl">{team.name}</CardTitle>
@@ -180,7 +256,9 @@ export function TeamDetail() {
             <CardContent className="space-y-4">
               {team.preferredPitch && (
                 <div>
-                  <p className="text-sm font-medium">{t("teams.preferredPitch")}</p>
+                  <p className="text-sm font-medium">
+                    {t("teams.preferredPitch")}
+                  </p>
                   <p className="text-sm text-muted-foreground">
                     {team.preferredPitch.name}
                   </p>
@@ -189,7 +267,9 @@ export function TeamDetail() {
               {team.captain && (
                 <div>
                   <p className="text-sm font-medium">{t("teams.captain")}</p>
-                  <p className="text-sm text-muted-foreground">{team.captain.name}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {team.captain.name}
+                  </p>
                 </div>
               )}
               <div>
@@ -239,23 +319,29 @@ export function TeamDetail() {
                       <User className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="font-medium">{member.user?.name || 'Unknown'}</p>
+                      <p className="font-medium">
+                        {member.user?.name || "Unknown"}
+                      </p>
                       <div className="flex items-center gap-2">
-                        {(member.role === 'OWNER' || member.role === 'CAPTAIN') && (
+                        {(member.role === "OWNER" ||
+                          member.role === "CAPTAIN") && (
                           <Badge variant="secondary" className="text-xs">
                             <Crown className="mr-1 h-3 w-3" />
                             {t("teams.owner")}
                           </Badge>
                         )}
                         <span className="text-xs text-muted-foreground">
-                          {t("teams.joined")} {format(new Date(member.joinedAt), 'MMM yyyy', { locale: enUS })}
+                          {t("teams.joined")}{" "}
+                          {format(new Date(member.joinedAt), "MMM yyyy", {
+                            locale: enUS,
+                          })}
                         </span>
                       </div>
                     </div>
                   </div>
                   {isOwner &&
-                    member.role !== 'OWNER' &&
-                    member.role !== 'CAPTAIN' &&
+                    member.role !== "OWNER" &&
+                    member.role !== "CAPTAIN" &&
                     member.user?.id !== user?.id && (
                       <Button
                         variant="ghost"
@@ -299,14 +385,17 @@ export function TeamDetail() {
       <Dialog open={removeConfirmOpen} onOpenChange={setRemoveConfirmOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('teams.removeMemberConfirmTitle')}</DialogTitle>
+            <DialogTitle>{t("teams.removeMemberConfirmTitle")}</DialogTitle>
             <DialogDescription>
-              {t('teams.removeMemberConfirm', { name: memberToRemove?.name })}
+              {t("teams.removeMemberConfirm", { name: memberToRemove?.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRemoveConfirmOpen(false)}>
-              {t('common.cancel')}
+            <Button
+              variant="outline"
+              onClick={() => setRemoveConfirmOpen(false)}
+            >
+              {t("common.cancel")}
             </Button>
             <Button
               variant="destructive"
@@ -316,11 +405,40 @@ export function TeamDetail() {
               {removeMemberMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('common.loading')}
+                  {t("common.loading")}
                 </>
               ) : (
-                t('common.confirm')
+                t("common.confirm")
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Update Logo Dialog */}
+      <Dialog open={updateLogoOpen} onOpenChange={setUpdateLogoOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>{t("teams.updateLogo")}</DialogTitle>
+            <DialogDescription>{t("teams.updateLogoDesc")}</DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <TeamLogoUpload
+              value={team.logoUrl || ""}
+              onChange={(url) => {
+                // Handle both logo update and removal (empty string)
+                updateLogoMutation.mutate(url || "");
+              }}
+              teamName={team.name}
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setUpdateLogoOpen(false)}
+              disabled={updateLogoMutation.isPending}
+            >
+              {t("common.cancel")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -328,4 +446,3 @@ export function TeamDetail() {
     </div>
   );
 }
-

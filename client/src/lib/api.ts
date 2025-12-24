@@ -170,5 +170,11 @@ export const adminApi = {
     api.get<ApiResponse<any[]>>('/admin/bookings', { params }),
 };
 
+// Uploads
+export const uploadsApi = {
+  uploadTeamLogo: (data: { image: string }) =>
+    api.post<ApiResponse<{ url: string }>>('/uploads/team-logo', data),
+};
+
 export default api;
 

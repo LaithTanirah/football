@@ -358,8 +358,25 @@ export function LeagueDetail() {
             {league.teams?.map((leagueTeam: any) => (
               <Card key={leagueTeam.team.id} className="card-elevated">
                 <CardHeader>
+                  {leagueTeam.team.logoUrl && (
+                    <div className="mb-4 flex justify-center">
+                      <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-muted">
+                        <img
+                          src={leagueTeam.team.logoUrl}
+                          alt={leagueTeam.team.name}
+                          className="h-full w-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = "none";
+                          }}
+                        />
+                      </div>
+                    </div>
+                  )}
                   <CardTitle>{leagueTeam.team.name}</CardTitle>
-                  <CardDescription>{leagueTeam.team.city}</CardDescription>
+                  <CardDescription className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    {leagueTeam.team.city}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <Link to={`/teams/${leagueTeam.team.id}`}>
@@ -411,7 +428,18 @@ export function LeagueDetail() {
                 <CardTitle>{t("leagueDetail.standings")}</CardTitle>
               </CardHeader>
               <CardContent>
-                <StandingsTable standings={standings} />
+                <StandingsTable 
+                  standings={standings.map((standing: any) => {
+                    // Find team logo from league teams
+                    const leagueTeam = league.teams?.find(
+                      (lt: any) => lt.team.id === standing.teamId
+                    );
+                    return {
+                      ...standing,
+                      logoUrl: leagueTeam?.team?.logoUrl,
+                    };
+                  })}
+                />
               </CardContent>
             </Card>
           ) : (

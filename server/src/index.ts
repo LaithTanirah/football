@@ -1,6 +1,9 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { authRouter } from './routes/auth.js';
 import { pitchesRouter } from './routes/pitches.js';
 import { bookingsRouter } from './routes/bookings.js';
@@ -9,6 +12,10 @@ import { teamsRouter } from './routes/teams.js';
 import { leaguesRouter } from './routes/leagues.js';
 import { matchesRouter } from './routes/matches.js';
 import { usersRouter } from './routes/users.js';
+import { uploadsRouter } from './routes/uploads.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 dotenv.config();
 
@@ -26,8 +33,13 @@ if (!process.env.DATABASE_URL) {
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
+
+// Serve static files from public/uploads
+const uploadsStaticPath = path.resolve(__dirname, '../public/uploads');
+console.log(`Serving static uploads from: ${uploadsStaticPath}`);
+app.use('/uploads', express.static(uploadsStaticPath));
 
 // CORS middleware
 app.use((req, res, next) => {
@@ -37,7 +49,7 @@ app.use((req, res, next) => {
   }
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept-Language');
   
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
@@ -59,6 +71,7 @@ app.use('/api/teams', teamsRouter);
 app.use('/api/leagues', leaguesRouter);
 app.use('/api/matches', matchesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/uploads', uploadsRouter);
 
 // Error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

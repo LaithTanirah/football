@@ -11,7 +11,7 @@ export const teamsRouter = Router();
 const createTeamSchema = z.object({
   name: z.string().min(1).max(255),
   city: z.string().min(1).max(100),
-  logoUrl: z.string().url().optional(),
+  logoUrl: z.union([z.string().url(), z.string().length(0)]).optional(),
   preferredPitchId: z.string().uuid().optional(),
 });
 

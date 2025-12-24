@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { CitySelect } from '@/components/CitySelect';
+import { TeamLogoUpload } from '@/components/team/TeamLogoUpload';
 import { useAuthStore } from '@/store/authStore';
 
 export function CreateTeam() {
@@ -125,13 +126,10 @@ export function CreateTeam() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="logoUrl">{t('teams.logoUrl')}</Label>
-              <Input
-                id="logoUrl"
-                type="url"
+              <TeamLogoUpload
                 value={formData.logoUrl}
-                onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
-                placeholder={t('teams.logoUrlPlaceholder')}
+                onChange={(url) => setFormData({ ...formData, logoUrl: url })}
+                teamName={formData.name}
               />
             </div>
 
