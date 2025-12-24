@@ -125,19 +125,21 @@ export function Teams() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {teams.map((team: any) => (
             <Card key={team.id} className="card-elevated overflow-hidden">
-              {team.logoUrl && (
-                <div className="aspect-video w-full overflow-hidden bg-muted">
-                  <img
-                    src={team.logoUrl}
-                    alt={team.name}
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                </div>
-              )}
               <CardHeader>
+                {team.logoUrl && (
+                  <div className="mb-4 flex justify-center">
+                    <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-muted">
+                      <img
+                        src={team.logoUrl}
+                        alt={team.name}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
                 <CardTitle className="flex items-center justify-between">
                   {team.name}
                   {team.preferredPitch && (

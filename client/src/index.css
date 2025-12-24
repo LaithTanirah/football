@@ -77,6 +77,59 @@
     font-family: "Cairo", "Noto Sans Arabic", -apple-system, sans-serif;
   }
 
+  /* RTL Form Controls - Global fixes */
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="rtl"] input::placeholder,
+  [dir="rtl"] textarea::placeholder {
+    text-align: right;
+    direction: rtl;
+  }
+
+  /* Native select arrow positioning in RTL */
+  [dir="rtl"] select {
+    padding-right: 0.75rem;
+    padding-left: 2.5rem;
+    background-position: left 0.5rem center;
+  }
+
+  [dir="ltr"] select {
+    padding-left: 0.75rem;
+    padding-right: 2.5rem;
+    background-position: right 0.5rem center;
+  }
+
+  /* Select option alignment */
+  [dir="rtl"] option {
+    text-align: right;
+    direction: rtl;
+  }
+
+  /* Ensure Radix Select components respect RTL */
+  [dir="rtl"] [data-radix-select-trigger] {
+    text-align: right;
+  }
+
+  [dir="rtl"] [data-radix-select-content] {
+    text-align: right;
+  }
+
+  /* Input padding adjustments for RTL */
+  [dir="rtl"] input[type="text"],
+  [dir="rtl"] input[type="email"],
+  [dir="rtl"] input[type="password"],
+  [dir="rtl"] input[type="url"],
+  [dir="rtl"] input[type="search"],
+  [dir="rtl"] textarea {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
   /* Dark mode - clean neutral background, no gradients */
   .dark body {
     background: hsl(var(--background));

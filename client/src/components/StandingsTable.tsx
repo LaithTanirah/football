@@ -12,6 +12,7 @@ interface Standing {
   goalsAgainst: number;
   goalDifference: number;
   points: number;
+  logoUrl?: string;
 }
 
 interface StandingsTableProps {
@@ -49,7 +50,21 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                 {index > 2 && <span className="ml-8">{index + 1}</span>}
               </TableCell>
               <TableCell className="sticky left-12 z-10 bg-background font-medium">
-                {standing.teamName}
+                <div className="flex items-center gap-3">
+                  {standing.logoUrl && (
+                    <div className="h-8 w-8 overflow-hidden rounded-full border border-border bg-muted flex-shrink-0">
+                      <img
+                        src={standing.logoUrl}
+                        alt={standing.teamName}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+                  <span>{standing.teamName}</span>
+                </div>
               </TableCell>
               <TableCell className="text-center">{standing.played}</TableCell>
               <TableCell className="text-center">{standing.won}</TableCell>
