@@ -30,10 +30,12 @@ export function isValidCityKey(city: string | null | undefined): city is JordanC
 
 /**
  * Validate city key and return error message if invalid
+ * Returns valid: true for empty/null/undefined (city is optional)
  */
 export function validateCity(city: string | null | undefined): { valid: boolean; error?: string } {
-  if (!city) {
-    return { valid: false, error: 'City is required' };
+  // City is optional, so empty/null/undefined is valid
+  if (!city || city.trim() === '') {
+    return { valid: true };
   }
   
   if (!isValidCityKey(city)) {

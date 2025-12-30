@@ -12,6 +12,7 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { useThemeStore } from "@/store/themeStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Moon,
   Sun,
@@ -31,12 +32,17 @@ export function Navbar() {
   const { t } = useTranslation();
   const { user, logout } = useAuthStore();
   const { theme, toggleTheme } = useThemeStore();
+  const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     await logout();
+    toast({
+      title: t("common.success"),
+      description: t("auth.logoutSuccess") || "Logged out successfully",
+    });
     navigate("/");
     setMobileMenuOpen(false);
   };
@@ -48,6 +54,8 @@ export function Navbar() {
     { to: "/pitches", label: t("nav.pitches") },
     { to: "/teams", label: t("nav.teams") },
     { to: "/leagues", label: t("nav.leagues") },
+    { to: "/community", label: t("community.title") },
+    { to: "/games", label: t("games.title") },
   ];
 
   return (
@@ -97,6 +105,12 @@ export function Navbar() {
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>{t("nav.myAccount")}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/profile" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      {t("profile.title")}
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link to="/me/bookings" className="flex items-center gap-2">
                       <Calendar className="h-4 w-4" />
@@ -194,6 +208,13 @@ export function Navbar() {
               </Link>
             ))}
             <div className="border-t my-2" />
+            <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              className="block px-3 py-2 rounded-md text-sm hover:bg-muted"
+            >
+              {t("profile.title")}
+            </Link>
             <Link
               to="/me/bookings"
               onClick={() => setMobileMenuOpen(false)}

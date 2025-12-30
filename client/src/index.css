@@ -96,12 +96,14 @@
     padding-right: 0.75rem;
     padding-left: 2.5rem;
     background-position: left 0.5rem center;
+    background-size: 1.5em 1.5em;
   }
 
   [dir="ltr"] select {
     padding-left: 0.75rem;
     padding-right: 2.5rem;
     background-position: right 0.5rem center;
+    background-size: 1.5em 1.5em;
   }
 
   /* Select option alignment */
@@ -113,10 +115,36 @@
   /* Ensure Radix Select components respect RTL */
   [dir="rtl"] [data-radix-select-trigger] {
     text-align: right;
+    direction: rtl;
   }
 
   [dir="rtl"] [data-radix-select-content] {
     text-align: right;
+    direction: rtl;
+  }
+
+  /* Radix SelectValue RTL support */
+  [dir="rtl"] [data-radix-select-value] {
+    text-align: right;
+    direction: rtl;
+    width: 100%;
+  }
+
+  [dir="ltr"] [data-radix-select-value] {
+    text-align: left;
+    direction: ltr;
+    width: 100%;
+  }
+
+  /* Radix SelectValue placeholder RTL support */
+  [dir="rtl"] [data-radix-select-value][data-placeholder] {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="ltr"] [data-radix-select-value][data-placeholder] {
+    text-align: left;
+    direction: ltr;
   }
 
   /* Input padding adjustments for RTL */

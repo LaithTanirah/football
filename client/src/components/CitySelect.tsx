@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useDirection } from '@/hooks/useDirection';
 
 interface CitySelectProps {
   value?: string;
@@ -19,6 +20,27 @@ interface CitySelectProps {
   className?: string;
   required?: boolean;
   allowEmpty?: boolean;
+}
+
+// Separate component for city item content to handle RTL properly
+function CitySelectItemContent({ city, locale }: { city: City; locale: 'ar' | 'en' }) {
+  const { isRTL } = useDirection();
+  return (
+    <div className={cn(
+      'flex items-center w-full',
+      isRTL ? 'flex-row-reverse justify-between' : 'justify-between'
+    )}>
+      <span>{locale === 'ar' ? city.ar : city.en}</span>
+      {locale !== 'ar' && (
+        <span className={cn(
+          'text-xs text-muted-foreground',
+          isRTL ? 'ml-2' : 'mr-2'
+        )}>
+          {city.ar}
+        </span>
+      )}
+    </div>
+  );
 }
 
 export function CitySelect({
@@ -126,14 +148,7 @@ export function CitySelect({
                   value={city.key}
                   onSelect={() => setSearchQuery('')}
                 >
-                  <div className="flex items-center justify-between w-full">
-                    <span>{locale === 'ar' ? city.ar : city.en}</span>
-                    {locale !== 'ar' && (
-                      <span className="text-xs text-muted-foreground mr-2">
-                        {city.ar}
-                      </span>
-                    )}
-                  </div>
+                  <CitySelectItemContent city={city} locale={locale} />
                 </SelectItem>
               ))
           )}

@@ -13,6 +13,7 @@ import { leaguesRouter } from './routes/leagues.js';
 import { matchesRouter } from './routes/matches.js';
 import { usersRouter } from './routes/users.js';
 import { uploadsRouter } from './routes/uploads.js';
+import { postsRouter } from './routes/posts.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,6 +73,7 @@ app.use('/api/leagues', leaguesRouter);
 app.use('/api/matches', matchesRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/uploads', uploadsRouter);
+app.use('/api/posts', postsRouter);
 
 // Error handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

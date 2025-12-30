@@ -11,13 +11,20 @@ export interface AuthRequest extends Request {
 
 export async function authenticate(req: AuthRequest, res: Response, next: NextFunction) {
   try {
-    const token = req.cookies?.accessToken;
+    // Read token from Authorization header
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({ message: 'Unauthorized', code: 'NO_TOKEN' });
+    }
+
+    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
 
     if (!token) {
       return res.status(401).json({ message: 'Unauthorized', code: 'NO_TOKEN' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string; username: string; role?: string };
     const user = await db.select().from(users).where(eq(users.id, decoded.userId)).limit(1);
 
     if (!user[0]) {
@@ -27,7 +34,15 @@ export async function authenticate(req: AuthRequest, res: Response, next: NextFu
     req.userId = decoded.userId;
     req.user = user[0];
     next();
-  } catch (error) {
+  } catch (error: any) {
+    // Check error type by name property (jsonwebtoken uses name property)
+    if (error?.name === 'TokenExpiredError') {
+      return res.status(401).json({ message: 'Token expired', code: 'TOKEN_EXPIRED' });
+    }
+    if (error?.name === 'JsonWebTokenError' || error?.name === 'NotBeforeError') {
+      return res.status(401).json({ message: 'Invalid token', code: 'INVALID_TOKEN' });
+    }
+    // For any other error, return generic invalid token message
     return res.status(401).json({ message: 'Invalid token', code: 'INVALID_TOKEN' });
   }
 }

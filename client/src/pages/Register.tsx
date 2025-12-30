@@ -22,7 +22,7 @@ export function Register() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setUser } = useAuthStore();
+  const { setTokenAndUser } = useAuthStore();
   const [formData, setFormData] = useState({
     name: "",
     username: "",
@@ -35,12 +35,21 @@ export function Register() {
   const mutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (response) => {
-      setUser(response.data.data.user);
-      toast({
-        title: t("common.success"),
-        description: t("auth.registerSuccess"),
-      });
-      navigate("/pitches");
+      const { user, token } = response.data.data;
+      if (token && user) {
+        setTokenAndUser(token, user);
+        toast({
+          title: t("common.success"),
+          description: t("auth.registerSuccess"),
+        });
+        navigate("/pitches");
+      } else {
+        toast({
+          title: t("common.error"),
+          description: t("auth.registerError"),
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: any) => {
       toast({

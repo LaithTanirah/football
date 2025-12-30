@@ -26,7 +26,13 @@ import { TeamDetail } from "@/pages/TeamDetail";
 import { CreateTeam } from "@/pages/CreateTeam";
 import { Leagues } from "@/pages/Leagues";
 import { LeagueDetail } from "@/pages/LeagueDetail";
+import { Community } from "@/pages/Community";
+import { PostDetail } from "@/pages/PostDetail";
+import { CreatePost } from "@/pages/CreatePost";
 import { CreateLeague } from "@/pages/CreateLeague";
+import { Profile } from "@/pages/Profile";
+import { GamesHubPage } from "@/features/games/pages/GamesHubPage";
+import { GamePage } from "@/features/games/pages/GamePage";
 
 function AppContent() {
   const { t } = useTranslation();
@@ -69,6 +75,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <MyBookings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
@@ -116,6 +130,18 @@ function AppContent() {
           }
         />
         <Route path="/leagues/:id" element={<LeagueDetail />} />
+        <Route path="/community" element={<Community />} />
+        <Route path="/community/post/:id" element={<PostDetail />} />
+        <Route
+          path="/community/create"
+          element={
+            <ProtectedRoute>
+              <CreatePost />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/games" element={<GamesHubPage />} />
+        <Route path="/games/:slug" element={<GamePage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />

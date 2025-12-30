@@ -1,188 +1,405 @@
-import { pgTable, uuid, varchar, text, integer, boolean, timestamp, time, date, pgEnum, index, uniqueIndex } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  integer,
+  boolean,
+  timestamp,
+  time,
+  date,
+  pgEnum,
+  index,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 
-export const userRoleEnum = pgEnum('user_role', ['USER', 'ADMIN', 'PITCH_OWNER']);
+export const userRoleEnum = pgEnum("user_role", [
+  "USER",
+  "ADMIN",
+  "PITCH_OWNER",
+]);
 
-export const bookingStatusEnum = pgEnum('booking_status', ['PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED']);
+export const bookingStatusEnum = pgEnum("booking_status", [
+  "PENDING",
+  "CONFIRMED",
+  "CANCELLED",
+  "COMPLETED",
+]);
 
-export const teamMemberRoleEnum = pgEnum('team_member_role', ['OWNER', 'ADMIN', 'MEMBER', 'CAPTAIN']); // CAPTAIN kept for backward compatibility
+export const teamMemberRoleEnum = pgEnum("team_member_role", [
+  "OWNER",
+  "ADMIN",
+  "MEMBER",
+  "CAPTAIN",
+]); // CAPTAIN kept for backward compatibility
 
-export const leagueStatusEnum = pgEnum('league_status', ['DRAFT', 'ACTIVE', 'COMPLETED']);
+export const leagueStatusEnum = pgEnum("league_status", [
+  "DRAFT",
+  "ACTIVE",
+  "COMPLETED",
+]);
 
-export const matchStatusEnum = pgEnum('match_status', ['SCHEDULED', 'PLAYED', 'CANCELLED']);
+export const matchStatusEnum = pgEnum("match_status", [
+  "SCHEDULED",
+  "PLAYED",
+  "CANCELLED",
+]);
 
-export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  username: varchar('username', { length: 100 }).notNull().unique(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  phone: varchar('phone', { length: 20 }),
-  passwordHash: varchar('password_hash', { length: 255 }).notNull(),
-  role: userRoleEnum('role').default('USER').notNull(),
-  city: varchar('city', { length: 100 }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  usernameIdx: index('users_username_idx').on(table.username),
-  emailIdx: index('users_email_idx').on(table.email),
-}));
+export const postMediaTypeEnum = pgEnum("post_media_type", ["none", "image"]);
 
-export const pitches = pgTable('pitches', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  // Bilingual fields
-  nameAr: varchar('name_ar', { length: 255 }),
-  nameEn: varchar('name_en', { length: 255 }),
-  cityAr: varchar('city_ar', { length: 100 }),
-  cityEn: varchar('city_en', { length: 100 }),
-  addressAr: text('address_ar'),
-  addressEn: text('address_en'),
-  descriptionAr: text('description_ar'),
-  descriptionEn: text('description_en'),
-  typeAr: varchar('type_ar', { length: 50 }), // "داخلي" or "خارجي"
-  typeEn: varchar('type_en', { length: 50 }), // "Indoor" or "Outdoor"
-  // Stable keys for filtering
-  cityKey: varchar('city_key', { length: 50 }), // "AMMAN", "ZARQA", etc.
-  typeKey: varchar('type_key', { length: 20 }), // "indoor" or "outdoor"
-  // Legacy fields (kept for backward compatibility, will be populated from bilingual fields)
-  name: varchar('name', { length: 255 }),
-  city: varchar('city', { length: 100 }),
-  address: text('address'),
-  indoor: boolean('indoor').default(false).notNull(),
-  description: text('description'),
-  pricePerHour: integer('price_per_hour').notNull(),
-  openTime: time('open_time').default('08:00:00'),
-  closeTime: time('close_time').default('22:00:00'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  cityKeyIdx: index('pitches_city_key_idx').on(table.cityKey),
-  cityIdx: index('pitches_city_idx').on(table.city), // Keep for backward compatibility
-}));
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    username: varchar("username", { length: 100 }).notNull().unique(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
+    phone: varchar("phone", { length: 20 }),
+    passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+    role: userRoleEnum("role").default("USER").notNull(),
+    city: varchar("city", { length: 100 }),
+    bio: text("bio"),
+    avatar: text("avatar"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    usernameIdx: index("users_username_idx").on(table.username),
+    emailIdx: index("users_email_idx").on(table.email),
+  })
+);
 
-export const pitchImages = pgTable('pitch_images', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  pitchId: uuid('pitch_id').notNull().references(() => pitches.id, { onDelete: 'cascade' }),
-  url: text('url').notNull(),
-  sortOrder: integer('sort_order').default(0).notNull(),
-}, (table) => ({
-  pitchIdIdx: index('pitch_images_pitch_id_idx').on(table.pitchId),
-}));
+export const pitches = pgTable(
+  "pitches",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    // Bilingual fields
+    nameAr: varchar("name_ar", { length: 255 }),
+    nameEn: varchar("name_en", { length: 255 }),
+    cityAr: varchar("city_ar", { length: 100 }),
+    cityEn: varchar("city_en", { length: 100 }),
+    addressAr: text("address_ar"),
+    addressEn: text("address_en"),
+    descriptionAr: text("description_ar"),
+    descriptionEn: text("description_en"),
+    typeAr: varchar("type_ar", { length: 50 }), // "داخلي" or "خارجي"
+    typeEn: varchar("type_en", { length: 50 }), // "Indoor" or "Outdoor"
+    // Stable keys for filtering
+    cityKey: varchar("city_key", { length: 50 }), // "AMMAN", "ZARQA", etc.
+    typeKey: varchar("type_key", { length: 20 }), // "indoor" or "outdoor"
+    // Legacy fields (kept for backward compatibility, will be populated from bilingual fields)
+    name: varchar("name", { length: 255 }),
+    city: varchar("city", { length: 100 }),
+    address: text("address"),
+    indoor: boolean("indoor").default(false).notNull(),
+    description: text("description"),
+    pricePerHour: integer("price_per_hour").notNull(),
+    openTime: time("open_time").default("08:00:00"),
+    closeTime: time("close_time").default("22:00:00"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    cityKeyIdx: index("pitches_city_key_idx").on(table.cityKey),
+    cityIdx: index("pitches_city_idx").on(table.city), // Keep for backward compatibility
+  })
+);
 
-export const pitchWorkingHours = pgTable('pitch_working_hours', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  pitchId: uuid('pitch_id').notNull().references(() => pitches.id, { onDelete: 'cascade' }),
-  dayOfWeek: integer('day_of_week').notNull(), // 0-6, 0 = Sunday
-  openTime: time('open_time').notNull(),
-  closeTime: time('close_time').notNull(),
-}, (table) => ({
-  pitchDayIdx: uniqueIndex('pitch_working_hours_pitch_day_idx').on(table.pitchId, table.dayOfWeek),
-}));
+export const pitchImages = pgTable(
+  "pitch_images",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    pitchId: uuid("pitch_id")
+      .notNull()
+      .references(() => pitches.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    sortOrder: integer("sort_order").default(0).notNull(),
+  },
+  (table) => ({
+    pitchIdIdx: index("pitch_images_pitch_id_idx").on(table.pitchId),
+  })
+);
 
-export const blockedSlots = pgTable('blocked_slots', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  pitchId: uuid('pitch_id').notNull().references(() => pitches.id, { onDelete: 'cascade' }),
-  date: date('date').notNull(),
-  startTime: time('start_time').notNull(),
-  endTime: time('end_time').notNull(),
-  reason: text('reason'),
-}, (table) => ({
-  pitchDateIdx: index('blocked_slots_pitch_date_idx').on(table.pitchId, table.date),
-}));
+export const pitchWorkingHours = pgTable(
+  "pitch_working_hours",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    pitchId: uuid("pitch_id")
+      .notNull()
+      .references(() => pitches.id, { onDelete: "cascade" }),
+    dayOfWeek: integer("day_of_week").notNull(), // 0-6, 0 = Sunday
+    openTime: time("open_time").notNull(),
+    closeTime: time("close_time").notNull(),
+  },
+  (table) => ({
+    pitchDayIdx: uniqueIndex("pitch_working_hours_pitch_day_idx").on(
+      table.pitchId,
+      table.dayOfWeek
+    ),
+  })
+);
 
-export const bookings = pgTable('bookings', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  pitchId: uuid('pitch_id').notNull().references(() => pitches.id, { onDelete: 'cascade' }),
-  date: date('date').notNull(),
-  startTime: time('start_time').notNull(),
-  durationMinutes: integer('duration_minutes').default(60).notNull(),
-  status: bookingStatusEnum('status').default('CONFIRMED').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  userIdIdx: index('bookings_user_id_idx').on(table.userId),
-  pitchDateIdx: index('bookings_pitch_date_idx').on(table.pitchId, table.date),
-}));
+export const blockedSlots = pgTable(
+  "blocked_slots",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    pitchId: uuid("pitch_id")
+      .notNull()
+      .references(() => pitches.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    startTime: time("start_time").notNull(),
+    endTime: time("end_time").notNull(),
+    reason: text("reason"),
+  },
+  (table) => ({
+    pitchDateIdx: index("blocked_slots_pitch_date_idx").on(
+      table.pitchId,
+      table.date
+    ),
+  })
+);
 
-export const teams = pgTable('teams', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  city: varchar('city', { length: 100 }).notNull(),
-  logoUrl: text('logo_url'),
-  preferredPitchId: uuid('preferred_pitch_id').references(() => pitches.id, { onDelete: 'set null' }),
-  captainId: uuid('captain_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  squad: text('squad'), // JSON string: { mode: 5|6, slots: [{ slotKey, playerId }], updatedAt }
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  captainIdx: index('teams_captain_id_idx').on(table.captainId),
-  cityIdx: index('teams_city_idx').on(table.city),
-}));
+export const bookings = pgTable(
+  "bookings",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    pitchId: uuid("pitch_id")
+      .notNull()
+      .references(() => pitches.id, { onDelete: "cascade" }),
+    date: date("date").notNull(),
+    startTime: time("start_time").notNull(),
+    durationMinutes: integer("duration_minutes").default(60).notNull(),
+    status: bookingStatusEnum("status").default("CONFIRMED").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    userIdIdx: index("bookings_user_id_idx").on(table.userId),
+    pitchDateIdx: index("bookings_pitch_date_idx").on(
+      table.pitchId,
+      table.date
+    ),
+  })
+);
 
-export const teamMembers = pgTable('team_members', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  teamId: uuid('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  role: teamMemberRoleEnum('role').default('MEMBER').notNull(),
-  joinedAt: timestamp('joined_at').defaultNow().notNull(),
-}, (table) => ({
-  teamUserIdx: uniqueIndex('team_members_team_user_idx').on(table.teamId, table.userId),
-  teamIdIdx: index('team_members_team_id_idx').on(table.teamId),
-  userIdIdx: index('team_members_user_id_idx').on(table.userId),
-}));
+export const teams = pgTable(
+  "teams",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    city: varchar("city", { length: 100 }).notNull(),
+    logoUrl: text("logo_url"),
+    preferredPitchId: uuid("preferred_pitch_id").references(() => pitches.id, {
+      onDelete: "set null",
+    }),
+    captainId: uuid("captain_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    squad: text("squad"), // JSON string: { mode: 5|6, slots: [{ slotKey, playerId }], updatedAt }
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    captainIdx: index("teams_captain_id_idx").on(table.captainId),
+    cityIdx: index("teams_city_idx").on(table.city),
+  })
+);
 
-export const leagues = pgTable('leagues', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  city: varchar('city', { length: 100 }).notNull(),
-  season: varchar('season', { length: 50 }),
-  startDate: date('start_date'),
-  status: leagueStatusEnum('status').default('DRAFT').notNull(),
-  ownerId: uuid('owner_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  ownerIdx: index('leagues_owner_id_idx').on(table.ownerId),
-  cityIdx: index('leagues_city_idx').on(table.city),
-  statusIdx: index('leagues_status_idx').on(table.status),
-}));
+export const teamMembers = pgTable(
+  "team_members",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    teamId: uuid("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: teamMemberRoleEnum("role").default("MEMBER").notNull(),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    teamUserIdx: uniqueIndex("team_members_team_user_idx").on(
+      table.teamId,
+      table.userId
+    ),
+    teamIdIdx: index("team_members_team_id_idx").on(table.teamId),
+    userIdIdx: index("team_members_user_id_idx").on(table.userId),
+  })
+);
 
-export const leagueTeams = pgTable('league_teams', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  leagueId: uuid('league_id').notNull().references(() => leagues.id, { onDelete: 'cascade' }),
-  teamId: uuid('team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
-  joinedAt: timestamp('joined_at').defaultNow().notNull(),
-}, (table) => ({
-  leagueTeamIdx: uniqueIndex('league_teams_league_team_idx').on(table.leagueId, table.teamId),
-  leagueIdIdx: index('league_teams_league_id_idx').on(table.leagueId),
-  teamIdIdx: index('league_teams_team_id_idx').on(table.teamId),
-}));
+export const leagues = pgTable(
+  "leagues",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    city: varchar("city", { length: 100 }).notNull(),
+    season: varchar("season", { length: 50 }),
+    startDate: date("start_date"),
+    status: leagueStatusEnum("status").default("DRAFT").notNull(),
+    ownerId: uuid("owner_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    ownerIdx: index("leagues_owner_id_idx").on(table.ownerId),
+    cityIdx: index("leagues_city_idx").on(table.city),
+    statusIdx: index("leagues_status_idx").on(table.status),
+  })
+);
 
-export const matches = pgTable('matches', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  leagueId: uuid('league_id').notNull().references(() => leagues.id, { onDelete: 'cascade' }),
-  homeTeamId: uuid('home_team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
-  awayTeamId: uuid('away_team_id').notNull().references(() => teams.id, { onDelete: 'cascade' }),
-  pitchId: uuid('pitch_id').references(() => pitches.id, { onDelete: 'set null' }),
-  bookingId: uuid('booking_id').references(() => bookings.id, { onDelete: 'set null' }),
-  scheduledDate: date('scheduled_date'),
-  scheduledTime: time('scheduled_time'),
-  status: matchStatusEnum('status').default('SCHEDULED').notNull(),
-  round: integer('round').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-}, (table) => ({
-  leagueIdIdx: index('matches_league_id_idx').on(table.leagueId),
-  homeTeamIdx: index('matches_home_team_id_idx').on(table.homeTeamId),
-  awayTeamIdx: index('matches_away_team_id_idx').on(table.awayTeamId),
-  roundIdx: index('matches_round_idx').on(table.leagueId, table.round),
-}));
+export const leagueTeams = pgTable(
+  "league_teams",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    leagueId: uuid("league_id")
+      .notNull()
+      .references(() => leagues.id, { onDelete: "cascade" }),
+    teamId: uuid("team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    joinedAt: timestamp("joined_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    leagueTeamIdx: uniqueIndex("league_teams_league_team_idx").on(
+      table.leagueId,
+      table.teamId
+    ),
+    leagueIdIdx: index("league_teams_league_id_idx").on(table.leagueId),
+    teamIdIdx: index("league_teams_team_id_idx").on(table.teamId),
+  })
+);
 
-export const matchResults = pgTable('match_results', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  matchId: uuid('match_id').notNull().references(() => matches.id, { onDelete: 'cascade' }),
-  homeScore: integer('home_score').notNull(),
-  awayScore: integer('away_score').notNull(),
-  recordedBy: uuid('recorded_by').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  recordedAt: timestamp('recorded_at').defaultNow().notNull(),
-}, (table) => ({
-  matchIdIdx: uniqueIndex('match_results_match_id_idx').on(table.matchId),
-  recordedByIdx: index('match_results_recorded_by_idx').on(table.recordedBy),
-}));
+export const matches = pgTable(
+  "matches",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    leagueId: uuid("league_id")
+      .notNull()
+      .references(() => leagues.id, { onDelete: "cascade" }),
+    homeTeamId: uuid("home_team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    awayTeamId: uuid("away_team_id")
+      .notNull()
+      .references(() => teams.id, { onDelete: "cascade" }),
+    pitchId: uuid("pitch_id").references(() => pitches.id, {
+      onDelete: "set null",
+    }),
+    bookingId: uuid("booking_id").references(() => bookings.id, {
+      onDelete: "set null",
+    }),
+    scheduledDate: date("scheduled_date"),
+    scheduledTime: time("scheduled_time"),
+    status: matchStatusEnum("status").default("SCHEDULED").notNull(),
+    round: integer("round").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    leagueIdIdx: index("matches_league_id_idx").on(table.leagueId),
+    homeTeamIdx: index("matches_home_team_id_idx").on(table.homeTeamId),
+    awayTeamIdx: index("matches_away_team_id_idx").on(table.awayTeamId),
+    roundIdx: index("matches_round_idx").on(table.leagueId, table.round),
+  })
+);
+
+export const matchResults = pgTable(
+  "match_results",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    matchId: uuid("match_id")
+      .notNull()
+      .references(() => matches.id, { onDelete: "cascade" }),
+    homeScore: integer("home_score").notNull(),
+    awayScore: integer("away_score").notNull(),
+    recordedBy: uuid("recorded_by")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    matchIdIdx: uniqueIndex("match_results_match_id_idx").on(table.matchId),
+    recordedByIdx: index("match_results_recorded_by_idx").on(table.recordedBy),
+  })
+);
+
+export const posts = pgTable(
+  "posts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    authorId: uuid("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    authorName: varchar("author_name", { length: 255 }).notNull(),
+    authorUsername: varchar("author_username", { length: 100 }).notNull(),
+    authorAvatar: text("author_avatar"),
+    content: text("content").notNull(),
+    mediaType: postMediaTypeEnum("media_type").default("none").notNull(),
+    mediaUrl: text("media_url"),
+    city: varchar("city", { length: 100 }),
+    pitchId: uuid("pitch_id").references(() => pitches.id, {
+      onDelete: "set null",
+    }),
+    teamId: uuid("team_id").references(() => teams.id, {
+      onDelete: "set null",
+    }),
+    likesCount: integer("likes_count").default(0).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    authorIdIdx: index("posts_author_id_idx").on(table.authorId),
+    cityIdx: index("posts_city_idx").on(table.city),
+    pitchIdIdx: index("posts_pitch_id_idx").on(table.pitchId),
+    teamIdIdx: index("posts_team_id_idx").on(table.teamId),
+    createdAtIdx: index("posts_created_at_idx").on(table.createdAt),
+  })
+);
+
+export const comments = pgTable(
+  "comments",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    authorId: uuid("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    authorName: varchar("author_name", { length: 255 }).notNull(),
+    authorUsername: varchar("author_username", { length: 100 }).notNull(),
+    content: text("content").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    postIdIdx: index("comments_post_id_idx").on(table.postId),
+    authorIdIdx: index("comments_author_id_idx").on(table.authorId),
+    createdAtIdx: index("comments_created_at_idx").on(table.createdAt),
+  })
+);
+
+export const postLikes = pgTable(
+  "post_likes",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    postId: uuid("post_id")
+      .notNull()
+      .references(() => posts.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => ({
+    postUserIdx: uniqueIndex("post_likes_post_user_idx").on(
+      table.postId,
+      table.userId
+    ),
+    postIdIdx: index("post_likes_post_id_idx").on(table.postId),
+    userIdIdx: index("post_likes_user_id_idx").on(table.userId),
+  })
+);
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
@@ -191,6 +408,9 @@ export const usersRelations = relations(users, ({ many }) => ({
   teamMemberships: many(teamMembers),
   ownedLeagues: many(leagues),
   recordedResults: many(matchResults),
+  posts: many(posts),
+  comments: many(comments),
+  postLikes: many(postLikes),
 }));
 
 export const pitchesRelations = relations(pitches, ({ many, one }) => ({
@@ -200,6 +420,7 @@ export const pitchesRelations = relations(pitches, ({ many, one }) => ({
   bookings: many(bookings),
   preferredByTeams: many(teams),
   matches: many(matches),
+  posts: many(posts),
 }));
 
 export const bookingsRelations = relations(bookings, ({ one }) => ({
@@ -228,8 +449,9 @@ export const teamsRelations = relations(teams, ({ one, many }) => ({
   }),
   members: many(teamMembers),
   leagueMemberships: many(leagueTeams),
-  homeMatches: many(matches, { relationName: 'homeMatches' }),
-  awayMatches: many(matches, { relationName: 'awayMatches' }),
+  homeMatches: many(matches, { relationName: "homeMatches" }),
+  awayMatches: many(matches, { relationName: "awayMatches" }),
+  posts: many(posts),
 }));
 
 export const teamMembersRelations = relations(teamMembers, ({ one }) => ({
@@ -271,12 +493,12 @@ export const matchesRelations = relations(matches, ({ one }) => ({
   homeTeam: one(teams, {
     fields: [matches.homeTeamId],
     references: [teams.id],
-    relationName: 'homeMatches',
+    relationName: "homeMatches",
   }),
   awayTeam: one(teams, {
     fields: [matches.awayTeamId],
     references: [teams.id],
-    relationName: 'awayMatches',
+    relationName: "awayMatches",
   }),
   pitch: one(pitches, {
     fields: [matches.pitchId],
@@ -303,3 +525,41 @@ export const matchResultsRelations = relations(matchResults, ({ one }) => ({
   }),
 }));
 
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
+  }),
+  pitch: one(pitches, {
+    fields: [posts.pitchId],
+    references: [pitches.id],
+  }),
+  team: one(teams, {
+    fields: [posts.teamId],
+    references: [teams.id],
+  }),
+  comments: many(comments),
+  likes: many(postLikes),
+}));
+
+export const commentsRelations = relations(comments, ({ one }) => ({
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+  author: one(users, {
+    fields: [comments.authorId],
+    references: [users.id],
+  }),
+}));
+
+export const postLikesRelations = relations(postLikes, ({ one }) => ({
+  post: one(posts, {
+    fields: [postLikes.postId],
+    references: [posts.id],
+  }),
+  user: one(users, {
+    fields: [postLikes.userId],
+    references: [users.id],
+  }),
+}));

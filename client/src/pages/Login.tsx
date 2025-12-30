@@ -51,19 +51,28 @@ export function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { setUser, fetchUser } = useAuthStore();
+  const { setTokenAndUser } = useAuthStore();
   const [formData, setFormData] = useState({ username: "", password: "" });
   const isDevelopment = import.meta.env.DEV || import.meta.env.MODE === 'development';
 
   const mutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: (response) => {
-      setUser(response.data.data.user);
-      toast({
-        title: t("common.success"),
-        description: t("auth.loginSuccess"),
-      });
-      navigate("/pitches");
+      const { user, token } = response.data.data;
+      if (token && user) {
+        setTokenAndUser(token, user);
+        toast({
+          title: t("common.success"),
+          description: t("auth.loginSuccess"),
+        });
+        navigate("/pitches");
+      } else {
+        toast({
+          title: t("common.error"),
+          description: t("auth.loginError"),
+          variant: "destructive",
+        });
+      }
     },
     onError: (error: any) => {
       toast({

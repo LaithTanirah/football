@@ -1,70 +1,48 @@
 import axios from 'axios';
+import { getToken, clearToken } from '@/auth/token';
 
 const api = axios.create({
   baseURL: '/api',
-  withCredentials: true,
 });
 
-// Add Accept-Language header based on current locale
+// Add Accept-Language header and Authorization header based on current locale and token
 api.interceptors.request.use((config) => {
   // Get locale from localStorage (since we can't use hooks in interceptor)
   const locale = (localStorage.getItem('locale') as 'ar' | 'en') || 'ar';
   config.headers['Accept-Language'] = locale;
+  
+  // Add Authorization header if token exists
+  const token = getToken();
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   return config;
 });
 
-// Handle expected 401 errors for /auth/me (user not logged in)
-// This works as a fallback even if backend still returns 401
+// Handle 401 errors - clear token and redirect to login
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // For /auth/me 401 errors, return a successful response with null user
-    // This prevents browser console errors for expected "not logged in" state
-    if (error.config?.url?.includes('/auth/me') && error.response?.status === 401) {
-      // Return successful response with null user
-      return Promise.resolve({
-        data: {
-          data: {
-            user: null,
-          },
-        },
-        status: 200,
-        statusText: 'OK',
-        headers: error.response?.headers || {},
-        config: error.config,
-      });
-    }
-    
-    // For login 401 errors, suppress console logging but still reject the promise
-    // (so the UI can show the error message)
-    if (error.config?.url?.includes('/auth/login') && error.response?.status === 401) {
-      // Mark error to suppress console logging
-      error.suppressConsoleError = true;
+    // On 401 (Unauthorized), clear token and user state
+    if (error.response?.status === 401) {
+      // Don't clear token for login/register endpoints (they handle their own errors)
+      const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
+                             error.config?.url?.includes('/auth/register');
+      
+      if (!isAuthEndpoint) {
+        clearToken();
+        // Redirect to login if we're not already there
+        if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
+          window.location.href = '/auth/login';
+        }
+      }
     }
     
     return Promise.reject(error);
   }
 );
 
-// Suppress axios network errors in console for expected 401s
-if (typeof window !== 'undefined') {
-  const originalError = console.error;
-  console.error = (...args: any[]) => {
-    // Filter out expected 401 errors
-    const firstArg = args[0];
-    if (
-      (firstArg?.config?.url?.includes('/auth/me') && firstArg?.response?.status === 401) ||
-      (firstArg?.config?.url?.includes('/auth/login') && firstArg?.response?.status === 401 && firstArg?.suppressConsoleError)
-    ) {
-      return; // Don't log expected errors
-    }
-    originalError.apply(console, args);
-  };
-}
-
-// Note: Browser Network tab will still show HTTP status codes
-// This is expected and cannot be suppressed (it's a browser feature)
-// The interceptor above handles the error gracefully in JavaScript
 
 export interface ApiResponse<T> {
   data: T;
@@ -79,9 +57,9 @@ export interface ApiError {
 // Auth
 export const authApi = {
   register: (data: { name: string; username: string; email: string; password: string; phone?: string; city?: string }) =>
-    api.post<ApiResponse<{ user: any }>>('/auth/register', data),
+    api.post<ApiResponse<{ user: any; token: string }>>('/auth/register', data),
   login: (data: { username: string; password: string }) =>
-    api.post<ApiResponse<{ user: any }>>('/auth/login', data),
+    api.post<ApiResponse<{ user: any; token: string }>>('/auth/login', data),
   logout: () => api.post<ApiResponse<{ message: string }>>('/auth/logout'),
   me: () => api.get<ApiResponse<{ user: any }>>('/auth/me'),
 };
@@ -126,6 +104,10 @@ export const teamsApi = {
 export const usersApi = {
   search: (params: { q: string; excludeTeamId?: string; limit?: number }) =>
     api.get<ApiResponse<any[]>>('/users/search', { params }),
+  getMe: () => api.get<ApiResponse<any>>('/users/me'),
+  updateMe: (data: { name?: string; username?: string; city?: string; bio?: string | null; avatar?: string | null }) =>
+    api.patch<ApiResponse<any>>('/users/me', data),
+  getStats: () => api.get<ApiResponse<{ teamsCount: number; leaguesCount: number; bookingsCount: number; postsCount: number }>>('/users/me/stats'),
 };
 
 // Leagues
@@ -174,6 +156,42 @@ export const adminApi = {
 export const uploadsApi = {
   uploadTeamLogo: (data: { image: string }) =>
     api.post<ApiResponse<{ url: string }>>('/uploads/team-logo', data),
+};
+
+// Posts
+export const postsApi = {
+  getAll: (params?: {
+    search?: string;
+    city?: string;
+    tagType?: 'pitches' | 'teams';
+    tagId?: string;
+    page?: number;
+    limit?: number;
+    sort?: 'newest' | 'mostLiked';
+  }) => api.get<ApiResponse<any[]>>('/posts', { params }),
+  getById: (id: string) => api.get<ApiResponse<any>>(`/posts/${id}`),
+  create: (data: {
+    content: string;
+    city?: string;
+    pitchId?: string;
+    teamId?: string;
+    mediaType?: 'none' | 'image';
+    mediaUrl?: string;
+  }) => api.post<ApiResponse<any>>('/posts', data),
+  update: (id: string, data: {
+    content?: string;
+    mediaType?: 'none' | 'image';
+    mediaUrl?: string | null;
+  }) => api.patch<ApiResponse<any>>(`/posts/${id}`, data),
+  delete: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/posts/${id}`),
+  like: (id: string) => api.post<ApiResponse<{ message: string }>>(`/posts/${id}/like`),
+  unlike: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/posts/${id}/like`),
+  getComments: (id: string, params?: { page?: number; limit?: number }) =>
+    api.get<ApiResponse<any[]>>(`/posts/${id}/comments`, { params }),
+  createComment: (id: string, data: { content: string }) =>
+    api.post<ApiResponse<any>>(`/posts/${id}/comments`, data),
+  deleteComment: (id: string) =>
+    api.delete<ApiResponse<{ message: string }>>(`/posts/comments/${id}`),
 };
 
 export default api;

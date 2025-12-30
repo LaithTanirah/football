@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import { users } from '../db/schema.js';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
+import { generateAccessToken } from '../utils/jwt.js';
 import { authenticate, AuthRequest } from '../middleware/auth.js';
 import { eq, or } from 'drizzle-orm';
 import { validateCity } from '../utils/cities.js';
@@ -68,21 +68,10 @@ authRouter.post('/register', async (req, res) => {
       })
       .returning();
 
-    const accessToken = generateAccessToken({ userId: newUser.id });
-    const refreshToken = generateRefreshToken({ userId: newUser.id });
-
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    const accessToken = generateAccessToken({ 
+      userId: newUser.id, 
+      username: newUser.username, 
+      role: newUser.role 
     });
 
     const { passwordHash: _, ...userWithoutPassword } = newUser;
@@ -90,6 +79,7 @@ authRouter.post('/register', async (req, res) => {
     res.status(201).json({
       data: {
         user: userWithoutPassword,
+        token: accessToken,
       },
     });
   } catch (error) {
@@ -137,21 +127,10 @@ authRouter.post('/login', async (req, res) => {
       });
     }
 
-    const accessToken = generateAccessToken({ userId: user.id });
-    const refreshToken = generateRefreshToken({ userId: user.id });
-
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+    const accessToken = generateAccessToken({ 
+      userId: user.id, 
+      username: user.username, 
+      role: user.role 
     });
 
     const { passwordHash: _, ...userWithoutPassword } = user;
@@ -159,6 +138,7 @@ authRouter.post('/login', async (req, res) => {
     res.json({
       data: {
         user: userWithoutPassword,
+        token: accessToken,
       },
     });
   } catch (error) {
@@ -175,40 +155,21 @@ authRouter.post('/login', async (req, res) => {
 });
 
 authRouter.post('/logout', (req, res) => {
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  // Token-based auth: logout is handled client-side by clearing token
   res.json({ data: { message: 'Logged out successfully' } });
 });
 
-// IMPORTANT: This endpoint returns 200 with null user instead of 401
-// This prevents browser console errors when user is not logged in
-authRouter.get('/me', async (req: AuthRequest, res) => {
+// Protected endpoint: requires authentication via JWT middleware
+authRouter.get('/me', authenticate, async (req: AuthRequest, res) => {
   try {
-    const token = req.cookies?.accessToken;
-    
-    // No token = not logged in, return 200 with null user (not 401)
-    if (!token) {
-      return res.status(200).json({ data: { user: null } });
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized', code: 'NO_USER' });
     }
 
-    // Verify token
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-      const [user] = await db.select().from(users).where(eq(users.id, decoded.userId)).limit(1);
-
-      if (!user) {
-        return res.status(200).json({ data: { user: null } });
-      }
-
-      const { passwordHash: _, ...userWithoutPassword } = user;
-      return res.status(200).json({ data: { user: userWithoutPassword } });
-    } catch (jwtError) {
-      // Invalid token, return 200 with null user (not 401)
-      return res.status(200).json({ data: { user: null } });
-    }
+    const { passwordHash: _, ...userWithoutPassword } = req.user;
+    return res.status(200).json({ data: { user: userWithoutPassword } });
   } catch (error) {
-    // Any error, return 200 with null user (not 401)
     console.error('Auth /me error:', error);
-    return res.status(200).json({ data: { user: null } });
+    return res.status(500).json({ message: 'Internal server error', code: 'INTERNAL_ERROR' });
   }
 });
