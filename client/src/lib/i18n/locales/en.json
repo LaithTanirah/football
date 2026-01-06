@@ -20,6 +20,8 @@
     "update": "Update",
     "city": "City",
     "allCities": "All cities",
+    "filters": "Filters",
+    "sortBy": "Sort by",
     "clearFilters": "Clear filters",
     "minPrice": "Min price",
     "maxPrice": "Max price",
@@ -69,7 +71,11 @@
     "noPitchesFound": "No pitches found",
     "noPitchesDesc": "Try adjusting your filters or check back later",
     "viewDetails": "View Details",
-    "pricePerHour": "JOD/hour"
+    "pricePerHour": "JOD/hour",
+    "address": "Address",
+    "description": "Description",
+    "openTime": "Open Time",
+    "closeTime": "Close Time"
   },
   "pitchDetail": {
     "bookThisPitch": "Book This Pitch",
@@ -104,6 +110,10 @@
     "createTeam": "Create Team",
     "searchTeams": "Search teams...",
     "filterByCity": "Filter by city...",
+    "allCities": "All Cities",
+    "sortByName": "Name",
+    "sortByCity": "City",
+    "sortByMembers": "Members",
     "noTeamsFound": "No teams found",
     "noTeamsDesc": "Be the first to create a team in your city!",
     "loginToCreate": "Login to Create",
@@ -152,6 +162,10 @@
     "preferredPitch": "Preferred Pitch (Optional)",
     "selectPitch": "Select a pitch",
     "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "image": "Image",
+    "video": "Video",
     "creating": "Creating...",
     "teamCreatedSuccess": "Team Created",
     "teamCreatedSuccessDesc": "Team created successfully!",
@@ -367,11 +381,20 @@
     "loginSuccess": "Logged in successfully",
     "loginError": "Failed to login",
     "invalidCredentials": "Invalid credentials",
+    "logoutSuccess": "Logged out successfully",
     "registerSuccess": "Account created successfully",
     "registerError": "Failed to create account"
   },
   "admin": {
     "title": "Admin Panel",
+    "sidebar": {
+      "expand": "Expand sidebar",
+      "collapse": "Collapse sidebar"
+    },
+    "search": {
+      "placeholder": "Search...",
+      "noResults": "No results found"
+    },
     "pitches": "Pitches",
     "bookings": "Bookings",
     "createPitch": "Create Pitch",
@@ -384,7 +407,242 @@
     "date": "Date",
     "time": "Time",
     "status": "Status",
-    "minutes": "min"
+    "minutes": "min",
+    "accessDenied": "Access Denied",
+    "accessDeniedDesc": "You don't have permission to access this page. Only administrators can access the admin panel.",
+    "backToHome": "Back to Home",
+    "backToSite": "Back to Site",
+    "nav": {
+      "overview": "Overview",
+      "users": "Users",
+      "teams": "Teams",
+      "leagues": "Leagues",
+      "pitches": "Pitches",
+      "posts": "Posts",
+      "settings": "Settings"
+    },
+    "overview": {
+      "title": "Dashboard Overview",
+      "subtitle": "Welcome to the admin dashboard",
+      "recentActivity": "Recent Activity",
+      "noActivity": "No recent activity to display"
+    },
+    "stats": {
+      "users": "Total Users",
+      "teams": "Total Teams",
+      "leagues": "Total Leagues",
+      "pitches": "Total Pitches",
+      "posts": "Total Posts"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "createLeague": "Create League",
+      "createTeam": "Create Team",
+      "addPitch": "Add Pitch",
+      "manageUsers": "Manage Users"
+    },
+    "users": {
+      "title": "Users Management",
+      "subtitle": "Manage all platform users",
+      "create": "Create User",
+      "searchPlaceholder": "Search users...",
+      "empty": "No users found",
+      "emptyDesc": "There are no users in the system yet.",
+      "columns": {
+        "name": "Name",
+        "email": "Email",
+        "username": "Username",
+        "role": "Role",
+        "city": "City"
+      },
+      "filters": {
+        "status": "Status",
+        "city": "City"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sort": {
+        "name": "Name",
+        "email": "Email",
+        "created": "Created Date"
+      },
+      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirm": "Are you sure you want to delete this user? This action cannot be undone.",
+      "deleteSuccess": "User deleted successfully",
+      "deleteError": "Failed to delete user",
+      "editTitle": "Edit User",
+      "editSubtitle": "Update user information",
+      "updateSuccess": "User updated successfully",
+      "updateError": "Failed to update user",
+      "fillRequiredFields": "Please fill all required fields"
+    },
+    "teams": {
+      "title": "Teams Management",
+      "subtitle": "Manage all teams",
+      "create": "Create Team",
+      "searchPlaceholder": "Search teams...",
+      "empty": "No teams found",
+      "emptyDesc": "There are no teams in the system yet.",
+      "columns": {
+        "name": "Name",
+        "city": "City",
+        "members": "Members",
+        "created": "Created"
+      },
+      "filters": {
+        "city": "City"
+      },
+      "sort": {
+        "name": "Name",
+        "members": "Members",
+        "created": "Created Date"
+      },
+      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirm": "Are you sure you want to delete this team? This action cannot be undone.",
+      "deleteSuccess": "Team deleted successfully",
+      "deleteError": "Failed to delete team",
+      "updateSuccess": "Team updated successfully",
+      "updateError": "Failed to update team"
+    },
+    "table": {
+      "actions": "Actions",
+      "noData": "No data found",
+      "noDataDesc": "There is no data to display.",
+      "resultCount": "{{count}} results"
+    },
+    "leagues": {
+      "title": "Leagues Management",
+      "subtitle": "Manage all leagues",
+      "create": "Create League",
+      "searchPlaceholder": "Search leagues...",
+      "empty": "No leagues found",
+      "emptyDesc": "There are no leagues in the system yet.",
+      "columns": {
+        "name": "Name",
+        "city": "City",
+        "teams": "Teams",
+        "status": "Status",
+        "created": "Created"
+      },
+      "filters": {
+        "status": "Status"
+      },
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "finished": "Finished"
+      },
+      "sort": {
+        "name": "Name",
+        "teams": "Teams",
+        "created": "Created Date"
+      },
+      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirm": "Are you sure you want to delete this league? This action cannot be undone.",
+      "deleteSuccess": "League deleted successfully",
+      "deleteError": "Failed to delete league",
+      "editTitle": "Edit League",
+      "editSubtitle": "Update league information",
+      "updateSuccess": "League updated successfully",
+      "updateError": "Failed to update league",
+      "fillRequiredFields": "Please fill all required fields"
+    },
+    "pitches": {
+      "title": "Pitches Management",
+      "subtitle": "Manage all football pitches",
+      "create": "Create Pitch",
+      "searchPlaceholder": "Search pitches...",
+      "empty": "No pitches found",
+      "emptyDesc": "There are no pitches in the system yet.",
+      "columns": {
+        "name": "Name",
+        "city": "City",
+        "price": "Price",
+        "status": "Status"
+      },
+      "filters": {
+        "city": "City"
+      },
+      "sort": {
+        "name": "Name",
+        "price": "Price",
+        "city": "City"
+      },
+      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirm": "Are you sure you want to delete this pitch? This action cannot be undone.",
+      "deleteSuccess": "Pitch deleted successfully",
+      "deleteError": "Failed to delete pitch",
+      "editNotImplemented": "Pitch editing will be available soon"
+    },
+    "posts": {
+      "title": "Posts Management",
+      "subtitle": "Manage community posts",
+      "searchPlaceholder": "Search posts...",
+      "empty": "No posts found",
+      "emptyDesc": "There are no posts in the system yet.",
+      "columns": {
+        "title": "Title",
+        "author": "Author",
+        "created": "Created",
+        "likes": "Likes"
+      },
+      "sort": {
+        "created": "Created Date",
+        "likes": "Likes"
+      },
+      "deleteConfirmTitle": "Confirm Delete",
+      "deleteConfirm": "Are you sure you want to delete this post? This action cannot be undone.",
+      "deleteSuccess": "Post deleted successfully",
+      "deleteError": "Failed to delete post",
+      "editTitle": "Edit Post",
+      "editSubtitle": "Update post content",
+      "updateSuccess": "Post updated successfully",
+      "updateError": "Failed to update post",
+      "fillRequiredFields": "Please fill all required fields"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Manage admin panel settings",
+      "comingSoon": "Coming soon",
+      "displayOnly": "Display only",
+      "saveSuccess": "Settings saved successfully",
+      "general": {
+        "title": "General",
+        "desc": "Configure general platform settings",
+        "defaultLanguage": "Default Language",
+        "themeMode": "Theme Mode",
+        "light": "Light",
+        "dark": "Dark",
+        "appNameDisplay": "Show App Name",
+        "appNameDisplayDesc": "Display PLAYRO LEAGUE branding in navigation"
+      },
+      "branding": {
+        "title": "Branding",
+        "desc": "Manage brand appearance and colors",
+        "logoPreview": "Logo Preview",
+        "logoReadOnly": "Logo is read-only",
+        "primaryColor": "Primary Color"
+      },
+      "security": {
+        "title": "Security",
+        "desc": "Manage security and access controls",
+        "passwordRules": "Password Rules",
+        "sessionSettings": "Session Settings",
+        "sessionTimeout": "Session Timeout"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Configure notification preferences",
+        "toastPosition": "Toast Position"
+      }
+    },
+    "actions": {
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   },
   "community": {
     "title": "Community",
@@ -412,6 +670,8 @@
     "post": {
       "content": "Content",
       "contentPlaceholder": "What do you want to share?",
+      "mediaType": "Media Type",
+      "mediaUrl": "Media URL",
       "charCount": "{{count}}/500",
       "city": "City (Optional)",
       "tagPitch": "Tag Pitch (Optional)",
@@ -541,6 +801,12 @@
     "noLeagues": "No leagues yet",
     "noLeaguesDesc": "Create or join a league to compete",
     "loading": "Loading...",
+    "viewingProfile": "Viewing Profile",
+    "theirTeams": "Their Teams",
+    "theirLeagues": "Their Leagues",
+    "activity": "Activity Summary",
+    "quickInfo": "Quick Info",
+    "memberSince": "Member since",
     "role": {
       "captain": "Captain",
       "player": "Player",

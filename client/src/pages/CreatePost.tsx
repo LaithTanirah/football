@@ -235,10 +235,10 @@ export function CreatePost() {
         className="mb-6"
       />
 
-      <Card className="card-elevated">
+      <Card>
         <CardHeader>
-          <CardTitle>{t('community.createPost')}</CardTitle>
-          <CardDescription>{t('community.subtitle')}</CardDescription>
+          <CardTitle className="text-section-title">{t('community.createPost')}</CardTitle>
+          <CardDescription className="text-caption">{t('community.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -254,7 +254,7 @@ export function CreatePost() {
                 maxLength={5000}
                 required
               />
-              <div className="text-sm text-muted-foreground text-right">
+              <div className="text-sm text-text-muted text-right">
                 {t('community.post.charCount', { count: formData.content.length })}
               </div>
             </div>
@@ -329,8 +329,8 @@ export function CreatePost() {
                   className={cn(
                     'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
                     isDragging
-                      ? 'border-primary bg-primary/5'
-                      : 'border-muted-foreground/25 hover:border-primary/50'
+                      ? 'border-brand-blue bg-brand-blue/5'
+                      : 'border-border-soft hover:border-brand-blue/50'
                   )}
                   onClick={() => fileInputRef.current?.click()}
                 >
@@ -376,17 +376,19 @@ export function CreatePost() {
             </div>
 
             {/* Submit */}
-            <div className="flex gap-4 justify-end">
+            <div className="flex gap-4 justify-end pt-6 border-t-2 border-border-soft">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate('/community')}
+                className="font-semibold"
               >
                 {t('common.cancel')}
               </Button>
               <Button
                 type="submit"
                 disabled={createPostMutation.isPending || uploadImageMutation.isPending}
+                className="font-bold"
               >
                 {createPostMutation.isPending
                   ? t('community.post.creating')

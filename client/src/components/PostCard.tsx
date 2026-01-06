@@ -127,18 +127,22 @@ export function PostCard({ post, onDelete, onUpdate }: PostCardProps) {
   };
 
   return (
-    <Card className="p-6 space-y-4">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
+    <Card className="bg-background border-2 border-border p-6 space-y-4 relative overflow-hidden hover:shadow-md transition-all">
+      {/* Author Header - Clear and Bold */}
+      <div className="flex items-start justify-between gap-4 pb-4 border-b-2 border-border">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <img
-            src={avatarUrl}
-            alt={post.authorName}
-            className="w-12 h-12 rounded-full flex-shrink-0 object-cover"
-          />
+          <div className="relative flex-shrink-0">
+            <div className="w-12 h-12 rounded-full border-2 border-primary/30 overflow-hidden bg-muted">
+              <img
+                src={avatarUrl}
+                alt={post.authorName}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
           <div className="flex-1 min-w-0">
-            <div className="font-semibold truncate">{post.authorName}</div>
-            <div className="text-sm text-muted-foreground flex items-center gap-2">
+            <div className="font-bold text-lg truncate text-foreground">{post.authorName}</div>
+            <div className="text-sm text-muted-foreground flex items-center gap-2 flex-wrap">
               <span>@{post.authorUsername}</span>
               {post.city && (
                 <>
@@ -189,13 +193,13 @@ export function PostCard({ post, onDelete, onUpdate }: PostCardProps) {
           </button>
         )}
 
-        {/* Media */}
+        {/* Media - Edge to Edge */}
         {post.mediaType === 'image' && post.mediaUrl && (
-          <div className="rounded-lg overflow-hidden border">
+          <div className="rounded-lg overflow-hidden border-2 border-border relative group -mx-6">
             <img
               src={post.mediaUrl}
               alt="Post media"
-              className="w-full h-auto max-h-96 object-cover"
+              className="w-full h-auto max-h-96 object-cover transition-transform duration-300 group-hover:scale-[1.02]"
             />
           </div>
         )}
@@ -225,30 +229,30 @@ export function PostCard({ post, onDelete, onUpdate }: PostCardProps) {
         )}
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-4 pt-2 border-t">
+      {/* Action Bar - Solid Row */}
+      <div className="flex items-center gap-3 pt-4 border-t-2 border-border">
         <Button
           variant="ghost"
           size="sm"
           onClick={handleLike}
           className={cn(
-            'gap-2',
-            isLiked && 'text-red-500 hover:text-red-600'
+            'gap-2 rounded-lg px-4 py-2 h-auto font-semibold',
+            isLiked && 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border-2 border-red-500/20'
           )}
         >
           <Heart className={cn('h-4 w-4', isLiked && 'fill-current')} />
-          <span>{likesCount}</span>
+          <span className="text-sm">{likesCount}</span>
         </Button>
 
         <Link to={`/community/post/${post.id}`}>
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2 rounded-lg px-4 py-2 h-auto font-semibold">
             <MessageCircle className="h-4 w-4" />
-            <span>{post.commentsCount}</span>
+            <span className="text-sm">{post.commentsCount}</span>
           </Button>
         </Link>
 
-        <Link to={`/community/post/${post.id}`} className="flex-1">
-          <Button variant="ghost" size="sm" className="w-full">
+        <Link to={`/community/post/${post.id}`} className="flex-1 ml-auto">
+          <Button variant="outline" size="sm" className="w-full rounded-lg font-semibold border-2">
             {t('community.post.open')}
           </Button>
         </Link>

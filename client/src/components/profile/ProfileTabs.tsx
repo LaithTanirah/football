@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Calendar, Users, Trophy, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface ProfileTabsProps {
   bookings: any[];
@@ -16,6 +17,7 @@ interface ProfileTabsProps {
   teamsLoading: boolean;
   leagues: any[];
   leaguesLoading: boolean;
+  isViewingOtherUser?: boolean;
 }
 
 export function ProfileTabs({
@@ -25,24 +27,33 @@ export function ProfileTabs({
   teamsLoading,
   leagues,
   leaguesLoading,
+  isViewingOtherUser = false,
 }: ProfileTabsProps) {
   const { t } = useTranslation();
 
   return (
-    <Card className="p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
-      <Tabs defaultValue="bookings" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="bookings" className="gap-2">
-            <Calendar className="h-4 w-4" />
-            {t("profile.myBookings")}
-          </TabsTrigger>
+    <Card className={cn(
+      "p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm",
+      isViewingOtherUser && "border-2 border-brand-green/20 bg-gradient-to-br from-bg-surface to-brand-green/5"
+    )}>
+      <Tabs defaultValue={isViewingOtherUser ? "teams" : "bookings"} className="w-full">
+        <TabsList className={cn(
+          "grid w-full mb-6",
+          isViewingOtherUser ? "grid-cols-2" : "grid-cols-3"
+        )}>
+          {!isViewingOtherUser && (
+            <TabsTrigger value="bookings" className="gap-2">
+              <Calendar className="h-4 w-4" />
+              {t("profile.myBookings")}
+            </TabsTrigger>
+          )}
           <TabsTrigger value="teams" className="gap-2">
             <Users className="h-4 w-4" />
-            {t("profile.myTeams")}
+            {isViewingOtherUser ? t("profile.theirTeams") || t("profile.myTeams") : t("profile.myTeams")}
           </TabsTrigger>
           <TabsTrigger value="leagues" className="gap-2">
             <Trophy className="h-4 w-4" />
-            {t("profile.myLeagues")}
+            {isViewingOtherUser ? t("profile.theirLeagues") || t("profile.myLeagues") : t("profile.myLeagues")}
           </TabsTrigger>
         </TabsList>
 

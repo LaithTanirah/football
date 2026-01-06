@@ -12,6 +12,7 @@
     "db:migrate-pitches-bilingual": "tsx src/db/migrate-pitches-bilingual.ts",
     "db:migrate-user-bio-avatar": "tsx src/db/run-user-bio-avatar-migration.ts",
     "db:seed": "tsx src/db/seed.ts",
+    "db:update-admin": "tsx src/db/update-admin-role.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

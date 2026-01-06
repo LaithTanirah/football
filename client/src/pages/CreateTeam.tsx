@@ -96,73 +96,102 @@ export function CreateTeam() {
         className="mb-6"
       />
 
-      <Card className="card-elevated">
+      <Card>
         <CardHeader>
-          <CardTitle>{t('teams.createNewTeam')}</CardTitle>
-          <CardDescription>{t('teams.createTeamSubtitle')}</CardDescription>
+          <CardTitle className="text-section-title">{t('teams.createNewTeam')}</CardTitle>
+          <CardDescription className="text-caption">{t('teams.createTeamSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">{t('teams.teamName')} *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t('teams.teamNamePlaceholder')}
-                required
-              />
+          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+            {/* Basics Section */}
+            <div className="flex flex-col gap-6">
+              <div className="pb-2 border-b-2 border-border-soft">
+                <h3 className="text-lg font-bold text-text-primary">{t('teams.teamName')}</h3>
+                <p className="text-sm text-text-muted mt-1">{t('teams.createTeamSubtitle')}</p>
+              </div>
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="name" className="text-sm font-semibold text-text-primary">
+                    {t('teams.teamName')} <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="name"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    placeholder={t('teams.teamNamePlaceholder')}
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="city" className="text-sm font-semibold text-text-primary">
+                    {t('teams.city')} <span className="text-destructive">*</span>
+                  </Label>
+                  <CitySelect
+                    value={formData.city}
+                    onChange={(value) => setFormData({ ...formData, city: value })}
+                    placeholder={t('teams.cityPlaceholder')}
+                    required
+                    allowEmpty={false}
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="city">{t('teams.city')} *</Label>
-              <CitySelect
-                value={formData.city}
-                onChange={(value) => setFormData({ ...formData, city: value })}
-                placeholder={t('teams.cityPlaceholder')}
-                required
-                allowEmpty={false}
-              />
+            {/* Logo Section */}
+            <div className="flex flex-col gap-6">
+              <div className="pb-2 border-b-2 border-border-soft">
+                <h3 className="text-lg font-bold text-text-primary">{t('teams.teamLogo')}</h3>
+                <p className="text-sm text-text-muted mt-1">{t('teams.uploadLogo')}</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <TeamLogoUpload
+                  value={formData.logoUrl}
+                  onChange={(url) => setFormData({ ...formData, logoUrl: url })}
+                  teamName={formData.name}
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <TeamLogoUpload
-                value={formData.logoUrl}
-                onChange={(url) => setFormData({ ...formData, logoUrl: url })}
-                teamName={formData.name}
-              />
+            {/* Location Section */}
+            <div className="flex flex-col gap-6">
+              <div className="pb-2 border-b-2 border-border-soft">
+                <h3 className="text-lg font-bold text-text-primary">{t('teams.preferredPitch')}</h3>
+                <p className="text-sm text-text-muted mt-1">{t('teams.preferredPitch')}</p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="preferredPitch" className="text-sm font-semibold text-text-primary">
+                  {t('teams.preferredPitch')}
+                </Label>
+                <Select
+                  value={formData.preferredPitchId || 'none'}
+                  onValueChange={(value) => setFormData({ ...formData, preferredPitchId: value === 'none' ? '' : value })}
+                >
+                  <SelectTrigger id="preferredPitch">
+                    <SelectValue placeholder={t('teams.selectPitch')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{t('teams.none')}</SelectItem>
+                    {pitches.map((pitch: any) => (
+                      <SelectItem key={pitch.id} value={pitch.id}>
+                        {pitch.name} - {pitch.city}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="preferredPitch">{t('teams.preferredPitch')}</Label>
-              <Select
-                value={formData.preferredPitchId || 'none'}
-                onValueChange={(value) => setFormData({ ...formData, preferredPitchId: value === 'none' ? '' : value })}
-              >
-                <SelectTrigger id="preferredPitch">
-                  <SelectValue placeholder={t('teams.selectPitch')} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t('teams.none')}</SelectItem>
-                  {pitches.map((pitch: any) => (
-                    <SelectItem key={pitch.id} value={pitch.id}>
-                      {pitch.name} - {pitch.city}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-6 border-t-2 border-border-soft">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate('/teams')}
-                className="flex-1"
+                className="flex-1 font-semibold"
               >
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="flex-1">
+              <Button type="submit" disabled={createMutation.isPending} className="flex-1 font-bold">
                 {createMutation.isPending ? t('teams.creating') : t('teams.createTeam')}
               </Button>
             </div>

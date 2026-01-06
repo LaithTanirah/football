@@ -1,13 +1,17 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Input } from "@/components/ui/input";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
-import { GameCard } from "../components/GameCard";
+import { PosterHeader } from "@/components/playro/MatchHeader";
+import { CategoryStrip } from "@/components/playro/CategoryStrip";
+import { GameRow } from "@/components/playro/GameRow";
+import { MediaSkeleton } from "@/components/playro/MediaSkeleton";
 import { GAMES, Game } from "../registry";
 import { GameCategory } from "../types";
-import { Search } from "lucide-react";
+import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DifficultyBadge } from "../components/DifficultyBadge";
 
 export function GamesHubPage() {
   const { t } = useTranslation();
@@ -27,58 +31,84 @@ export function GamesHubPage() {
     });
   }, [searchQuery, selectedCategory, t]);
 
+  const featuredGame = filteredGames.find((g) => g.available) || filteredGames[0];
+
+  const otherGames = filteredGames.filter((g) => g.available && g !== featuredGame);
+  const categoryOptions = categories.map((cat) => ({
+    id: cat,
+    label: t(`games.category${cat}` as any),
+  }));
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8">
-      {/* Hero Header */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">{t("games.title")}</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          {t("games.subtitle")}
-        </p>
+      <PosterHeader
+        title={t("games.title")}
+        subtitle={t("games.subtitle")}
+      />
+
+      {/* Horizontal Game Categories Rail */}
+      <CategoryStrip
+        categories={categoryOptions}
+        selectedId={selectedCategory}
+        onSelect={(id) => setSelectedCategory(id as GameCategory)}
+      />
+
+      {/* Play Zone Layout */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Left: Featured Game (Large Poster Tile) */}
+        {featuredGame && (
+          <div className="lg:col-span-1">
+            <div className="bg-background border-2 border-primary/30 rounded-lg p-8 hover:shadow-lg transition-all">
+              <div className="text-center mb-6">
+                <div className="text-7xl mb-6">{featuredGame.icon}</div>
+                <h3 className="font-bold text-3xl mb-3 text-foreground">{t(featuredGame.titleKey as any)}</h3>
+                <p className="text-muted-foreground mb-6 text-base">{t(featuredGame.descKey as any)}</p>
+                <div className="flex items-center justify-center gap-3 mb-8">
+                  <DifficultyBadge difficulty={featuredGame.difficulty} />
+                  <span className="text-sm text-muted-foreground font-medium">
+                    {featuredGame.estTime} {t("games.minutes")}
+                  </span>
+                </div>
+                {featuredGame.available ? (
+                  <Link to={`/games/${featuredGame.slug}`}>
+                    <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground font-bold w-full py-6 text-base shadow-lg">
+                      <Play className="h-5 w-5 mr-2" />
+                      {t("games.play")}
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button size="lg" variant="outline" disabled className="w-full py-6 font-semibold">
+                    {t("games.comingSoon")}
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Right: Other Games as Horizontal Rows */}
+        <div className="lg:col-span-2 space-y-4">
+          {otherGames.length > 0 ? (
+            otherGames.map((game) => (
+              <GameRow
+                key={game.slug}
+                icon={game.icon}
+                title={t(game.titleKey as any)}
+                description={t(game.descKey as any)}
+                difficulty={game.difficulty}
+                duration={`${game.estTime} ${t("games.minutes")}`}
+                href={game.available ? `/games/${game.slug}` : undefined}
+                available={game.available}
+              />
+            ))
+          ) : filteredGames.length === 0 ? (
+            <EmptyState
+              title={t("games.noGamesFound")}
+              description={t("games.noGamesDesc")}
+            />
+          ) : null}
+        </div>
       </div>
-
-      {/* Filters and Search */}
-      <div className="space-y-4 mb-8">
-        {/* Search */}
-        <div className="relative max-w-md mx-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={t("games.searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-
-        {/* Category Filters */}
-        <div className="flex flex-wrap gap-2 justify-center">
-          {categories.map((category) => (
-            <Button
-              key={category}
-              variant={selectedCategory === category ? "default" : "outline"}
-              size="sm"
-              onClick={() => setSelectedCategory(category)}
-            >
-              {t(`games.category${category}` as any)}
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      {/* Games Grid */}
-      {filteredGames.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGames.map((game) => (
-            <GameCard key={game.slug} game={game} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          title={t("games.noGamesFound")}
-          description={t("games.noGamesDesc")}
-        />
-      )}
     </div>
   );
 }

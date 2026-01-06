@@ -20,6 +20,8 @@
     "update": "تحديث",
     "city": "المدينة",
     "allCities": "جميع المدن",
+    "filters": "المرشحات",
+    "sortBy": "ترتيب حسب",
     "clearFilters": "مسح المرشحات",
     "minPrice": "أقل سعر",
     "maxPrice": "أعلى سعر",
@@ -69,7 +71,11 @@
     "noPitchesFound": "لم يتم العثور على ملاعب",
     "noPitchesDesc": "حاول تعديل المرشحات أو تحقق لاحقاً",
     "viewDetails": "عرض التفاصيل",
-    "pricePerHour": "دينار/ساعة"
+    "pricePerHour": "دينار/ساعة",
+    "address": "العنوان",
+    "description": "الوصف",
+    "openTime": "وقت الفتح",
+    "closeTime": "وقت الإغلاق"
   },
   "pitchDetail": {
     "bookThisPitch": "احجز هذا الملعب",
@@ -104,6 +110,10 @@
     "createTeam": "إنشاء فريق",
     "searchTeams": "بحث في الفرق...",
     "filterByCity": "تصفية حسب المدينة...",
+    "allCities": "جميع المدن",
+    "sortByName": "الاسم",
+    "sortByCity": "المدينة",
+    "sortByMembers": "الأعضاء",
     "noTeamsFound": "لم يتم العثور على فرق",
     "noTeamsDesc": "كن أول من ينشئ فريقاً في مدينتك!",
     "loginToCreate": "تسجيل الدخول للإنشاء",
@@ -152,6 +162,10 @@
     "preferredPitch": "الملعب المفضل (اختياري)",
     "selectPitch": "اختر ملعباً",
     "none": "لا يوجد",
+    "yes": "نعم",
+    "no": "لا",
+    "image": "صورة",
+    "video": "فيديو",
     "creating": "جاري الإنشاء...",
     "teamCreatedSuccess": "تم إنشاء الفريق بنجاح",
     "teamCreatedSuccessDesc": "تم إنشاء الفريق بنجاح!",
@@ -367,11 +381,20 @@
     "loginSuccess": "تم تسجيل الدخول بنجاح",
     "loginError": "فشل تسجيل الدخول",
     "invalidCredentials": "بيانات الدخول غير صحيحة",
+    "logoutSuccess": "تم تسجيل الخروج بنجاح",
     "registerSuccess": "تم إنشاء الحساب بنجاح",
     "registerError": "فشل إنشاء الحساب"
   },
   "admin": {
     "title": "لوحة التحكم",
+    "sidebar": {
+      "expand": "توسيع الشريط الجانبي",
+      "collapse": "طي الشريط الجانبي"
+    },
+    "search": {
+      "placeholder": "بحث...",
+      "noResults": "لم يتم العثور على نتائج"
+    },
     "pitches": "الملاعب",
     "bookings": "الحجوزات",
     "createPitch": "إنشاء ملعب",
@@ -384,7 +407,252 @@
     "date": "التاريخ",
     "time": "الوقت",
     "status": "الحالة",
-    "minutes": "دقيقة"
+    "minutes": "دقيقة",
+    "accessDenied": "الوصول مرفوض",
+    "accessDeniedDesc": "ليس لديك صلاحية للوصول إلى هذه الصفحة. فقط المديرون يمكنهم الوصول إلى لوحة التحكم.",
+    "backToHome": "العودة إلى الصفحة الرئيسية",
+    "backToSite": "العودة إلى الموقع",
+    "nav": {
+      "overview": "نظرة عامة",
+      "users": "المستخدمون",
+      "teams": "الفرق",
+      "leagues": "الدوريات",
+      "pitches": "الملاعب",
+      "posts": "المنشورات",
+      "settings": "الإعدادات"
+    },
+    "overview": {
+      "title": "نظرة عامة على لوحة التحكم",
+      "subtitle": "مرحباً بك في لوحة تحكم المدير",
+      "recentActivity": "النشاط الأخير",
+      "noActivity": "لا يوجد نشاط حديث للعرض"
+    },
+    "stats": {
+      "users": "إجمالي المستخدمين",
+      "teams": "إجمالي الفرق",
+      "leagues": "إجمالي الدوريات",
+      "pitches": "إجمالي الملاعب",
+      "posts": "إجمالي المنشورات"
+    },
+    "quickActions": {
+      "title": "إجراءات سريعة",
+      "createLeague": "إنشاء دوري",
+      "createTeam": "إنشاء فريق",
+      "addPitch": "إضافة ملعب",
+      "manageUsers": "إدارة المستخدمين"
+    },
+    "users": {
+      "title": "إدارة المستخدمين",
+      "subtitle": "إدارة جميع مستخدمي المنصة",
+      "create": "إنشاء مستخدم",
+      "searchPlaceholder": "البحث عن المستخدمين...",
+      "empty": "لم يتم العثور على مستخدمين",
+      "emptyDesc": "لا يوجد مستخدمون في النظام بعد.",
+      "filters": {
+        "status": "الحالة",
+        "city": "المدينة"
+      },
+      "status": {
+        "active": "نشط",
+        "inactive": "غير نشط"
+      },
+      "sort": {
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "created": "تاريخ الإنشاء"
+      },
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم حذف المستخدم بنجاح",
+      "deleteError": "فشل حذف المستخدم",
+      "editTitle": "تعديل المستخدم",
+      "editSubtitle": "تحديث معلومات المستخدم",
+      "updateSuccess": "تم تحديث المستخدم بنجاح",
+      "updateError": "فشل تحديث المستخدم",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "columns": {
+        "name": "الاسم",
+        "email": "البريد الإلكتروني",
+        "username": "اسم المستخدم",
+        "role": "الدور",
+        "city": "المدينة",
+        "phone": "الهاتف"
+      }
+    },
+    "teams": {
+      "title": "إدارة الفرق",
+      "subtitle": "إدارة جميع الفرق",
+      "create": "إنشاء فريق",
+      "searchPlaceholder": "البحث عن الفرق...",
+      "empty": "لم يتم العثور على فرق",
+      "emptyDesc": "لا يوجد فرق في النظام بعد.",
+      "columns": {
+        "name": "الاسم",
+        "city": "المدينة",
+        "members": "الأعضاء",
+        "created": "تاريخ الإنشاء"
+      },
+      "filters": {
+        "city": "المدينة"
+      },
+      "sort": {
+        "name": "الاسم",
+        "members": "الأعضاء",
+        "created": "تاريخ الإنشاء"
+      },
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الفريق؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم حذف الفريق بنجاح",
+      "deleteError": "فشل حذف الفريق",
+      "updateSuccess": "تم تحديث الفريق بنجاح",
+      "updateError": "فشل تحديث الفريق"
+    },
+    "table": {
+      "actions": "الإجراءات",
+      "noData": "لا توجد بيانات",
+      "noDataDesc": "لا توجد بيانات للعرض.",
+      "resultCount": "{{count}} نتيجة"
+    },
+    "leagues": {
+      "title": "إدارة الدوريات",
+      "subtitle": "إدارة جميع الدوريات",
+      "create": "إنشاء دوري",
+      "searchPlaceholder": "البحث عن الدوريات...",
+      "empty": "لم يتم العثور على دوريات",
+      "emptyDesc": "لا يوجد دوريات في النظام بعد.",
+      "columns": {
+        "name": "الاسم",
+        "city": "المدينة",
+        "teams": "الفرق",
+        "status": "الحالة",
+        "created": "تاريخ الإنشاء"
+      },
+      "filters": {
+        "status": "الحالة"
+      },
+      "status": {
+        "draft": "مسودة",
+        "active": "نشط",
+        "finished": "منتهي"
+      },
+      "sort": {
+        "name": "الاسم",
+        "teams": "الفرق",
+        "created": "تاريخ الإنشاء"
+      },
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الدوري؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم حذف الدوري بنجاح",
+      "deleteError": "فشل حذف الدوري",
+      "editTitle": "تعديل الدوري",
+      "editSubtitle": "تحديث معلومات الدوري",
+      "updateSuccess": "تم تحديث الدوري بنجاح",
+      "updateError": "فشل تحديث الدوري",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة"
+    },
+    "pitches": {
+      "title": "إدارة الملاعب",
+      "subtitle": "إدارة جميع ملاعب كرة القدم",
+      "create": "إنشاء ملعب",
+      "searchPlaceholder": "البحث عن الملاعب...",
+      "empty": "لم يتم العثور على ملاعب",
+      "emptyDesc": "لا يوجد ملاعب في النظام بعد.",
+      "columns": {
+        "name": "الاسم",
+        "city": "المدينة",
+        "price": "السعر",
+        "status": "الحالة"
+      },
+      "filters": {
+        "city": "المدينة"
+      },
+      "sort": {
+        "name": "الاسم",
+        "price": "السعر",
+        "city": "المدينة"
+      },
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا الملعب؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم حذف الملعب بنجاح",
+      "deleteError": "فشل حذف الملعب",
+      "editTitle": "تعديل الملعب",
+      "editSubtitle": "تحديث معلومات الملعب",
+      "updateSuccess": "تم تحديث الملعب بنجاح",
+      "updateError": "فشل تحديث الملعب",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة"
+    },
+    "posts": {
+      "title": "إدارة المنشورات",
+      "subtitle": "إدارة منشورات المجتمع",
+      "searchPlaceholder": "البحث عن المنشورات...",
+      "empty": "لم يتم العثور على منشورات",
+      "emptyDesc": "لا يوجد منشورات في النظام بعد.",
+      "columns": {
+        "title": "العنوان",
+        "author": "المؤلف",
+        "created": "تاريخ الإنشاء",
+        "likes": "الإعجابات"
+      },
+      "sort": {
+        "created": "تاريخ الإنشاء",
+        "likes": "الإعجابات"
+      },
+      "deleteConfirmTitle": "تأكيد الحذف",
+      "deleteConfirm": "هل أنت متأكد أنك تريد حذف هذا المنشور؟ لا يمكن التراجع عن هذا الإجراء.",
+      "deleteSuccess": "تم حذف المنشور بنجاح",
+      "deleteError": "فشل حذف المنشور",
+      "editTitle": "تعديل المنشور",
+      "editSubtitle": "تحديث محتوى المنشور",
+      "updateSuccess": "تم تحديث المنشور بنجاح",
+      "updateError": "فشل تحديث المنشور",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة",
+      "editTitle": "تعديل المنشور",
+      "editSubtitle": "تحديث محتوى المنشور",
+      "updateSuccess": "تم تحديث المنشور بنجاح",
+      "updateError": "فشل تحديث المنشور",
+      "fillRequiredFields": "يرجى ملء جميع الحقول المطلوبة"
+    },
+    "settings": {
+      "title": "الإعدادات",
+      "subtitle": "إدارة إعدادات لوحة التحكم",
+      "comingSoon": "قريباً",
+      "displayOnly": "عرض فقط",
+      "saveSuccess": "تم حفظ الإعدادات بنجاح",
+      "general": {
+        "title": "عام",
+        "desc": "تكوين إعدادات المنصة العامة",
+        "defaultLanguage": "اللغة الافتراضية",
+        "themeMode": "وضع السمة",
+        "light": "فاتح",
+        "dark": "داكن",
+        "appNameDisplay": "عرض اسم التطبيق",
+        "appNameDisplayDesc": "عرض علامة PLAYRO LEAGUE في التنقل"
+      },
+      "branding": {
+        "title": "العلامة التجارية",
+        "desc": "إدارة مظهر العلامة التجارية والألوان",
+        "logoPreview": "معاينة الشعار",
+        "logoReadOnly": "الشعار للقراءة فقط",
+        "primaryColor": "اللون الأساسي"
+      },
+      "security": {
+        "title": "الأمان",
+        "desc": "إدارة الأمان وضوابط الوصول",
+        "passwordRules": "قواعد كلمة المرور",
+        "sessionSettings": "إعدادات الجلسة",
+        "sessionTimeout": "انتهاء الجلسة"
+      },
+      "notifications": {
+        "title": "الإشعارات",
+        "desc": "تكوين تفضيلات الإشعارات",
+        "toastPosition": "موضع الإشعارات"
+      }
+    },
+    "actions": {
+      "view": "عرض",
+      "edit": "تعديل",
+      "delete": "حذف"
+    }
   },
   "community": {
     "title": "المجتمع",
@@ -412,6 +680,8 @@
     "post": {
       "content": "المحتوى",
       "contentPlaceholder": "ماذا تريد أن تشارك؟",
+      "mediaType": "نوع الوسائط",
+      "mediaUrl": "رابط الوسائط",
       "charCount": "{{count}}/500",
       "city": "المدينة (اختياري)",
       "tagPitch": "ربط ملعب (اختياري)",
@@ -541,6 +811,12 @@
     "noLeagues": "لا توجد دوريات بعد",
     "noLeaguesDesc": "أنشئ أو انضم إلى دوري للمنافسة",
     "loading": "جاري التحميل...",
+    "viewingProfile": "عرض الملف الشخصي",
+    "theirTeams": "فرقهم",
+    "theirLeagues": "دورياتهم",
+    "activity": "ملخص النشاط",
+    "quickInfo": "معلومات سريعة",
+    "memberSince": "عضو منذ",
     "role": {
       "captain": "قائد",
       "player": "لاعب",

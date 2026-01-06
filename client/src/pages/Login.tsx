@@ -16,6 +16,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useDirection } from "@/hooks/useDirection";
+import logoImage from "@/assets/Logo.jpg?url";
+import { cn } from "@/lib/utils";
 
 // Helper function to translate error messages
 const getTranslatedError = (error: any, t: (key: string) => string): string => {
@@ -48,7 +51,8 @@ const getTranslatedError = (error: any, t: (key: string) => string): string => {
 };
 
 export function Login() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const { isRTL } = useDirection();
   const navigate = useNavigate();
   const { toast } = useToast();
   const { setTokenAndUser } = useAuthStore();
@@ -95,42 +99,91 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-bg-page">
       <div className="container mx-auto max-w-[1200px] px-4 py-12 lg:py-16">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[calc(100vh-12rem)]">
           {/* Brand Section - Left (Desktop) / Top (Mobile) */}
-          <div className="flex flex-col justify-center items-center lg:items-start text-center lg:text-left space-y-6 py-8 lg:py-0">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-5xl">⚽</span>
-              <span className="text-3xl font-bold">6-a-Side</span>
+          <div 
+            className={cn(
+              "flex flex-col justify-center items-center lg:items-start py-8 lg:py-0",
+              isRTL ? "text-right" : "text-left"
+            )}
+            dir={isRTL ? "rtl" : "ltr"}
+          >
+            <div className="flex flex-col gap-8 w-full">
+              {/* Logo Badge - Premium Brand Presentation */}
+              <div className="hidden lg:flex flex-col items-center justify-center gap-6">
+                {/* Outer container with glow effect */}
+                <div className="relative flex justify-center items-center">
+                  {/* Subtle glow behind logo */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-48 h-48 rounded-full bg-brand-blue/20 blur-3xl" />
+                    <div className="absolute w-40 h-40 rounded-full bg-brand-cyan/15 blur-2xl" />
+                  </div>
+                  
+                  {/* Logo Badge - Premium White Badge */}
+                  <div className="relative bg-white rounded-2xl px-6 py-5 shadow-lg border border-slate-200/80 flex items-center justify-center">
+                    <img
+                      src={logoImage}
+                      alt="PLAYRO LEAGUE"
+                      className="max-h-[140px] w-auto object-contain"
+                    />
+                  </div>
+                </div>
+                
+                {/* Brand Name */}
+                <span className="text-2xl font-bold text-text-primary tracking-wide">
+                  PLAYRO LEAGUE
+                </span>
+
+                {/* Brand Tagline - Centered below logo */}
+                <p className="text-base text-text-muted text-center max-w-md">
+                  {t("home.brandHeadline")}
+                </p>
+              </div>
+
+              {/* Mobile Logo Badge - Smaller */}
+              <div className="lg:hidden flex flex-col items-center justify-center gap-4">
+                <div className="relative flex justify-center items-center">
+                  {/* Mobile glow */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-32 h-32 rounded-full bg-brand-blue/20 blur-2xl" />
+                  </div>
+                  
+                  {/* Mobile Logo Badge */}
+                  <div className="relative bg-white rounded-xl px-4 py-3 shadow-md border border-slate-200/80 flex items-center justify-center">
+                    <img
+                      src={logoImage}
+                      alt="PLAYRO LEAGUE"
+                      className="max-h-[80px] w-auto object-contain"
+                    />
+                  </div>
+                </div>
+                <span className="text-xl font-bold text-text-primary tracking-wide">
+                  PLAYRO LEAGUE
+                </span>
+
+                {/* Brand Tagline - Centered below logo (Mobile) */}
+                <p className="text-sm text-text-muted text-center max-w-xs px-4">
+                  {t("home.brandHeadline")}
+                </p>
+              </div>
             </div>
-            <h1 className="text-3xl lg:text-4xl font-bold leading-tight">
-              {t("home.brandHeadline")}
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-md">
-              {t("home.brandSubtitle")}
-            </p>
-            <div 
-              className="hidden lg:block w-full h-64 rounded-2xl mt-8"
-              style={{
-                background: `linear-gradient(135deg, hsl(var(--primary)/0.1), hsl(var(--primary)/0.05))`
-              }}
-            />
           </div>
 
           {/* Form Section - Right (Desktop) / Bottom (Mobile) */}
           <div className="flex justify-center lg:justify-end w-full">
-            <Card className="w-full max-w-[420px] card-elevated">
+            <Card className="w-full max-w-[420px]">
               <CardHeader className="space-y-2">
-                <CardTitle className="text-2xl">{t("auth.login")}</CardTitle>
-                <CardDescription className="text-base">
+                <CardTitle className="text-section-title">{t("auth.login")}</CardTitle>
+                <CardDescription className="text-caption">
                   {t("auth.loginSubtitle")}
                 </CardDescription>
               </CardHeader>
               <form onSubmit={handleSubmit}>
                 <CardContent className="space-y-5">
                   <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-medium">
+                    <Label htmlFor="username" className="text-sm font-semibold text-text-primary">
                       {t("auth.username")}
                     </Label>
                     <Input
@@ -141,11 +194,10 @@ export function Login() {
                         setFormData({ ...formData, username: e.target.value })
                       }
                       required
-                      className="h-[52px]"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-medium">
+                    <Label htmlFor="password" className="text-sm font-semibold text-text-primary">
                       {t("auth.password")}
                     </Label>
                     <Input
@@ -157,14 +209,13 @@ export function Login() {
                         setFormData({ ...formData, password: e.target.value })
                       }
                       required
-                      className="h-[52px]"
                     />
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col gap-4 pt-2">
                   <Button
                     type="submit"
-                    className="w-full h-12 text-base font-medium"
+                    className="w-full h-12 text-base font-bold"
                     disabled={mutation.isPending}
                   >
                     {mutation.isPending ? t("common.loading") : t("auth.login")}
@@ -221,11 +272,11 @@ export function Login() {
                     </div>
                   )}
 
-                  <p className="text-center text-sm text-muted-foreground">
+                  <p className="text-center text-sm text-text-muted">
                     {t("auth.dontHaveAccount")}{" "}
                     <Link
                       to="/auth/register"
-                      className="text-primary hover:underline font-medium"
+                      className="text-brand-blue hover:underline font-semibold"
                     >
                       {t("auth.register")}
                     </Link>

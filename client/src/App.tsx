@@ -21,6 +21,15 @@ import { MyBookings } from "@/pages/MyBookings";
 import { Admin } from "@/pages/Admin";
 import { AdminPitches } from "@/pages/AdminPitches";
 import { AdminBookings } from "@/pages/AdminBookings";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminRoute } from "@/components/admin/AdminRoute";
+import { AdminOverview } from "@/pages/admin/AdminOverview";
+import { AdminUsers } from "@/pages/admin/AdminUsers";
+import { AdminTeams } from "@/pages/admin/AdminTeams";
+import { AdminLeagues } from "@/pages/admin/AdminLeagues";
+import { AdminPitches as AdminPitchesNew } from "@/pages/admin/AdminPitches";
+import { AdminPosts } from "@/pages/admin/AdminPosts";
+import { AdminSettings } from "@/pages/admin/AdminSettings";
 import { Teams } from "@/pages/Teams";
 import { TeamDetail } from "@/pages/TeamDetail";
 import { CreateTeam } from "@/pages/CreateTeam";
@@ -61,9 +70,11 @@ function AppContent() {
     );
   }
 
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
   return (
-    <div className="min-h-screen" dir={dir}>
-      <Navbar />
+    <div className="min-h-screen overflow-x-hidden" dir={dir}>
+      {!isAdminRoute && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/login" element={<Login />} />
@@ -86,8 +97,9 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        {/* Legacy admin routes - kept for backward compatibility */}
         <Route
-          path="/admin"
+          path="/admin/old"
           element={
             <ProtectedRoute requireAdmin>
               <Admin />
@@ -95,7 +107,7 @@ function AppContent() {
           }
         />
         <Route
-          path="/admin/pitches"
+          path="/admin/pitches/old"
           element={
             <ProtectedRoute requireAdmin>
               <AdminPitches />
@@ -110,6 +122,24 @@ function AppContent() {
             </ProtectedRoute>
           }
         />
+        {/* New admin dashboard routes */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<Navigate to="/admin/overview" replace />} />
+          <Route path="overview" element={<AdminOverview />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="teams" element={<AdminTeams />} />
+          <Route path="leagues" element={<AdminLeagues />} />
+          <Route path="pitches" element={<AdminPitchesNew />} />
+          <Route path="posts" element={<AdminPosts />} />
+          <Route path="settings" element={<AdminSettings />} />
+        </Route>
         <Route path="/teams" element={<Teams />} />
         <Route
           path="/teams/create"

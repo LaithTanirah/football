@@ -79,13 +79,13 @@ export function CreateLeague() {
         className="mb-6"
       />
 
-      <Card className="card-elevated">
+      <Card>
         <CardHeader>
-          <CardTitle>{t('leagues.createNewLeague')}</CardTitle>
-          <CardDescription>{t('leagues.createLeagueSubtitle')}</CardDescription>
+          <CardTitle className="text-section-title">{t('leagues.createNewLeague')}</CardTitle>
+          <CardDescription className="text-caption">{t('leagues.createLeagueSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="name">
                 {t('leagues.leagueName')} *
@@ -132,16 +132,16 @@ export function CreateLeague() {
               />
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 pt-6 border-t-2 border-border-soft">
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => navigate('/leagues')}
-                className="flex-1"
+                className="flex-1 font-semibold"
               >
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="flex-1">
+              <Button type="submit" disabled={createMutation.isPending} className="flex-1 font-bold">
                 {createMutation.isPending ? t('common.creating') : t('leagues.createLeague')}
               </Button>
             </div>

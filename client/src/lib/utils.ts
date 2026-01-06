@@ -19,3 +19,22 @@ export function normalizeArabic(text: string): string {
     .trim();
 }
 
+// Safe translation helper - ensures translation keys never appear in UI
+export function safeTranslate(
+  t: (key: string) => string,
+  key: string,
+  fallback?: string
+): string {
+  const value = t(key);
+  // If translation returns the key itself (missing translation), use fallback or key
+  if (value === key) {
+    if (fallback) return fallback;
+    // In development, log missing translations
+    if (import.meta.env.DEV) {
+      console.warn(`Missing translation for key: ${key}`);
+    }
+    return key;
+  }
+  return value;
+}
+

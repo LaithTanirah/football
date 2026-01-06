@@ -4,30 +4,30 @@ import { Button } from '@/components/ui/button';
 
 export function Admin() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Admin Dashboard</h1>
+    <div className="container mx-auto max-w-7xl px-4 py-8 page-section">
+      <h1 className="text-page-title mb-8 text-text-primary">Admin Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-2">
         <Link to="/admin/pitches">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
-              <CardTitle>Manage Pitches</CardTitle>
-              <CardDescription>Create, edit, and manage football pitches</CardDescription>
+              <CardTitle className="text-section-title">Manage Pitches</CardTitle>
+              <CardDescription className="text-caption">Create, edit, and manage football pitches</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button>Go to Pitches Management</Button>
+              <Button className="font-semibold">Go to Pitches Management</Button>
             </CardContent>
           </Card>
         </Link>
 
         <Link to="/admin/bookings">
-          <Card className="hover:shadow-lg transition-shadow">
+          <Card>
             <CardHeader>
-              <CardTitle>View Bookings</CardTitle>
-              <CardDescription>View and manage all bookings</CardDescription>
+              <CardTitle className="text-section-title">View Bookings</CardTitle>
+              <CardDescription className="text-caption">View and manage all bookings</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button>Go to Bookings</Button>
+              <Button className="font-semibold">Go to Bookings</Button>
             </CardContent>
           </Card>
         </Link>

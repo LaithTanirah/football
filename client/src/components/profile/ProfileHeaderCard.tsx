@@ -11,6 +11,7 @@ import { Edit, LogOut, MapPin } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
+import { cn } from "@/lib/utils";
 
 interface ProfileHeaderCardProps {
   user: {
@@ -21,9 +22,10 @@ interface ProfileHeaderCardProps {
     role: string;
     avatar?: string;
   };
+  isViewingOtherUser?: boolean;
 }
 
-export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
+export function ProfileHeaderCard({ user, isViewingOtherUser = false }: ProfileHeaderCardProps) {
   const { t } = useTranslation();
   const { logout } = useAuthStore();
   const { locale } = useLocaleStore();
@@ -85,12 +87,18 @@ export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
 
   return (
     <>
-      <Card className="p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm">
+      <Card className={cn(
+        "p-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm",
+        isViewingOtherUser && "border-2 border-brand-blue/30 bg-gradient-to-br from-card/50 via-brand-blue/5 to-brand-cyan/5 shadow-lg"
+      )}>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           {/* Left: Avatar + Info */}
           <div className="flex items-center gap-6">
             <div className="relative">
-              <div className="w-24 h-24 rounded-2xl overflow-hidden border-2 border-border/50 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+              <div className={cn(
+                "rounded-2xl overflow-hidden border-2 bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center",
+                isViewingOtherUser ? "w-32 h-32 border-brand-blue/40 shadow-lg" : "w-24 h-24 border-border/50"
+              )}>
                 {user.avatar ? (
                   <img
                     src={avatarUrl}
@@ -115,11 +123,31 @@ export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
               </div>
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold mb-1">{user.name}</h1>
-              <p className="text-muted-foreground mb-3">@{user.username}</p>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className={cn(
+                  "font-bold mb-1",
+                  isViewingOtherUser ? "text-3xl text-text-primary" : "text-2xl"
+                )}>
+                  {user.name}
+                </h1>
+                {isViewingOtherUser && (
+                  <Badge variant="outline" className="bg-brand-blue/10 text-brand-blue border-brand-blue/30">
+                    {t("profile.viewingProfile") || "Viewing Profile"}
+                  </Badge>
+                )}
+              </div>
+              <p className={cn(
+                "mb-3",
+                isViewingOtherUser ? "text-base text-text-muted font-medium" : "text-muted-foreground"
+              )}>
+                @{user.username}
+              </p>
               <div className="flex flex-wrap items-center gap-2">
                 {cityDisplay && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className={cn(
+                    "gap-1",
+                    isViewingOtherUser && "border-brand-cyan/40 bg-brand-cyan/10"
+                  )}>
                     <MapPin className="h-3 w-3" />
                     {cityDisplay}
                   </Badge>
@@ -129,25 +157,27 @@ export function ProfileHeaderCard({ user }: ProfileHeaderCardProps) {
             </div>
           </div>
 
-          {/* Right: Actions */}
-          <div className="flex items-center gap-3 flex-shrink-0">
-            <Button
-              variant="outline"
-              onClick={() => setEditModalOpen(true)}
-              className="gap-2"
-            >
-              <Edit className="h-4 w-4" />
-              {t("profile.editProfile")}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleLogout}
-              className="text-destructive hover:text-destructive"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
-          </div>
+          {/* Right: Actions - Only show for own profile */}
+          {!isViewingOtherUser && (
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <Button
+                variant="outline"
+                onClick={() => setEditModalOpen(true)}
+                className="gap-2"
+              >
+                <Edit className="h-4 w-4" />
+                {t("profile.editProfile")}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleLogout}
+                className="text-destructive hover:text-destructive"
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
         </div>
       </Card>
 

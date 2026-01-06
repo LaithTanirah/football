@@ -1,6 +1,7 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
+import logoImage from "@/assets/Logo.jpg?url";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +13,7 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { useThemeStore } from "@/store/themeStore";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { UserAvatar } from "@/components/UserAvatar";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Moon,
@@ -41,7 +43,7 @@ export function Navbar() {
     await logout();
     toast({
       title: t("common.success"),
-      description: t("auth.logoutSuccess") || "Logged out successfully",
+      description: t("auth.logoutSuccess"),
     });
     navigate("/");
     setMobileMenuOpen(false);
@@ -59,72 +61,109 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 border-b-2 border-border-soft bg-bg-page/98 backdrop-blur-sm shadow-soft">
       <div className="container mx-auto flex h-20 max-w-7xl items-center justify-between px-4">
-        {/* Left: Logo */}
+        {/* Left: Logo + Brand - PLAYRO LEAGUE */}
         <Link
           to="/"
-          className="flex items-center gap-2 text-xl font-bold hover:opacity-80 transition-opacity"
+          className="flex items-center gap-3 hover:opacity-90 transition-opacity group"
         >
-          <span className="text-2xl">⚽</span>
-          <span className="hidden sm:inline">6-a-Side</span>
+          {/* Logo Container - Premium Styling */}
+          <div className="flex-shrink-0 w-10 h-10 p-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 shadow-soft flex items-center justify-center">
+          <img
+            src={logoImage}
+            alt="PLAYRO LEAGUE"
+              className="w-full h-full object-contain"
+          />
+          </div>
+          {/* Brand Text - Readable on Dark */}
+          <span className="hidden sm:inline-block text-lg font-bold text-white tracking-wide group-hover:text-slate-100 transition-colors drop-shadow-sm">
+            PLAYRO LEAGUE
+          </span>
         </Link>
 
-        {/* Middle: Navigation Links (Desktop) */}
-        <div className="hidden md:flex items-center gap-1">
+        {/* Center: Bold Navigation Tabs with Blue Underline */}
+        <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <Link key={link.to} to={link.to}>
-              <Button
-                variant={isActive(link.to) ? "ghost" : "ghost"}
+            <Link
+              key={link.to}
+              to={link.to}
+              className={cn(
+                "relative flex flex-col items-center justify-center pb-3 px-1 group",
+                "transition-colors"
+              )}
+            >
+              <span
                 className={cn(
-                  "transition-all",
-                  isActive(link.to) && "bg-accent/50 text-accent-foreground"
+                  "text-base font-bold transition-colors",
+                  isActive(link.to)
+                    ? "text-brand-blue"
+                    : "text-text-muted hover:text-text-primary"
                 )}
               >
                 {link.label}
-              </Button>
+              </span>
+              {isActive(link.to) && (
+                <span className="absolute bottom-0 inset-x-0 h-1 bg-brand-blue rounded-full" />
+              )}
             </Link>
           ))}
         </div>
 
-        {/* Right: User Menu & Theme Toggle */}
-        <div className="flex items-center gap-2">
+        {/* Right: Language + Theme + User - Compact and Clean */}
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher />
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-9 w-9"
+          >
+            {theme === "dark" ? (
+              <Sun className="h-4 w-4" />
+            ) : (
+              <Moon className="h-4 w-4" />
+            )}
+          </Button>
           {user ? (
             <>
-              {/* Desktop User Menu */}
+              {/* Desktop User Menu - Clean Avatar Chip */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="hidden md:flex items-center gap-2"
+                    size="sm"
+                    className="hidden md:flex items-center gap-2 cursor-pointer"
                   >
-                    <User className="h-4 w-4" />
-                    <span className="hidden lg:inline">{user.name}</span>
+                    <UserAvatar user={user} size="sm" />
+                    <span className="hidden lg:inline font-semibold">
+                      {user.name}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                   <DropdownMenuLabel>{t("nav.myAccount")}</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/profile" className="flex items-center gap-2">
+                    <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
                       <User className="h-4 w-4" />
                       {t("profile.title")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/me/bookings" className="flex items-center gap-2">
+                    <Link to="/me/bookings" className="flex items-center gap-2 cursor-pointer">
                       <Calendar className="h-4 w-4" />
                       {t("nav.myBookings")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/teams" className="flex items-center gap-2">
+                    <Link to="/teams" className="flex items-center gap-2 cursor-pointer">
                       <Users className="h-4 w-4" />
                       {t("nav.teams")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link to="/leagues" className="flex items-center gap-2">
+                    <Link to="/leagues" className="flex items-center gap-2 cursor-pointer">
                       <Trophy className="h-4 w-4" />
                       {t("nav.leagues")}
                     </Link>
@@ -133,7 +172,7 @@ export function Navbar() {
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link to="/admin" className="flex items-center gap-2">
+                        <Link to="/admin" className="flex items-center gap-2 cursor-pointer">
                           <Settings className="h-4 w-4" />
                           {t("nav.adminPanel")}
                         </Link>
@@ -143,9 +182,9 @@ export function Navbar() {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="text-destructive focus:text-destructive"
+                    className="!text-destructive-foreground !bg-destructive hover:!bg-destructive/90 focus:!bg-destructive focus:!text-destructive-foreground data-[highlighted]:!bg-destructive/90 data-[highlighted]:!text-destructive-foreground transition-colors cursor-pointer"
                   >
-                    <LogOut className="h-4 w-4 mr-2" />
+                    <LogOut className="h-4 w-4 me-2 !text-destructive-foreground" />
                     {t("nav.logout")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -167,41 +206,31 @@ export function Navbar() {
             </>
           ) : (
             <Link to="/auth/login">
-              <Button size="sm">{t("nav.login")}</Button>
+              <Button
+                size="sm"
+                className="bg-brand-orange hover:bg-brand-orange/90 text-text-invert font-bold shadow-brand"
+              >
+                {t("nav.login")}
+              </Button>
             </Link>
           )}
-
-          <LanguageSwitcher />
-          <div className="w-2" /> {/* Spacing between language and theme */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="hidden sm:flex"
-          >
-            {theme === "dark" ? (
-              <Sun className="h-4 w-4" />
-            ) : (
-              <Moon className="h-4 w-4" />
-            )}
-          </Button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu - Bottom Sheet Style */}
       {mobileMenuOpen && user && (
-        <div className="md:hidden border-t bg-background">
-          <div className="container mx-auto max-w-7xl px-4 py-2 space-y-1">
+        <div className="md:hidden border-t-2 border-border-soft bg-bg-page shadow-medium">
+          <div className="container mx-auto max-w-7xl px-4 py-4 space-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
-                  "block px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                  "block px-4 py-3 rounded-brand text-sm font-bold transition-all relative",
                   isActive(link.to)
-                    ? "bg-secondary text-secondary-foreground"
-                    : "hover:bg-muted"
+                    ? "text-brand-blue bg-brand-blue/10 border-l-4 border-brand-blue"
+                    : "text-text-muted hover:text-text-primary hover:bg-bg-surface"
                 )}
               >
                 {link.label}

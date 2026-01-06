@@ -3,65 +3,196 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+  }
+  
+  body {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+    position: relative;
+    margin: 0;
+    padding: 0;
+  }
+  
+  /* Prevent scroll-lock library from adding margin that causes layout gaps */
+  /* Radix UI uses react-remove-scroll which adds margin-right to prevent scrollbar shift */
+  /* We override this because we already handle overflow-x: hidden globally */
+  body[data-scroll-locked],
+  html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+  
+  /* RTL-safe: prevent margin/padding on either side */
+  [dir="rtl"] body[data-scroll-locked],
+  [dir="rtl"] html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+  
+  [dir="ltr"] body[data-scroll-locked],
+  [dir="ltr"] html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+  
+  /* Prevent Radix Portal from causing overflow */
+  [data-radix-portal] {
+    position: fixed;
+    z-index: 9999;
+    max-width: 100vw;
+  }
+  
+  /* Constrain Radix Popper Content Wrapper to prevent overflow */
+  [data-radix-popper-content-wrapper] {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    overflow: visible !important;
+    contain: layout style paint;
+  }
+  
+  /* Ensure popper content doesn't extend beyond viewport */
+  [data-radix-popper-content-wrapper] > * {
+    max-width: calc(100vw - 16px) !important;
+  }
+  
+  /* Ensure dropdowns don't cause body expansion */
+  body:has([data-radix-portal]) {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+  
+  /* Prevent any fixed positioned elements from causing overflow */
+  [style*="position: fixed"] {
+    max-width: 100vw;
+  }
+  
+  /* Constrain root container */
+  #root {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+}
+
+@layer base {
   :root {
-    /* Light theme - Soft & Premium */
-    --background: 220 15% 97%; /* #F6F7F9 - Soft off-white */
-    --foreground: 220 30% 9%; /* #0E1320 - Deep but soft black */
-    --primary: 217 91% 60%; /* #2563EB - Clean blue */
+    /* PLAYRO LEAGUE Brand Theme - Derived from Logo */
+    --background: 0 0% 100%; /* Pure white - base background */
+    --foreground: 220 50% 15%; /* Dark navy - text and contrast */
+    --primary: 210 100% 50%; /* Primary Blue - navigation, headers, structure */
     --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 41%; /* #5B6275 - Muted gray */
+    --secondary: 142 70% 50%; /* Green - growth, play, success, football energy */
     --secondary-foreground: 0 0% 100%;
-    --accent: 217 91% 60%; /* Match primary */
+    --accent: 25 95% 55%; /* Orange - important actions (Create/Play/CTA) */
     --accent-foreground: 0 0% 100%;
-    --muted: 220 15% 96%; /* Very light gray */
-    --muted-foreground: 220 15% 41%; /* #5B6275 */
-    --border: 220 15% 92%; /* #E6E8EE - Very subtle border */
-    --input: 0 0% 100%; /* #FFFFFF - Pure white */
-    --input-foreground: 220 30% 9%; /* #0E1320 - Readable text */
-    --ring: 217 91% 60%; /* Match primary */
-    --radius: 0.75rem; /* 12px - Softer corners */
+    --muted: 220 15% 96%; /* Very light blue-gray */
+    --muted-foreground: 220 20% 45%; /* Muted text */
+    --border: 220 20% 90%; /* Light border */
+    --input: 0 0% 100%; /* Pure white */
+    --input-foreground: 220 50% 15%;
+    --ring: 210 100% 50%; /* Primary Blue */
+    --radius: 0.5rem; /* 8px - clean geometry */
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 9%;
-    --card: 0 0% 100%; /* #FFFFFF - Pure white for cards */
-    --card-foreground: 220 30% 9%;
-    --success: 142 50% 50%; /* Soft green */
+    --popover-foreground: 220 50% 15%;
+    --card: 0 0% 100%; /* Pure white */
+    --card-foreground: 220 50% 15%;
+    --success: 142 70% 50%; /* Green - success states */
     --success-foreground: 0 0% 100%;
-    --warning: 38 80% 60%; /* Soft amber */
-    --warning-foreground: 220 30% 9%;
-    --error: 0 55% 55%; /* Soft red */
+    --warning: 38 90% 55%; /* Amber */
+    --warning-foreground: 220 50% 15%;
+    --error: 0 75% 55%; /* Red */
     --error-foreground: 0 0% 100%;
-    --destructive: 0 55% 55%;
+    --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
+    /* PLAYRO LEAGUE Brand tokens - from logo */
+    --playro-blue: 210 100% 50%; /* Primary Blue - vibrant blue from logo */
+    --playro-green: 142 70% 50%; /* Green - bright green arrow from logo */
+    --playro-orange: 25 95% 55%; /* Orange - curved shape from logo */
+    --playro-navy: 220 50% 15%; /* Dark Navy - text color */
+    /* Brand color system */
+    --brand-blue: 210 100% 50%; /* Primary Blue */
+    --brand-cyan: 180 80% 55%; /* Secondary Cyan */
+    --brand-green: 142 70% 50%; /* Accent Green */
+    --brand-orange: 25 95% 55%; /* CTA Orange */
+    --brand-navy: 220 50% 15%; /* Deep Navy Text */
+    /* Semantic surface colors */
+    --bg-page: 0 0% 100%; /* Page background */
+    --bg-surface: 220 15% 98%; /* Surface background */
+    --bg-panel: 0 0% 100%; /* Panel background */
+    --text-primary: 220 50% 15%; /* Primary text */
+    --text-muted: 220 20% 45%; /* Muted text */
+    --text-invert: 0 0% 100%; /* Inverted text */
+    --border-soft: 220 20% 90%; /* Soft border */
+    --border-strong: 220 30% 70%; /* Strong border */
+    --radius: 14px; /* Consistent brand radius */
   }
 
   .dark {
-    /* Dark theme - Deep gray, NOT black, comfortable */
-    --background: 220 20% 7%; /* #0F1115 - Deep gray, NOT black */
-    --foreground: 220 20% 96%; /* #F1F3F8 - Soft white */
-    --primary: 217 91% 65%; /* #3B82F6 - Softer blue */
-    --primary-foreground: 220 20% 7%;
-    --secondary: 220 15% 20%; /* Muted gray */
-    --secondary-foreground: 220 20% 96%;
-    --accent: 217 91% 65%; /* Match primary */
-    --accent-foreground: 220 20% 96%;
-    --muted: 220 15% 11%; /* #171A21 - Slightly lighter than bg */
-    --muted-foreground: 220 15% 71%; /* #A6ADC2 */
-    --border: 220 15% 20%; /* #2A2F3A - Subtle border */
-    --input: 220 15% 11%; /* #171A21 */
-    --input-foreground: 220 20% 96%; /* #F1F3F8 - Readable */
-    --ring: 217 91% 65%; /* Match primary */
-    --popover: 220 15% 11%; /* #171A21 */
-    --popover-foreground: 220 20% 96%;
-    --card: 220 20% 15%; /* #1E2230 - Elevated card surface */
-    --card-foreground: 220 20% 96%;
-    --success: 142 45% 45%; /* Softer green for dark */
-    --success-foreground: 220 20% 96%;
-    --warning: 38 70% 55%; /* Softer amber for dark */
-    --warning-foreground: 220 20% 7%;
-    --error: 0 50% 50%; /* Softer red for dark */
-    --error-foreground: 220 20% 96%;
-    --destructive: 0 50% 50%;
-    --destructive-foreground: 220 20% 96%;
+    /* Dark mode - Still white-first philosophy, darker backgrounds */
+    --background: 220 30% 8%; /* Dark navy */
+    --foreground: 0 0% 98%; /* Near white */
+    --primary: 210 100% 55%; /* Primary Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 142 70% 55%; /* Green */
+    --secondary-foreground: 0 0% 100%;
+    --accent: 25 95% 60%; /* Orange */
+    --accent-foreground: 0 0% 100%;
+    --muted: 220 25% 15%; /* Dark muted */
+    --muted-foreground: 220 15% 70%; /* Light gray */
+    --border: 220 25% 25%; /* Dark border */
+    --input: 220 25% 12%; /* Dark input */
+    --input-foreground: 0 0% 98%;
+    --ring: 210 100% 55%; /* Primary Blue */
+    --popover: 220 25% 12%;
+    --popover-foreground: 0 0% 98%;
+    --card: 220 25% 12%; /* Dark card */
+    --card-foreground: 0 0% 98%;
+    --success: 142 70% 55%; /* Green */
+    --success-foreground: 0 0% 98%;
+    --warning: 38 85% 60%; /* Amber */
+    --warning-foreground: 220 30% 8%;
+    --error: 0 70% 60%; /* Red */
+    --error-foreground: 0 0% 98%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 98%;
+    /* PLAYRO LEAGUE Brand tokens */
+    --playro-blue: 210 100% 55%;
+    --playro-green: 142 70% 55%;
+    --playro-orange: 25 95% 60%;
+    --playro-navy: 220 30% 8%;
+    /* Brand color system */
+    --brand-blue: 210 100% 55%;
+    --brand-cyan: 180 80% 60%;
+    --brand-green: 142 70% 55%;
+    --brand-orange: 25 95% 60%;
+    --brand-navy: 220 30% 8%;
+    /* Semantic surface colors */
+    --bg-page: 220 30% 8%;
+    --bg-surface: 220 25% 12%;
+    --bg-panel: 220 25% 12%;
+    --text-primary: 0 0% 98%;
+    --text-muted: 220 15% 70%;
+    --text-invert: 220 50% 15%;
+    --border-soft: 220 25% 25%;
+    --border-strong: 220 20% 40%;
+    --radius: 14px;
   }
 
   body {
@@ -70,6 +201,7 @@
     position: relative;
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Arabic", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 500; /* Bolder default for sports feel */
   }
 
   /* Arabic font support */
@@ -169,35 +301,42 @@
     z-index: 1;
   }
 
-  /* Card elevation system - premium shadows, no borders */
+  /* Sports tile cards - bold, confident */
   .card-elevated {
     background: hsl(var(--card));
+    border: 2px solid hsl(var(--border));
     border-radius: var(--radius);
-    box-shadow: 
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 2px 4px rgba(0, 0, 0, 0.02);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  /* Surface container - consistent padding for bordered containers */
+  .surface {
+    padding: 1rem; /* p-4 */
+    border-radius: 1rem; /* rounded-2xl */
+  }
+
+  @media (min-width: 768px) {
+    .surface {
+      padding: 1.5rem; /* md:p-6 */
+    }
   }
 
   .card-elevated:hover {
-    box-shadow: 
-      0 4px 8px rgba(0, 0, 0, 0.06),
-      0 2px 4px rgba(0, 0, 0, 0.04);
-    transform: translateY(-1px);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
+    transform: translateY(-2px);
   }
 
   .dark .card-elevated {
     background: hsl(var(--card));
-    box-shadow: 
-      0 1px 2px rgba(0, 0, 0, 0.4),
-      0 2px 4px rgba(0, 0, 0, 0.3);
+    border: 2px solid hsl(var(--border));
   }
 
   .dark .card-elevated:hover {
-    box-shadow: 
-      0 4px 8px rgba(0, 0, 0, 0.5),
-      0 2px 4px rgba(0, 0, 0, 0.4);
-    transform: translateY(-1px);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
   }
 
   /* Smooth page transitions */
@@ -226,6 +365,138 @@
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
+  }
+
+  /* Global cursor styles for interactive elements */
+  button,
+  [role="button"],
+  a,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"],
+  select,
+  label[for],
+  [onclick],
+  [tabindex]:not([tabindex="-1"]) {
+    cursor: pointer;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="date"],
+  input[type="time"],
+  input[type="datetime-local"],
+  textarea {
+    cursor: text;
+  }
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    cursor: pointer;
+  }
+
+  input:disabled,
+  button:disabled,
+  select:disabled,
+  textarea:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
+  /* Links and clickable elements */
+  a[href],
+  button:not(:disabled),
+  [role="link"],
+  [role="menuitem"],
+  [role="option"] {
+    cursor: pointer;
+  }
+
+  /* Drag and drop */
+  [draggable="true"] {
+    cursor: grab;
+  }
+
+  [draggable="true"]:active {
+    cursor: grabbing;
+  }
+
+  /* Resize */
+  textarea[resize] {
+    cursor: auto;
+  }
+
+  /* Loading states */
+  [aria-busy="true"],
+  .loading {
+    cursor: wait;
+  }
+
+  /* Match poster header background - angled sections inspired by logo arrow */
+  .match-header-bg {
+    position: relative;
+    background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--secondary) / 0.05));
+    overflow: hidden;
+  }
+
+  .match-header-bg::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, hsl(var(--primary) / 0.03) 50%, transparent 70%);
+    transform: rotate(-15deg);
+    pointer-events: none;
+  }
+
+  .match-header-bg::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, 
+      hsl(var(--primary)) 0%, 
+      hsl(var(--secondary)) 50%, 
+      hsl(var(--accent)) 100%
+    );
+    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+  }
+
+  /* Action button - bold orange */
+  .btn-action {
+    background: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    font-weight: 600;
+    border: none;
+    box-shadow: 0 2px 8px hsl(var(--accent) / 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .btn-action:hover {
+    background: hsl(var(--accent) / 0.9);
+    box-shadow: 0 4px 12px hsl(var(--accent) / 0.4);
+    transform: translateY(-1px);
+  }
+
+  /* Sports badge */
+  .sports-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 }
 

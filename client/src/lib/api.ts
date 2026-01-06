@@ -105,6 +105,7 @@ export const usersApi = {
   search: (params: { q: string; excludeTeamId?: string; limit?: number }) =>
     api.get<ApiResponse<any[]>>('/users/search', { params }),
   getMe: () => api.get<ApiResponse<any>>('/users/me'),
+  getById: (id: string) => api.get<ApiResponse<any>>(`/users/${id}`),
   updateMe: (data: { name?: string; username?: string; city?: string; bio?: string | null; avatar?: string | null }) =>
     api.patch<ApiResponse<any>>('/users/me', data),
   getStats: () => api.get<ApiResponse<{ teamsCount: number; leaguesCount: number; bookingsCount: number; postsCount: number }>>('/users/me/stats'),
@@ -150,6 +151,16 @@ export const adminApi = {
   deleteBlockedSlot: (id: string) => api.delete<ApiResponse<any>>(`/admin/blocked-slots/${id}`),
   getBookings: (params?: { pitchId?: string; date?: string }) =>
     api.get<ApiResponse<any[]>>('/admin/bookings', { params }),
+  getUsers: (params?: { search?: string; role?: string; city?: string }) =>
+    api.get<ApiResponse<any[]>>('/admin/users', { params }),
+  updateUser: (id: string, data: { name?: string; username?: string; email?: string; phone?: string | null; city?: string | null; role?: string; bio?: string | null; avatar?: string | null }) =>
+    api.patch<ApiResponse<any>>(`/admin/users/${id}`, data),
+  updateLeague: (id: string, data: { name?: string; city?: string; season?: string | null; startDate?: string | null; status?: string }) =>
+    api.patch<ApiResponse<any>>(`/admin/leagues/${id}`, data),
+  updatePost: (id: string, data: { content?: string; mediaType?: string; mediaUrl?: string | null }) =>
+    api.patch<ApiResponse<any>>(`/admin/posts/${id}`, data),
+  getStats: () => api.get<ApiResponse<{ usersCount: number; teamsCount: number; leaguesCount: number; pitchesCount: number }>>('/admin/stats'),
+  deleteTeam: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/teams/${id}`),
 };
 
 // Uploads

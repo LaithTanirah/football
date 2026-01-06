@@ -39,7 +39,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       
       // Token exists, try to fetch user
       const response = await authApi.me();
-      set({ user: response.data.data.user || null, isLoading: false });
+      const fetchedUser = response.data.data.user || null;
+      set({ user: fetchedUser, isLoading: false });
     } catch (error: any) {
       // If 401, token is invalid - clear it
       if (error.response?.status === 401) {

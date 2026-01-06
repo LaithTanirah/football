@@ -221,6 +221,43 @@ usersRouter.patch('/me', authenticate, async (req: AuthRequest, res) => {
   }
 });
 
+// Get user by ID (for viewing other users' profiles)
+usersRouter.get('/:id', authenticate, async (req: AuthRequest, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(401).json({ message: 'Unauthorized', code: 'UNAUTHORIZED' });
+    }
+
+    const userId = req.params.id;
+
+    const [user] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        username: users.username,
+        email: users.email,
+        phone: users.phone,
+        role: users.role,
+        city: users.city,
+        bio: users.bio,
+        avatar: users.avatar,
+        createdAt: users.createdAt,
+      })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found', code: 'USER_NOT_FOUND' });
+    }
+
+    res.json({ data: user });
+  } catch (error) {
+    console.error('Get user by ID error:', error);
+    res.status(500).json({ message: 'Internal server error', code: 'INTERNAL_ERROR' });
+  }
+});
+
 // Get user stats
 usersRouter.get('/me/stats', authenticate, async (req: AuthRequest, res) => {
   try {
