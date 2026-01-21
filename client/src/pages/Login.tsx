@@ -4,10 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { authApi } from "@/lib/api";
 import { useAuthStore } from "@/store/authStore";
-import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useToast } from "@/ui2/components/ui/use-toast";
+import { Button } from "@/ui2/components/ui/Button";
+import { Input } from "@/ui2/components/ui/Input";
+import { Label } from "@/ui2/components/ui/Label";
 import {
   Card,
   CardContent,
@@ -15,10 +15,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/ui2/components/ui/Card";
 import { useDirection } from "@/hooks/useDirection";
-import logoImage from "@/assets/Logo.jpg?url";
+import { AuthShell } from "@/components/common/AuthShell";
+import { AuthAnimation } from "@/components/common/AuthAnimation";
 import { cn } from "@/lib/utils";
+import { ArrowRight, ArrowLeft } from "lucide-react";
 
 // Helper function to translate error messages
 const getTranslatedError = (error: any, t: (key: string) => string): string => {
@@ -98,195 +100,183 @@ export function Login() {
     mutation.mutate(formData);
   };
 
+  const ArrowIcon = isRTL ? ArrowLeft : ArrowRight;
+
   return (
-    <div className="min-h-screen bg-bg-page">
-      <div className="container mx-auto max-w-[1200px] px-4 py-12 lg:py-16">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[calc(100vh-12rem)]">
-          {/* Brand Section - Left (Desktop) / Top (Mobile) */}
-          <div 
-            className={cn(
-              "flex flex-col justify-center items-center lg:items-start py-8 lg:py-0",
-              isRTL ? "text-right" : "text-left"
-            )}
-            dir={isRTL ? "rtl" : "ltr"}
-          >
-            <div className="flex flex-col gap-8 w-full">
-              {/* Logo Badge - Premium Brand Presentation */}
-              <div className="hidden lg:flex flex-col items-center justify-center gap-6">
-                {/* Outer container with glow effect */}
-                <div className="relative flex justify-center items-center">
-                  {/* Subtle glow behind logo */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-48 h-48 rounded-full bg-brand-blue/20 blur-3xl" />
-                    <div className="absolute w-40 h-40 rounded-full bg-brand-cyan/15 blur-2xl" />
-                  </div>
-                  
-                  {/* Logo Badge - Premium White Badge */}
-                  <div className="relative bg-white rounded-2xl px-6 py-5 shadow-lg border border-slate-200/80 flex items-center justify-center">
-                    <img
-                      src={logoImage}
-                      alt="PLAYRO LEAGUE"
-                      className="max-h-[140px] w-auto object-contain"
-                    />
-                  </div>
-                </div>
-                
-                {/* Brand Name */}
-                <span className="text-2xl font-bold text-text-primary tracking-wide">
-                  PLAYRO LEAGUE
-                </span>
-
-                {/* Brand Tagline - Centered below logo */}
-                <p className="text-base text-text-muted text-center max-w-md">
-                  {t("home.brandHeadline")}
-                </p>
-              </div>
-
-              {/* Mobile Logo Badge - Smaller */}
-              <div className="lg:hidden flex flex-col items-center justify-center gap-4">
-                <div className="relative flex justify-center items-center">
-                  {/* Mobile glow */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-32 h-32 rounded-full bg-brand-blue/20 blur-2xl" />
-                  </div>
-                  
-                  {/* Mobile Logo Badge */}
-                  <div className="relative bg-white rounded-xl px-4 py-3 shadow-md border border-slate-200/80 flex items-center justify-center">
-                    <img
-                      src={logoImage}
-                      alt="PLAYRO LEAGUE"
-                      className="max-h-[80px] w-auto object-contain"
-                    />
-                  </div>
-                </div>
-                <span className="text-xl font-bold text-text-primary tracking-wide">
-                  PLAYRO LEAGUE
-                </span>
-
-                {/* Brand Tagline - Centered below logo (Mobile) */}
-                <p className="text-sm text-text-muted text-center max-w-xs px-4">
-                  {t("home.brandHeadline")}
-                </p>
-              </div>
+    <AuthShell
+      animationPanel={
+        <AuthAnimation
+          title={t("auth.welcomeBack")}
+          subtitle={t("auth.loginSubtitle")}
+        />
+      }
+    >
+      <Card className={cn(
+        "glass-neon-strong rounded-3xl",
+        "shadow-md",
+        "backdrop-blur-xl",
+        "bg-slate-950/40 dark:bg-slate-950/60",
+        "p-6 sm:p-8"
+      )}>
+        <CardHeader className={cn(
+          "space-y-2 pb-6",
+          isRTL ? "text-right" : "text-left"
+        )}>
+          <CardTitle className={cn(
+            "text-3xl sm:text-4xl font-semibold",
+            "text-foreground"
+          )}>
+            {t("auth.login")}
+          </CardTitle>
+          <CardDescription className={cn(
+            "text-sm opacity-75",
+            "text-muted-foreground dark:text-gray-300"
+          )}>
+            {t("auth.loginSubtitle")}
+          </CardDescription>
+        </CardHeader>
+        <form onSubmit={handleSubmit}>
+          <CardContent className={cn("space-y-4", isRTL ? "text-right" : "text-left")}>
+            <div className="space-y-2">
+              <Label htmlFor="username" className="text-sm font-medium text-gray-200 dark:text-gray-100">
+                {t("auth.username")}
+              </Label>
+              <Input
+                id="username"
+                placeholder={t("auth.username")}
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                required
+                className={cn(
+                  "h-12 rounded-2xl",
+                  isRTL && "text-right"
+                )}
+              />
             </div>
-          </div>
-
-          {/* Form Section - Right (Desktop) / Bottom (Mobile) */}
-          <div className="flex justify-center lg:justify-end w-full">
-            <Card className="w-full max-w-[420px]">
-              <CardHeader className="space-y-2">
-                <CardTitle className="text-section-title">{t("auth.login")}</CardTitle>
-                <CardDescription className="text-caption">
-                  {t("auth.loginSubtitle")}
-                </CardDescription>
-              </CardHeader>
-              <form onSubmit={handleSubmit}>
-                <CardContent className="space-y-5">
-                  <div className="space-y-2">
-                    <Label htmlFor="username" className="text-sm font-semibold text-text-primary">
-                      {t("auth.username")}
-                    </Label>
-                    <Input
-                      id="username"
-                      placeholder={t("auth.username")}
-                      value={formData.username}
-                      onChange={(e) =>
-                        setFormData({ ...formData, username: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="password" className="text-sm font-semibold text-text-primary">
-                      {t("auth.password")}
-                    </Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder={t("auth.password")}
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                </CardContent>
-                <CardFooter className="flex flex-col gap-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-gray-200 dark:text-gray-100">
+                {t("auth.password")}
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder={t("auth.password")}
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                required
+                className={cn(
+                  "h-12 rounded-2xl",
+                  isRTL && "text-right"
+                )}
+              />
+            </div>
+          </CardContent>
+          <CardFooter className={cn(
+            "flex flex-col gap-4 pt-6",
+            isRTL ? "text-right" : "text-left"
+          )}>
+            <Button
+              type="submit"
+              className={cn(
+                "w-full h-12 rounded-2xl text-base font-semibold",
+                "bg-gradient-to-r from-cyan-500 to-cyan-600",
+                "hover:from-cyan-600 hover:to-cyan-700",
+                "text-foreground shadow-soft",
+                "hover:shadow-glow",
+                "hover:-translate-y-[1px] transition-all duration-200",
+                "disabled:opacity-50 disabled:cursor-not-allowed"
+              )}
+              disabled={mutation.isPending}
+            >
+              {mutation.isPending ? t("common.loading") : (
+                <span className="flex items-center justify-center gap-2">
+                  {t("auth.login")}
+                  <ArrowIcon className="h-4 w-4" />
+                </span>
+              )}
+            </Button>
+            
+            {/* Quick Login Buttons for Development */}
+            {isDevelopment && (
+              <div className={cn(
+                "w-full space-y-3 pt-4 border-t border-cyan-400/10",
+                "glass-neon-subtle rounded-2xl p-4"
+              )}>
+                <p className="text-xs text-muted-foreground dark:text-gray-300 text-center mb-2">
+                  🛠️ Development Quick Login
+                </p>
+                <div className="grid grid-cols-2 gap-2">
                   <Button
-                    type="submit"
-                    className="w-full h-12 text-base font-bold"
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickLogin("admin", "admin123")}
                     disabled={mutation.isPending}
+                    className="text-xs h-9 rounded-xl"
                   >
-                    {mutation.isPending ? t("common.loading") : t("auth.login")}
+                    Admin
                   </Button>
-                  
-                  {/* Quick Login Buttons for Development */}
-                  {isDevelopment && (
-                    <div className="w-full space-y-2 pt-2 border-t">
-                      <p className="text-xs text-muted-foreground text-center mb-2">
-                        🛠️ Development Quick Login
-                      </p>
-                      <div className="grid grid-cols-2 gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuickLogin("admin", "admin123")}
-                          disabled={mutation.isPending}
-                          className="text-xs"
-                        >
-                          Admin
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuickLogin("user1", "password123")}
-                          disabled={mutation.isPending}
-                          className="text-xs"
-                        >
-                          User 1
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuickLogin("user2", "password123")}
-                          disabled={mutation.isPending}
-                          className="text-xs"
-                        >
-                          User 2
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleQuickLogin("nazzal", "password123")}
-                          disabled={mutation.isPending}
-                          className="text-xs"
-                        >
-                          Nazzal
-                        </Button>
-                      </div>
-                    </div>
-                  )}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickLogin("user1", "password123")}
+                    disabled={mutation.isPending}
+                    className="text-xs h-9 rounded-xl"
+                  >
+                    User 1
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickLogin("user2", "password123")}
+                    disabled={mutation.isPending}
+                    className="text-xs h-9 rounded-xl"
+                  >
+                    User 2
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleQuickLogin("nazzal", "password123")}
+                    disabled={mutation.isPending}
+                    className="text-xs h-9 rounded-xl"
+                  >
+                    Nazzal
+                  </Button>
+                </div>
+              </div>
+            )}
 
-                  <p className="text-center text-sm text-text-muted">
-                    {t("auth.dontHaveAccount")}{" "}
-                    <Link
-                      to="/auth/register"
-                      className="text-brand-blue hover:underline font-semibold"
-                    >
-                      {t("auth.register")}
-                    </Link>
-                  </p>
-                </CardFooter>
-              </form>
-            </Card>
-          </div>
-        </div>
-      </div>
-    </div>
+            <p className={cn(
+              "text-center text-sm text-muted-foreground dark:text-gray-300",
+              isRTL ? "text-right" : "text-left"
+            )}>
+              {t("auth.dontHaveAccount")}{" "}
+              <Link
+                to="/auth/register"
+                className={cn(
+                  "text-cyan-400 hover:text-cyan-300 font-medium transition-colors",
+                  "relative inline-block group",
+                  "after:absolute after:bottom-0 after:w-0 after:h-0.5",
+                  isRTL ? "after:right-0" : "after:left-0",
+                  "after:bg-gradient-to-r after:from-cyan-400 after:to-purple-400",
+                  "after:transition-all after:duration-300",
+                  "hover:after:w-full"
+                )}
+              >
+                {t("auth.register")}
+              </Link>
+            </p>
+          </CardFooter>
+        </form>
+      </Card>
+    </AuthShell>
   );
 }

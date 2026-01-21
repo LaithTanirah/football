@@ -1,6 +1,8 @@
-# ⚽ 6-a-Side Football Platform
+# ⚽ PLAYRO LEAGUE - 6-a-Side Football Platform
 
 A comprehensive full-stack web application for managing football pitch bookings, teams, leagues, and community interactions. Built with modern technologies and featuring bilingual support (English/Arabic) with full RTL support.
+
+**PLAYRO LEAGUE** is a complete platform for organizing and managing 6-a-side football activities, including pitch bookings, team management, competitive leagues, community engagement, and interactive games.
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![License](https://img.shields.io/badge/license-Private-red)
@@ -23,23 +25,128 @@ A comprehensive full-stack web application for managing football pitch bookings,
 
 ### Core Features
 
-- **Pitch Management**: Browse, search, and book football pitches with advanced filtering
-- **Team Management**: Create teams, manage rosters, and assign player positions
-- **League System**: Create and manage leagues with automatic fixture generation and standings
-- **Community**: Social feed for sharing posts, updates, and engaging with the community
-- **User Profiles**: Comprehensive profiles with stats, bio, avatar, and activity history
-- **Admin Panel**: Full administrative control for pitches, bookings, and user management
+- **Pitch Management**:
+
+  - Browse and search football pitches with bilingual support (English/Arabic)
+  - Advanced filtering by city, type (indoor/outdoor), price range
+  - View pitch details with images, working hours, and availability
+  - Book pitches with date and time selection
+  - Manage bookings with status tracking (Pending, Confirmed, Cancelled, Completed)
+  - Blocked slots management for maintenance or special events
+
+- **Team Management**:
+
+  - Create and manage teams with custom logos
+  - Invite players and manage team rosters
+  - Visual squad formation board (5-a-side or 6-a-side)
+  - Drag-and-drop player positioning on pitch board
+  - Team member roles (Owner, Admin, Member, Captain)
+  - City-based team organization
+
+- **League System**:
+
+  - Create leagues with custom seasons and schedules
+  - Automatic fixture generation for round-robin tournaments
+  - League status management (Draft, Active, Completed)
+  - Real-time standings calculation
+  - Match scheduling with pitch booking integration
+  - Score recording and match result tracking
+
+- **Community Feed**:
+
+  - Social feed for sharing posts and updates
+  - Image posts with media upload
+  - Like and comment system
+  - City and pitch/team tagging
+  - Post detail pages with full engagement features
+
+- **User Profiles**:
+
+  - Comprehensive user profiles with bio and avatar
+  - User statistics and activity history
+  - Profile customization
+  - City-based user organization
+
+- **Admin Dashboard**:
+  - Modern admin panel with sidebar navigation
+  - Overview dashboard with statistics
+  - User management (view, edit, role assignment)
+  - Team management and moderation
+  - League administration
+  - Pitch management (create, edit, delete)
+  - Post moderation
+  - Settings and configuration
+  - Global search functionality
+  - Collapsible sidebar with RTL support
 
 ### Advanced Features
 
-- **Bilingual Support**: Full English/Arabic support with RTL (Right-to-Left) layout
-- **Dark Mode**: Beautiful dark theme with smooth transitions
-- **Responsive Design**: Mobile-first design that works on all devices
-- **Real-time Updates**: Live data synchronization with React Query
-- **Image Uploads**: Team logos, user avatars, and post images
-- **Advanced Filtering**: Search by city, type, price range, and more
-- **Squad Management**: Visual pitch board for team formations
-- **Games Hub**: Interactive games (Hangman, Quiz) for community engagement
+- **Bilingual Support**:
+
+  - Full English/Arabic support with complete translations
+  - RTL (Right-to-Left) layout for Arabic
+  - Language switcher in navigation
+  - Bilingual pitch data (name, description, address, type)
+
+- **Games Hub**:
+
+  - Interactive games for community engagement
+  - Available games:
+    - **Quiz**: Football trivia questions
+    - **Memory**: Card matching game
+    - **Hangman**: Word guessing game
+    - **Tic-Tac-Toe**: Classic game
+    - **Guess Player**: Player identification game (coming soon)
+  - Game categories and difficulty levels
+  - Score tracking and game history
+
+- **Dark Mode**:
+
+  - Beautiful dark theme with smooth transitions
+  - Theme persistence across sessions
+  - Consistent design system
+
+- **Responsive Design**:
+
+  - Mobile-first approach
+  - Tablet and desktop optimized
+  - Touch-friendly interactions
+  - Responsive admin dashboard
+
+- **Real-time Updates**:
+
+  - Live data synchronization with React Query (TanStack Query)
+  - Optimistic updates for better UX
+  - Automatic cache invalidation
+
+- **Image Uploads**:
+
+  - Team logo uploads
+  - User avatar uploads
+  - Post image uploads
+  - Pitch image galleries
+  - Image optimization and storage
+
+- **Advanced Filtering & Search**:
+
+  - Search by city, type, price range
+  - Global search in admin panel
+  - Debounced search inputs
+  - Filter persistence
+
+- **Squad Management**:
+
+  - Visual pitch board for team formations
+  - Drag-and-drop player positioning
+  - Support for 5-a-side and 6-a-side formations
+  - Slot-based player assignment
+
+- **Authentication & Security**:
+  - JWT-based authentication
+  - Refresh token mechanism
+  - Role-based access control (User, Admin, Pitch Owner)
+  - Protected routes
+  - Secure password hashing with bcrypt
 
 ## 🛠 Tech Stack
 
@@ -50,12 +157,20 @@ A comprehensive full-stack web application for managing football pitch bookings,
 - **Vite** - Build tool and dev server
 - **Tailwind CSS** - Utility-first CSS framework
 - **Radix UI** - Accessible component primitives
-- **React Router** - Client-side routing
-- **React Query (TanStack Query)** - Server state management
+  - Dialog, Dropdown Menu, Select, Tabs, Toast, Popover, Switch, Label
+- **React Router v6** - Client-side routing
+- **TanStack Query (React Query)** - Server state management
 - **Zustand** - Client state management
-- **i18next** - Internationalization
+- **i18next & react-i18next** - Internationalization
 - **Lucide React** - Icon library
 - **date-fns** - Date utilities
+- **@dnd-kit** - Drag and drop for squad management
+  - @dnd-kit/core
+  - @dnd-kit/sortable
+  - @dnd-kit/utilities
+- **Axios** - HTTP client
+- **class-variance-authority** - Component variants
+- **clsx & tailwind-merge** - Conditional styling
 
 ### Backend
 
@@ -64,17 +179,22 @@ A comprehensive full-stack web application for managing football pitch bookings,
 - **TypeScript** - Type safety
 - **Drizzle ORM** - Type-safe SQL ORM
 - **PostgreSQL** - Database (via Neon Serverless)
-- **JWT** - Authentication
+  - @neondatabase/serverless - Neon database driver
+- **JWT (jsonwebtoken)** - Authentication
 - **bcrypt** - Password hashing
 - **Zod** - Schema validation
 - **Cookie Parser** - Cookie handling
+- **dotenv** - Environment variable management
+- **tsx** - TypeScript execution for development
 
 ### Development Tools
 
-- **Concurrently** - Run multiple commands
+- **Concurrently** - Run multiple commands simultaneously
 - **Drizzle Kit** - Database migrations and studio
 - **ESLint** - Code linting
 - **TypeScript** - Type checking
+- **tsx** - TypeScript execution for scripts
+- **PostCSS & Autoprefixer** - CSS processing
 
 ## 📦 Prerequisites
 
@@ -249,41 +369,157 @@ npm start
 
 ```
 football-forked/
-├── client/                 # Frontend React application
+├── client/                          # Frontend React application
 │   ├── src/
-│   │   ├── components/     # Reusable UI components
-│   │   │   ├── ui/        # Base UI components (shadcn/ui style)
-│   │   │   ├── profile/   # Profile-related components
-│   │   │   └── team/      # Team-related components
-│   │   ├── features/      # Feature-specific modules
-│   │   │   └── games/     # Games hub feature
-│   │   ├── hooks/         # Custom React hooks
-│   │   ├── lib/           # Utilities and helpers
-│   │   │   ├── api.ts     # API client
-│   │   │   └── i18n/      # Internationalization
-│   │   ├── pages/         # Page components
-│   │   ├── store/         # Zustand stores
-│   │   └── App.tsx       # Main app component
+│   │   ├── components/              # Reusable UI components
+│   │   │   ├── ui/                  # Base UI components (shadcn/ui style)
+│   │   │   │   ├── button.tsx
+│   │   │   │   ├── card.tsx
+│   │   │   │   ├── dialog.tsx
+│   │   │   │   ├── dropdown-menu.tsx
+│   │   │   │   ├── input.tsx
+│   │   │   │   ├── select.tsx
+│   │   │   │   ├── tabs.tsx
+│   │   │   │   ├── toast.tsx
+│   │   │   │   └── ...
+│   │   │   ├── admin/               # Admin panel components
+│   │   │   │   ├── AdminLayout.tsx
+│   │   │   │   ├── AdminRoute.tsx
+│   │   │   │   ├── GlobalSearch.tsx
+│   │   │   │   ├── PageHeader.tsx
+│   │   │   │   └── ...
+│   │   │   ├── profile/              # Profile-related components
+│   │   │   ├── team/                 # Team-related components
+│   │   │   │   ├── LogoBuilder.tsx
+│   │   │   │   └── TeamLogoUpload.tsx
+│   │   │   ├── playro/               # PLAYRO LEAGUE branded components
+│   │   │   │   ├── MatchHeader.tsx
+│   │   │   │   ├── ClubTile.tsx
+│   │   │   │   ├── VenueRow.tsx
+│   │   │   │   ├── LeagueRow.tsx
+│   │   │   │   ├── GameRow.tsx
+│   │   │   │   └── ...
+│   │   │   ├── editorial/            # Editorial-style components
+│   │   │   ├── royale/               # Royale game components
+│   │   │   ├── stadium/              # Stadium-related components
+│   │   │   ├── common/               # Common components
+│   │   │   │   └── AppLoader.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── ProtectedRoute.tsx
+│   │   │   ├── PitchBoard.tsx
+│   │   │   ├── FixturesList.tsx
+│   │   │   └── ...
+│   │   ├── features/                 # Feature-specific modules
+│   │   │   └── games/                # Games hub feature
+│   │   │       ├── games/            # Individual game implementations
+│   │   │       │   ├── quiz/
+│   │   │       │   ├── memory/
+│   │   │       │   ├── hangman/
+│   │   │       │   ├── tictactoe/
+│   │   │       │   └── guessPlayer/
+│   │   │       ├── components/       # Shared game components
+│   │   │       ├── data/              # Game data (questions, words)
+│   │   │       ├── pages/             # Game pages
+│   │   │       ├── registry.tsx       # Game registry
+│   │   │       └── types.ts
+│   │   ├── hooks/                    # Custom React hooks
+│   │   │   ├── useDebounce.ts
+│   │   │   ├── useDirection.ts
+│   │   │   ├── useFilters.ts
+│   │   │   └── useGlobalSearch.ts
+│   │   ├── lib/                      # Utilities and helpers
+│   │   │   ├── api.ts                # API client (Axios)
+│   │   │   ├── avatar.ts             # Avatar utilities
+│   │   │   ├── cities.ts             # City data
+│   │   │   ├── formations.ts         # Squad formation data
+│   │   │   ├── timeAgo.ts            # Time formatting
+│   │   │   ├── utils.ts              # General utilities
+│   │   │   └── i18n/                 # Internationalization
+│   │   │       ├── index.ts
+│   │   │       ├── locales/
+│   │   │       │   ├── en.json
+│   │   │       │   └── ar.json
+│   │   │       └── types.ts
+│   │   ├── pages/                    # Page components
+│   │   │   ├── admin/                # Admin pages
+│   │   │   │   ├── AdminOverview.tsx
+│   │   │   │   ├── AdminUsers.tsx
+│   │   │   │   ├── AdminTeams.tsx
+│   │   │   │   ├── AdminLeagues.tsx
+│   │   │   │   ├── AdminPitches.tsx
+│   │   │   │   ├── AdminPosts.tsx
+│   │   │   │   └── AdminSettings.tsx
+│   │   │   ├── Home.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── Register.tsx
+│   │   │   ├── Pitches.tsx
+│   │   │   ├── PitchDetail.tsx
+│   │   │   ├── MyBookings.tsx
+│   │   │   ├── Teams.tsx
+│   │   │   ├── TeamDetail.tsx
+│   │   │   ├── CreateTeam.tsx
+│   │   │   ├── Leagues.tsx
+│   │   │   ├── LeagueDetail.tsx
+│   │   │   ├── CreateLeague.tsx
+│   │   │   ├── Community.tsx
+│   │   │   ├── PostDetail.tsx
+│   │   │   ├── CreatePost.tsx
+│   │   │   └── Profile.tsx
+│   │   ├── store/                    # Zustand stores
+│   │   │   ├── authStore.ts
+│   │   │   ├── localeStore.ts
+│   │   │   └── themeStore.ts
+│   │   ├── auth/                     # Auth utilities
+│   │   │   └── token.ts
+│   │   ├── assets/                    # Static assets
+│   │   │   └── Logo.jpg
+│   │   ├── App.tsx                   # Main app component
+│   │   ├── main.tsx                  # Entry point
+│   │   └── index.css                 # Global styles
 │   ├── index.html
 │   ├── package.json
 │   ├── tailwind.config.js
-│   └── vite.config.ts
+│   ├── vite.config.ts
+│   └── tsconfig.json
 │
-├── server/                 # Backend Express application
+├── server/                            # Backend Express application
 │   ├── src/
-│   │   ├── db/            # Database schema and migrations
-│   │   │   ├── schema.ts  # Drizzle schema definitions
-│   │   │   └── migrate.ts  # Migration runner
-│   │   ├── routes/        # API route handlers
-│   │   ├── middleware/    # Express middleware
-│   │   ├── utils/         # Utility functions
-│   │   └── index.ts       # Server entry point
-│   ├── public/            # Static files (uploads)
-│   ├── drizzle/           # Migration files
-│   └── package.json
+│   │   ├── db/                       # Database schema and migrations
+│   │   │   ├── schema.ts             # Drizzle schema definitions
+│   │   │   ├── index.ts              # Database connection
+│   │   │   ├── migrate.ts            # Migration runner
+│   │   │   ├── seed.ts              # Database seeding
+│   │   │   └── *.ts                  # Migration utilities
+│   │   ├── routes/                   # API route handlers
+│   │   │   ├── auth.ts              # Authentication routes
+│   │   │   ├── pitches.ts           # Pitch routes
+│   │   │   ├── bookings.ts          # Booking routes
+│   │   │   ├── teams.ts             # Team routes
+│   │   │   ├── leagues.ts           # League routes
+│   │   │   ├── matches.ts           # Match routes
+│   │   │   ├── posts.ts             # Post routes
+│   │   │   ├── users.ts             # User routes
+│   │   │   ├── admin.ts             # Admin routes
+│   │   │   └── uploads.ts           # File upload routes
+│   │   ├── middleware/               # Express middleware
+│   │   │   └── auth.ts              # Authentication middleware
+│   │   ├── utils/                    # Utility functions
+│   │   │   ├── jwt.ts               # JWT utilities
+│   │   │   ├── cities.ts            # City utilities
+│   │   │   ├── fixtureGenerator.ts  # League fixture generation
+│   │   │   └── standingsCalculator.ts # Standings calculation
+│   │   └── index.ts                  # Server entry point
+│   ├── public/                       # Static files (uploads)
+│   │   └── uploads/                  # User-uploaded images
+│   ├── drizzle/                      # Migration files
+│   │   ├── meta/                     # Migration metadata
+│   │   └── *.sql                     # SQL migration files
+│   ├── drizzle.config.ts
+│   ├── package.json
+│   └── tsconfig.json
 │
-├── package.json           # Root workspace configuration
-└── README.md             # This file
+├── package.json                      # Root workspace configuration
+└── README.md                         # This file
 ```
 
 ## 🔌 API Endpoints
@@ -338,12 +574,13 @@ football-forked/
 - `GET /api/matches/:id` - Get match details
 - `PATCH /api/matches/:id` - Update match score/status
 
-### Community
+### Community (Posts)
 
-- `GET /api/posts` - List all posts
+- `GET /api/posts` - List all posts (with filters)
 - `GET /api/posts/:id` - Get post details
 - `POST /api/posts` - Create post
 - `DELETE /api/posts/:id` - Delete post
+- Note: Posts support likes and comments (handled via separate tables)
 
 ### Users
 
@@ -353,9 +590,13 @@ football-forked/
 
 ### Admin
 
-- `GET /api/admin/stats` - Get admin statistics
-- `GET /api/admin/users` - List all users
+- `GET /api/admin/stats` - Get admin statistics (users, teams, leagues, pitches, posts)
+- `GET /api/admin/users` - List all users (with filters)
 - `PATCH /api/admin/users/:id` - Update user (Admin only)
+- `GET /api/admin/teams` - List all teams (Admin view)
+- `GET /api/admin/leagues` - List all leagues (Admin view)
+- `GET /api/admin/pitches` - List all pitches (Admin view)
+- `GET /api/admin/posts` - List all posts (Admin view)
 
 ### Uploads
 
@@ -373,11 +614,13 @@ This project follows a comprehensive design system. See [DESIGN_SYSTEM_PROMPT.md
 - **Bilingual**: Full RTL support for Arabic
 - **Dark Mode**: Beautiful dark theme with smooth transitions
 
-### Theme Colors
+### Theme Colors (PLAYRO LEAGUE Brand)
 
-- **Primary**: Blue (`#2563EB` light / `#3B82F6` dark)
+- **Primary Blue**: `#2563EB` (light) / `#3B82F6` (dark) - Vibrant blue from logo
+- **Brand Green**: Bright green accent - Arrow from logo
+- **Brand Orange**: Orange accent - Curved shape from logo
+- **Brand Navy**: Dark navy - Text color
 - **Background**: Soft off-white (light) / Deep gray (dark)
-- **Accent**: Matches primary color
 - **Success/Warning/Error**: Semantic color tokens
 
 ## 🌐 Internationalization
@@ -406,31 +649,47 @@ The application uses JWT (JSON Web Tokens) for authentication:
 
 ## 📱 Responsive Breakpoints
 
-- **Mobile**: < 640px
-- **Tablet**: 640px - 1024px
-- **Desktop**: > 1024px
+- **Mobile**: < 640px (sm)
+- **Tablet**: 640px - 1024px (md, lg)
+- **Desktop**: > 1024px (lg, xl, 2xl)
+
+The admin dashboard features a collapsible sidebar that adapts to screen size, with a mobile overlay menu for smaller screens.
 
 ## 🧪 Development Tips
 
 ### Hot Reload
 
-Both client and server support hot reload in development mode.
+Both client and server support hot reload in development mode:
+
+- Client uses Vite HMR (Hot Module Replacement)
+- Server uses `tsx watch` for automatic restarts
 
 ### Database Changes
 
 1. Modify `server/src/db/schema.ts`
-2. Generate migration: `npm run db:generate`
-3. Review generated migration files
-4. Run migration: `npm run db:migrate`
+2. Generate migration: `cd server && npm run db:generate`
+3. Review generated migration files in `server/drizzle/`
+4. Run migration: `cd server && npm run db:migrate`
+5. (Optional) Update seed data in `server/src/db/seed.ts`
 
 ### Adding New Features
 
-1. Create feature branch
-2. Add database schema changes (if needed)
-3. Create API routes in `server/src/routes/`
-4. Create React components in `client/src/`
-5. Add translations to i18n files
-6. Test thoroughly
+1. Create feature branch: `git checkout -b feature/your-feature`
+2. Add database schema changes (if needed) in `server/src/db/schema.ts`
+3. Generate and run migrations
+4. Create API routes in `server/src/routes/`
+5. Add authentication middleware if needed
+6. Create React components in `client/src/components/` or `client/src/pages/`
+7. Add routes in `client/src/App.tsx`
+8. Add translations to `client/src/lib/i18n/locales/en.json` and `ar.json`
+9. Test thoroughly in both languages and RTL mode
+
+### Adding a New Game
+
+1. Create game component in `client/src/features/games/games/your-game/`
+2. Register game in `client/src/features/games/registry.tsx`
+3. Add translations for game title and description
+4. Add game data files if needed in `client/src/features/games/data/`
 
 ## 🐛 Troubleshooting
 
@@ -462,13 +721,15 @@ If port 3000 or 5000 is already in use:
 
 ### Server
 
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
+- `npm run dev` - Start development server (with watch mode)
+- `npm run build` - Build for production (TypeScript compilation)
 - `npm start` - Run production server
-- `npm run db:generate` - Generate migrations
-- `npm run db:migrate` - Run migrations
-- `npm run db:seed` - Seed database
-- `npm run db:studio` - Open Drizzle Studio
+- `npm run db:generate` - Generate migration files from schema
+- `npm run db:migrate` - Run pending migrations
+- `npm run db:seed` - Seed database with sample data
+- `npm run db:studio` - Open Drizzle Studio (database GUI)
+- `npm run db:fix-enum` - Fix enum migrations (if needed)
+- `npm run db:update-admin` - Update admin role for users
 
 ### Client
 
@@ -493,6 +754,28 @@ If port 3000 or 5000 is already in use:
 - Add translations for new user-facing text
 - Write clear commit messages
 
+## 🗄️ Database Schema
+
+The application uses PostgreSQL with the following main entities:
+
+- **users**: User accounts with roles (USER, ADMIN, PITCH_OWNER)
+- **pitches**: Football pitches with bilingual support
+- **pitch_images**: Pitch image galleries
+- **pitch_working_hours**: Per-day working hours for pitches
+- **blocked_slots**: Blocked time slots for maintenance
+- **bookings**: Pitch bookings with status tracking
+- **teams**: Teams with squad formations
+- **team_members**: Team membership with roles
+- **leagues**: Leagues with status tracking
+- **league_teams**: League-team associations
+- **matches**: Match fixtures
+- **match_results**: Match scores and results
+- **posts**: Community posts
+- **comments**: Post comments
+- **post_likes**: Post likes
+
+All tables include proper indexes, foreign keys, and cascade delete rules.
+
 ## 📄 License
 
 This project is private and proprietary. All rights reserved.
@@ -506,6 +789,7 @@ This project is private and proprietary. All rights reserved.
 - Built with modern web technologies
 - Inspired by the need for better football pitch management
 - Community-driven feature development
+- PLAYRO LEAGUE branding and design system
 
 ---
 

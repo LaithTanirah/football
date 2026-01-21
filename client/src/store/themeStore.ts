@@ -7,9 +7,9 @@ interface ThemeState {
 }
 
 export const useThemeStore = create<ThemeState>((set) => {
-  // Initialize from localStorage or default to light
+  // Initialize from localStorage or default to dark (for neon/cyber theme visibility)
   const stored = localStorage.getItem('theme') as 'light' | 'dark' | null;
-  const initialTheme = stored || 'light';
+  const initialTheme = stored || 'dark';
   
   // Apply theme on init
   if (initialTheme === 'dark') {

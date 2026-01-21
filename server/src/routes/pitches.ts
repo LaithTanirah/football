@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { db } from '../db/index.js';
 import { pitches, pitchImages, pitchWorkingHours, blockedSlots, bookings } from '../db/schema.js';
-import { eq, and, gte, lte, or, like, sql } from 'drizzle-orm';
+import { eq, and, gte, lte, or, like, ilike, sql } from 'drizzle-orm';
 import { validateCity } from '../utils/cities.js';
 
 // Helper to check if a column exists (for graceful degradation before migration)
@@ -92,13 +92,29 @@ pitchesRouter.get('/', async (req, res) => {
     }
 
     if (search) {
-      // Search in legacy fields (bilingual fields will be added after migration)
-      // After migration runs, this will automatically search both languages
+      // Ultra-dynamic search: case-insensitive, partial matches in all fields
+      // Search in both legacy and bilingual fields for maximum coverage
+      // Use ilike for case-insensitive matching (works with English, Arabic, mixed case)
+      const searchPattern = `%${search}%`;
       conditions.push(
         or(
-          like(pitches.name, `%${search}%`),
-          like(pitches.description, `%${search}%`),
-          like(pitches.address, `%${search}%`)
+          // Legacy fields (case-insensitive)
+          ilike(pitches.name, searchPattern),
+          ilike(pitches.description, searchPattern),
+          ilike(pitches.address, searchPattern),
+          ilike(pitches.city, searchPattern),
+          // Bilingual name fields
+          ilike(pitches.nameAr, searchPattern),
+          ilike(pitches.nameEn, searchPattern),
+          // Bilingual description fields
+          ilike(pitches.descriptionAr, searchPattern),
+          ilike(pitches.descriptionEn, searchPattern),
+          // Bilingual address fields
+          ilike(pitches.addressAr, searchPattern),
+          ilike(pitches.addressEn, searchPattern),
+          // Bilingual city fields
+          ilike(pitches.cityAr, searchPattern),
+          ilike(pitches.cityEn, searchPattern)
         )!
       );
     }

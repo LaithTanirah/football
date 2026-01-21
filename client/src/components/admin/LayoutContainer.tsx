@@ -19,7 +19,10 @@ const maxWidthClasses = {
 
 export function LayoutContainer({ children, className, maxWidth = '7xl' }: LayoutContainerProps) {
   return (
-    <div className={cn('mx-auto w-full px-6 py-6 min-w-0', maxWidthClasses[maxWidth], className)}>
+    <div 
+      className={cn('mx-auto w-full px-4 md:px-6 min-w-0', maxWidthClasses[maxWidth], className)}
+      style={{ paddingTop: 0, paddingBottom: 0 }}
+    >
       {children}
     </div>
   );

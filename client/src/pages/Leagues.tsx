@@ -3,20 +3,18 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { leaguesApi } from "@/lib/api";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { ModernLeagueCard } from "@/ui2/components/layout/LeagueCard";
+import { PageHeader } from "@/ui2/components/layout/PageHeader";
+import { FilterBar } from "@/ui2/components/layout/FilterBar";
 import { EmptyState } from "@/components/EmptyState";
-import { PosterHeader } from "@/components/playro/MatchHeader";
-import { LeagueRow } from "@/components/playro/LeagueRow";
 import { CitySelect } from "@/components/CitySelect";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/ui2/components/ui/Select";
 import { useFilters } from "@/hooks/useFilters";
-import { Trophy, Plus, MapPin, Search, Users, X, Eye } from "lucide-react";
+import { Skeleton } from "@/ui2/components/ui/Skeleton";
+import { Card, CardContent } from "@/ui2/components/ui/Card";
+import { Button } from "@/ui2/components/ui/Button";
+import { Trophy, Plus } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
 
 export function Leagues() {
   const { t } = useTranslation();
@@ -48,161 +46,178 @@ export function Leagues() {
     return { draft, active, finished };
   }, [leagues]);
 
-
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-6 page-section">
-      <PosterHeader
+    <div className="container mx-auto max-w-7xl px-4 pt-20 md:pt-24 pb-8 md:pb-12 relative overflow-visible">
+      {/* Page Header */}
+      <PageHeader
         title={t("leagues.title")}
         subtitle={t("leagues.subtitle")}
-        action={
-          user
-            ? {
-                label: t("leagues.createLeague"),
-                href: "/leagues/create",
-                icon: <Plus className="h-4 w-4" />,
-                variant: "orange",
-              }
-            : undefined
-        }
-      />
-
-      {/* Horizontal Status Tabs */}
-      <div className="flex gap-3 mb-8 overflow-x-auto pb-4">
-        <button
-          onClick={() => setStatusFilter("")}
-          className={cn(
-            "px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap border-2",
-            statusFilter === ""
-              ? "bg-primary text-primary-foreground border-primary shadow-md"
-              : "bg-background text-foreground/70 border-border hover:border-primary/50 hover:text-foreground"
-          )}
-        >
-          {t("leagues.allStatus")}
-        </button>
-        <button
-          onClick={() => setStatusFilter("DRAFT")}
-          className={cn(
-            "px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap border-2",
-            statusFilter === "DRAFT"
-              ? "bg-primary text-primary-foreground border-primary shadow-md"
-              : "bg-background text-foreground/70 border-border hover:border-primary/50 hover:text-foreground"
-          )}
-        >
-          {t("leagues.draft")} ({stats.draft})
-        </button>
-        <button
-          onClick={() => setStatusFilter("ACTIVE")}
-          className={cn(
-            "px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap border-2",
-            statusFilter === "ACTIVE"
-              ? "bg-secondary text-secondary-foreground border-secondary shadow-md"
-              : "bg-background text-foreground/70 border-border hover:border-secondary/50 hover:text-foreground"
-          )}
-        >
-          {t("leagues.active")} ({stats.active})
-        </button>
-        <button
-          onClick={() => setStatusFilter("COMPLETED")}
-          className={cn(
-            "px-6 py-3 rounded-lg text-sm font-bold transition-all whitespace-nowrap border-2",
-            statusFilter === "COMPLETED"
-              ? "bg-accent text-accent-foreground border-accent shadow-md"
-              : "bg-background text-foreground/70 border-border hover:border-accent/50 hover:text-foreground"
-          )}
-        >
-          {t("leagues.completed")} ({stats.finished})
-        </button>
-      </div>
-
-      {/* Match Controls Row */}
-      <div className="flex flex-wrap items-center gap-3 mb-6">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder={t("leagues.searchLeagues")}
-            value={filters.search}
-            onChange={(e) => updateFilter("search", e.target.value)}
-            className="pl-9"
-          />
-        </div>
-        <CitySelect
-          value={filters.city}
-          onChange={(value) => updateFilter("city", value)}
-          placeholder={t("leagues.filterByCity")}
-          allowEmpty={true}
-        />
-        <Select
-          value={statusFilter || "__ALL_STATUS__"}
-          onValueChange={(val) => setStatusFilter(val === "__ALL_STATUS__" ? "" : val)}
-        >
-          <SelectTrigger className="w-[160px]">
-            <SelectValue placeholder={t("leagues.allStatus")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="__ALL_STATUS__">{t("leagues.allStatus")}</SelectItem>
-            <SelectItem value="DRAFT">{t("leagues.draft")}</SelectItem>
-            <SelectItem value="ACTIVE">{t("leagues.active")}</SelectItem>
-            <SelectItem value="COMPLETED">{t("leagues.completed")}</SelectItem>
-          </SelectContent>
-        </Select>
-        {hasActiveFilters && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
+      >
+        <div className="flex flex-col gap-6">
+          <FilterBar
+            searchValue={filters.search}
+            onSearchChange={(value) => updateFilter("search", value)}
+            searchPlaceholder={t("leagues.searchLeagues")}
+            hasActiveFilters={hasActiveFilters || !!statusFilter}
+            onClearFilters={() => {
               clearFilters();
               setStatusFilter("");
             }}
-            className="gap-2"
-          >
-            <X className="h-4 w-4" />
-            {t("common.clearFilters")}
-          </Button>
-        )}
-      </div>
+            filters={
+              <>
+                {/* City Filter */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-gray-300 dark:text-gray-300 uppercase tracking-wide">
+                    {t("common.city", "City")}
+                  </label>
+                  <CitySelect
+                    value={filters.city}
+                    onChange={(value) => updateFilter("city", value)}
+                    placeholder={t("common.allCities", "All Cities")}
+                    allowEmpty={true}
+                  />
+                </div>
 
-      {/* League Rows - Table-style layout */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[...Array(5)].map((_, i) => (
-            <Card key={i} className="p-4 md:p-6 border-2 border-border bg-background">
-              <Skeleton className="h-16 w-full" />
-            </Card>
-          ))}
+                {/* Status Filter */}
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-gray-300 dark:text-gray-300 uppercase tracking-wide">
+                    {t("leagues.allStatus", "Status")}
+                  </label>
+                  <Select
+                    value={statusFilter || "__ALL__"}
+                    onValueChange={(val) => setStatusFilter(val === "__ALL__" ? "" : val)}
+                  >
+                    <SelectTrigger className="w-full h-11 glass-neon-subtle border border-cyan-400/20 text-foregroundplaceholder:text-gray-400 focus:border-cyan-400/50">
+                      <SelectValue placeholder={t("leagues.allStatus", "All Status")}>
+                        {statusFilter === "ACTIVE" && t("leagues.active")}
+                        {statusFilter === "DRAFT" && t("leagues.draft")}
+                        {statusFilter === "COMPLETED" && t("leagues.completed")}
+                        {!statusFilter && t("leagues.allStatus", "All Status")}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent className="glass-neon-strong border-cyan-400/30">
+                      <SelectItem value="__ALL__" className="text-foregroundhover:bg-cyan-500/20 focus:bg-cyan-500/20">
+                        {t("leagues.allStatus", "All Status")}
+                      </SelectItem>
+                      <SelectItem value="ACTIVE" className="text-foregroundhover:bg-cyan-500/20 focus:bg-cyan-500/20">
+                        {t("leagues.active")}
+                      </SelectItem>
+                      <SelectItem value="DRAFT" className="text-foregroundhover:bg-cyan-500/20 focus:bg-cyan-500/20">
+                        {t("leagues.draft")}
+                      </SelectItem>
+                      <SelectItem value="COMPLETED" className="text-foregroundhover:bg-cyan-500/20 focus:bg-cyan-500/20">
+                        {t("leagues.completed")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            }
+          />
+          {user && (
+            <div className="flex justify-end">
+              <Link to="/leagues/create">
+                <Button size="lg" className="gap-2 glass-neon-strong border border-cyan-400/30 text-foregroundhover:border-cyan-400/50">
+                  <Plus className="h-5 w-5" />
+                  {t("leagues.createLeague")}
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
-      ) : leagues.length === 0 ? (
-        <EmptyState
-          icon={<Trophy className="h-12 w-12" />}
-          title={t("leagues.noLeaguesFound")}
-          description={t("leagues.noLeaguesDesc")}
-          action={
-            user
-              ? {
-                  label: t("leagues.createLeague"),
-                  href: "/leagues/create",
-                }
-              : {
-                  label: t("leagues.loginToCreate"),
-                  href: "/auth/login",
-                }
-          }
-        />
-      ) : (
-        <div className="space-y-3">
-          {leagues.map((league: any) => (
-            <LeagueRow
-              key={league.id}
-              name={league.name}
-              city={league.city}
-              season={league.season}
-              teamCount={league.teamCount || 0}
-              owner={league.owner?.name}
-              status={league.status}
-              href={`/leagues/${league.id}`}
-            />
-          ))}
+      </PageHeader>
+
+      {/* Stats Cards */}
+      {leagues.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-3 mb-8 relative z-10">
+          <Card className="glass-neon-strong">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground dark:text-gray-300">
+                    {t("leagues.active")}
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">{stats.active}</p>
+                </div>
+                <div className="rounded-2xl bg-green-500/20 p-3">
+                  <Trophy className="h-6 w-6 text-green-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="glass-neon-strong">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground dark:text-gray-300">
+                    {t("leagues.draft")}
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">{stats.draft}</p>
+                </div>
+                <div className="rounded-2xl bg-gray-500/20 p-3">
+                  <Trophy className="h-6 w-6 text-gray-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="glass-neon-strong">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-muted-foreground dark:text-gray-300">
+                    {t("leagues.completed")}
+                  </p>
+                  <p className="text-3xl font-bold text-foreground">{stats.finished}</p>
+                </div>
+                <div className="rounded-2xl bg-blue-500/20 p-3">
+                  <Trophy className="h-6 w-6 text-blue-400" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
+
+      {/* Leagues Grid */}
+      <div className="relative z-10">
+        {isLoading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[...Array(6)].map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-40 w-full" />
+                <div className="p-6 space-y-4">
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : leagues.length === 0 ? (
+          <EmptyState
+            icon={<Trophy className="h-12 w-12" />}
+            title={t("leagues.noLeaguesFound")}
+            description={t("leagues.noLeaguesDesc")}
+            action={
+              user
+                ? {
+                    label: t("leagues.createLeague"),
+                    href: '/leagues/create',
+                  }
+                : {
+                    label: t("leagues.loginToCreate"),
+                    href: '/auth/login',
+                  }
+            }
+          />
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {leagues.map((league: any) => (
+              <ModernLeagueCard key={league.id} league={league} t={t} />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

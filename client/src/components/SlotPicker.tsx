@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { pitchesApi } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useDirection } from "@/hooks/useDirection";
+import { Button } from "@/ui2/components/ui/Button";
+import { Skeleton } from "@/ui2/components/ui/Skeleton";
 import { format, isToday, isTomorrow, addDays } from "date-fns";
 import { Clock, Calendar, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CustomDatePicker } from "./CustomDatePicker";
+import styles from "./SlotPicker.module.css";
 
 interface SlotPickerProps {
   pitchId: string;
@@ -24,7 +27,19 @@ export function SlotPicker({
   onTimeSelect,
 }: SlotPickerProps) {
   const { t } = useTranslation();
+  const { dir } = useDirection();
   const dateString = selectedDate ? format(selectedDate, "yyyy-MM-dd") : null;
+  
+  // Format date for display in input
+  const getFormattedDateDisplay = () => {
+    if (!selectedDate) return "";
+    return format(selectedDate, "MMM d, yyyy");
+  };
+  const chipRailRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [showLeftFade, setShowLeftFade] = useState(false);
+  const [showRightFade, setShowRightFade] = useState(false);
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["availability", pitchId, dateString],
@@ -49,39 +64,111 @@ export function SlotPicker({
     return format(date, "EEE, MMM d");
   };
 
+  const getSelectedDateDisplay = () => {
+    if (!selectedDate) return null;
+    if (isToday(selectedDate)) return t("common.today", "Today");
+    if (isTomorrow(selectedDate)) return t("common.tomorrow", "Tomorrow");
+    return format(selectedDate, "EEEE, MMMM d, yyyy");
+  };
+
+  // Scroll selected chip into view and update fade edges
+  useEffect(() => {
+    const updateFadeEdges = () => {
+      if (!chipRailRef.current) return;
+      const { scrollLeft, scrollWidth, clientWidth } = chipRailRef.current;
+      setShowLeftFade(scrollLeft > 10);
+      setShowRightFade(scrollLeft < scrollWidth - clientWidth - 10);
+    };
+
+    if (selectedDate && chipRailRef.current) {
+      const selectedChip = chipRailRef.current.querySelector('[data-selected="true"]') as HTMLElement;
+      if (selectedChip) {
+        selectedChip.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center',
+        });
+      }
+    }
+
+    updateFadeEdges();
+    const rail = chipRailRef.current;
+    if (rail) {
+      rail.addEventListener('scroll', updateFadeEdges);
+      window.addEventListener('resize', updateFadeEdges);
+      return () => {
+        rail.removeEventListener('scroll', updateFadeEdges);
+        window.removeEventListener('resize', updateFadeEdges);
+      };
+    }
+  }, [selectedDate]);
+
   return (
-    <div className="space-y-6">
-      {/* Quick Date Selection */}
-      <div>
-        <label className="mb-3 block text-sm font-semibold text-foreground">
-          <Calendar className="mr-2 inline h-4 w-4" />
-          {t("pitchDetail.selectDate", "Select Date")}
-        </label>
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div className={styles.bookingCard} dir={dir}>
+      {/* Header Row */}
+      <header className={styles.bookingHeader}>
+        <div className={styles.headerContent}>
+          <h3 className={styles.headerTitle}>
+            {t("pitchDetail.bookThisPitch")}
+          </h3>
+          <p className={styles.headerSubtitle}>
+            {t("pitchDetail.selectDate", "Select Date")}
+          </p>
+          {selectedDate && (
+            <div className={styles.selectedPill}>
+              <Calendar className={styles.selectedPillIcon} />
+              <span>{getSelectedDateDisplay()}</span>
+            </div>
+          )}
+        </div>
+        <div className={styles.headerIcon}>
+          <Calendar className="h-5 w-5 text-cyan-300" />
+        </div>
+      </header>
+
+      {/* Quick Dates Rail */}
+      <div 
+        className={cn(
+          styles.chipRail,
+          !showLeftFade && !showRightFade && styles.chipRailFadeHidden
+        )}
+      >
+        <div
+          ref={chipRailRef}
+          className={styles.chipRailContainer}
+        >
           {quickDates.map((date) => {
             const isSelected = selectedDate && format(selectedDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd");
+            const dateKey = format(date, "yyyy-MM-dd");
+            
             return (
               <button
-                key={format(date, "yyyy-MM-dd")}
+                key={dateKey}
+                data-selected={isSelected}
                 onClick={() => {
                   onDateChange(date);
                   onTimeSelect("");
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onDateChange(date);
+                    onTimeSelect("");
+                  }
+                }}
+                aria-pressed={isSelected}
                 className={cn(
-                  "flex min-w-[100px] flex-col items-center gap-1 rounded-xl border-2 px-4 py-3 transition-all",
-                  "hover:scale-105 hover:shadow-md",
-                  isSelected
-                    ? "border-primary bg-primary/10 text-primary shadow-md"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                  styles.chip,
+                  isSelected && styles.chipActive
                 )}
               >
-                <span className="text-xs font-medium opacity-70">
+                <span className={styles.chipDayName}>
                   {format(date, "EEE")}
                 </span>
-                <span className="text-lg font-bold">
+                <span className={styles.chipDayNumber}>
                   {format(date, "d")}
                 </span>
-                <span className="text-xs font-medium opacity-70">
+                <span className={styles.chipMonth}>
                   {format(date, "MMM")}
                 </span>
               </button>
@@ -90,33 +177,61 @@ export function SlotPicker({
         </div>
       </div>
 
-      {/* Custom Date Input */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-muted-foreground">
-          {t("pitchDetail.orSelectCustomDate", "Or select a custom date")}
+      {/* Divider */}
+      <hr className={styles.divider} />
+
+      {/* Manual Date Input */}
+      <div className={styles.inputGroup}>
+        <label className={styles.inputLabel}>
+          {t("pitchDetail.orSelectCustomDate", "Or pick a custom date")}
         </label>
-        <input
-          type="date"
-          min={format(new Date(), "yyyy-MM-dd")}
-          value={selectedDate ? format(selectedDate, "yyyy-MM-dd") : ""}
-          onChange={(e) => {
-            if (e.target.value) {
-              onDateChange(new Date(e.target.value));
-              onTimeSelect("");
-            }
-          }}
-          className="w-full rounded-xl border border-border bg-background px-4 py-3 text-base transition-all focus:border-primary focus:ring-2 focus:ring-primary/20"
-        />
+        <div className={styles.inputWrap} style={{ position: 'relative' }} ref={inputRef}>
+          {selectedDate && !showCustomPicker && (
+            <span className={styles.inputDisplayValue}>
+              {getFormattedDateDisplay()}
+            </span>
+          )}
+          <input
+            type="text"
+            readOnly
+            value={selectedDate ? getFormattedDateDisplay() : ""}
+            onClick={() => setShowCustomPicker(true)}
+            onFocus={() => setShowCustomPicker(true)}
+            className={styles.input}
+            placeholder={t("pitchDetail.selectDate", "Select Date")}
+          />
+          <button
+            type="button"
+            onClick={() => setShowCustomPicker(!showCustomPicker)}
+            className={styles.inputIconBtn}
+            aria-label="Open calendar"
+          >
+            <Calendar className="h-4 w-4" />
+          </button>
+          {showCustomPicker && inputRef.current && (
+            <CustomDatePicker
+              selectedDate={selectedDate}
+              onDateChange={(date) => {
+                onDateChange(date);
+                onTimeSelect("");
+                setShowCustomPicker(false);
+              }}
+              minDate={new Date()}
+              onClose={() => setShowCustomPicker(false)}
+              anchorElement={inputRef.current}
+            />
+          )}
+        </div>
       </div>
 
       {/* Time Slots */}
       {selectedDate && (
-        <div>
+        <div style={{ marginBlockStart: '24px' }}>
           <label className="mb-3 block text-sm font-semibold text-foreground">
             <Clock className="mr-2 inline h-4 w-4" />
             {t("pitchDetail.selectTime", "Select Time")}
             {selectedDate && (
-              <span className="ml-2 text-xs font-normal text-muted-foreground">
+              <span className="ml-2 text-xs font-normal text-muted-foreground dark:text-gray-300">
                 ({getDateLabel(selectedDate)})
               </span>
             )}
@@ -129,12 +244,12 @@ export function SlotPicker({
               ))}
             </div>
           ) : availableSlots.length === 0 ? (
-            <div className="rounded-xl border-2 border-dashed border-muted bg-muted/30 p-8 text-center">
+            <div className="glass-neon-subtle rounded-xl border border-dashed border-cyan-400/15 p-8 text-center">
               <Clock className="mx-auto mb-3 h-12 w-12 text-muted-foreground/50" />
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-medium text-muted-foreground dark:text-gray-300">
                 {t("pitchDetail.noSlotsAvailable")}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground/70">
+              <p className="mt-1 text-xs text-muted-foreground/70 dark:text-gray-400">
                 {t("pitchDetail.tryAnotherDate", "Try selecting another date")}
               </p>
             </div>
@@ -151,12 +266,12 @@ export function SlotPicker({
                         "group relative flex flex-col items-center justify-center gap-1 rounded-xl border-2 px-3 py-3 transition-all",
                         "hover:scale-105 hover:shadow-lg",
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground shadow-lg ring-2 ring-primary/20"
-                          : "border-border bg-card hover:border-primary/50 hover:bg-accent"
+                          ? "border-cyan-400/25 bg-cyan-500/15 text-foreground shadow-md ring-1 ring-cyan-400/15"
+                          : "border-cyan-400/15 bg-glass-bg hover:border-cyan-400/20 hover:bg-cyan-500/10 hover:shadow-sm text-foreground"
                       )}
                     >
                       {isSelected && (
-                        <CheckCircle2 className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-primary text-primary-foreground" />
+                        <CheckCircle2 className="absolute -right-1 -top-1 h-5 w-5 rounded-full bg-cyan-400 text-foreground shadow-soft" />
                       )}
                       <span className="text-lg font-bold">{slot}</span>
                       <span className="text-xs opacity-70">
@@ -166,7 +281,7 @@ export function SlotPicker({
                   );
                 })}
               </div>
-              <p className="text-center text-xs text-muted-foreground">
+              <p className="text-center text-xs text-muted-foreground dark:text-gray-300">
                 {availableSlots.length} {t("pitchDetail.slotsAvailable", "slots available")}
               </p>
             </div>

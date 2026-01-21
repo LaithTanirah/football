@@ -23,6 +23,8 @@
     "filters": "Filters",
     "sortBy": "Sort by",
     "clearFilters": "Clear filters",
+    "clear": "Clear",
+    "today": "Today",
     "minPrice": "Min price",
     "maxPrice": "Max price",
     "invalidPriceRange": "Min price must be less than or equal to max price",
@@ -49,6 +51,12 @@
     "subtitle": "Book pitches, create teams, and compete in leagues across Jordan",
     "brandHeadline": "Book pitches, play with your team, compete easily",
     "brandSubtitle": "Book pitches, play with your team, compete easily",
+    "welcomeBadge": "Welcome to PLAYRO LEAGUE",
+    "stats": {
+      "pitches": "Pitches",
+      "teams": "Teams",
+      "leagues": "Leagues"
+    },
     "browsePitches": "Browse Pitches",
     "findTeams": "Find Teams",
     "joinLeagues": "Join Leagues",
@@ -57,10 +65,37 @@
     "createTeams": "Create Teams",
     "createTeamsDesc": "Form your team and invite players to join your squad",
     "joinLeagues": "Join Leagues",
-    "joinLeaguesDesc": "Compete in competitive leagues and track your standings"
+    "joinLeaguesDesc": "Compete in competitive leagues and track your standings",
+    "featuresTitle": "Everything You Need",
+    "featuresDesc": "Powerful features to enhance your football experience",
+    "features": {
+      "booking": {
+        "bullets": {
+          "easy": "Easy Booking",
+          "realtime": "Real-time Availability",
+          "instant": "Instant Confirmation"
+        }
+      },
+      "teams": {
+        "bullets": {
+          "management": "Team Management",
+          "profiles": "Player Profiles",
+          "history": "Match History"
+        }
+      },
+      "leagues": {
+        "bullets": {
+          "competitive": "Competitive Play",
+          "leaderboards": "Leaderboards",
+          "rewards": "Rewards"
+        }
+      }
+    },
+    "getStarted": "Get Started"
   },
   "pitches": {
     "title": "Football Pitches",
+    "subtitle": "Discover the best football pitches and book your perfect match",
     "searchPlaceholder": "Search...",
     "cityPlaceholder": "City",
     "allTypes": "All Types",
@@ -236,7 +271,7 @@
     "reset": "Reset",
     "randomize": "Randomize",
     "textSection": "Text",
-    "subtitle": "Subtitle",
+    "logoSubtitleLabel": "Subtitle",
     "optional": "Optional",
     "subtitlePlaceholder": "Optional subtitle",
     "fontFamily": "Font Family",
@@ -383,7 +418,9 @@
     "invalidCredentials": "Invalid credentials",
     "logoutSuccess": "Logged out successfully",
     "registerSuccess": "Account created successfully",
-    "registerError": "Failed to create account"
+    "registerError": "Failed to create account",
+    "welcomeBack": "Welcome back",
+    "createAccount": "Create your account"
   },
   "admin": {
     "title": "Admin Panel",
@@ -412,6 +449,12 @@
     "accessDeniedDesc": "You don't have permission to access this page. Only administrators can access the admin panel.",
     "backToHome": "Back to Home",
     "backToSite": "Back to Site",
+    "error": {
+      "title": "Something Went Wrong",
+      "description": "An unexpected error occurred while loading the admin panel. Please try reloading the page or contact support if the issue persists.",
+      "reload": "Reload Page"
+    },
+    "refresh": "Refresh User Data",
     "nav": {
       "overview": "Overview",
       "users": "Users",
@@ -471,7 +514,7 @@
       "deleteConfirmTitle": "Confirm Delete",
       "deleteConfirm": "Are you sure you want to delete this user? This action cannot be undone.",
       "deleteSuccess": "User deleted successfully",
-      "deleteError": "Failed to delete user",
+      "deleteError": "Unable to delete user. Please try again or contact support if the issue persists.",
       "editTitle": "Edit User",
       "editSubtitle": "Update user information",
       "updateSuccess": "User updated successfully",
@@ -502,7 +545,7 @@
       "deleteConfirmTitle": "Confirm Delete",
       "deleteConfirm": "Are you sure you want to delete this team? This action cannot be undone.",
       "deleteSuccess": "Team deleted successfully",
-      "deleteError": "Failed to delete team",
+      "deleteError": "Unable to delete team. The team may be part of active leagues or have pending bookings. Please remove the team from all leagues first or contact support if the issue persists.",
       "updateSuccess": "Team updated successfully",
       "updateError": "Failed to update team"
     },
@@ -542,7 +585,7 @@
       "deleteConfirmTitle": "Confirm Delete",
       "deleteConfirm": "Are you sure you want to delete this league? This action cannot be undone.",
       "deleteSuccess": "League deleted successfully",
-      "deleteError": "Failed to delete league",
+      "deleteError": "Unable to delete league. Please try again or contact support if the issue persists.",
       "editTitle": "Edit League",
       "editSubtitle": "Update league information",
       "updateSuccess": "League updated successfully",
@@ -573,8 +616,12 @@
       "deleteConfirmTitle": "Confirm Delete",
       "deleteConfirm": "Are you sure you want to delete this pitch? This action cannot be undone.",
       "deleteSuccess": "Pitch deleted successfully",
-      "deleteError": "Failed to delete pitch",
-      "editNotImplemented": "Pitch editing will be available soon"
+      "deleteError": "Unable to delete pitch. Please try again or contact support if the issue persists.",
+      "editTitle": "Edit Pitch",
+      "editSubtitle": "Update pitch information",
+      "updateSuccess": "Pitch updated successfully",
+      "updateError": "Failed to update pitch",
+      "fillRequiredFields": "Please fill all required fields"
     },
     "posts": {
       "title": "Posts Management",
@@ -595,7 +642,7 @@
       "deleteConfirmTitle": "Confirm Delete",
       "deleteConfirm": "Are you sure you want to delete this post? This action cannot be undone.",
       "deleteSuccess": "Post deleted successfully",
-      "deleteError": "Failed to delete post",
+      "deleteError": "Unable to delete post. Please try again or contact support if the issue persists.",
       "editTitle": "Edit Post",
       "editSubtitle": "Update post content",
       "updateSuccess": "Post updated successfully",
@@ -714,7 +761,7 @@
       "deletedSuccess": "Post deleted successfully",
       "createError": "Failed to create post",
       "updateError": "Failed to update post",
-      "deleteError": "Failed to delete post",
+      "deleteError": "Unable to delete post. Please try again or contact support if the issue persists.",
       "likeError": "Failed to like post",
       "loginRequired": "Login required",
       "loginRequiredDesc": "Please log in to interact with posts"
@@ -729,7 +776,7 @@
       "createdSuccess": "Comment posted successfully",
       "deletedSuccess": "Comment deleted successfully",
       "createError": "Failed to post comment",
-      "deleteError": "Failed to delete comment",
+      "deleteError": "Unable to delete comment. Please try again or contact support if the issue persists.",
       "noComments": "No comments yet",
       "noCommentsDesc": "Be the first to comment!"
     },
@@ -739,7 +786,9 @@
       "popularPitches": "Popular Pitches",
       "quickFilters": "Quick Filters",
       "allCities": "All Cities",
-      "myCity": "My City"
+      "myCity": "My City",
+      "newLeagues": "New Leagues",
+      "comingSoon": "Coming soon"
     }
   },
   "profile": {

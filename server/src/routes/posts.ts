@@ -39,7 +39,20 @@ const createPostSchema = z.object({
     (val) => (val === '' ? undefined : val),
     z.string().url().optional()
   ),
-});
+}).refine(
+  (data) => {
+    // If mediaType is 'image', mediaUrl must be provided and valid
+    if (data.mediaType === 'image') {
+      return data.mediaUrl !== undefined && data.mediaUrl !== null && data.mediaUrl.trim() !== '';
+    }
+    // If mediaType is 'none', mediaUrl should be undefined or empty
+    return true;
+  },
+  {
+    message: 'mediaUrl is required when mediaType is "image"',
+    path: ['mediaUrl'],
+  }
+);
 
 const updatePostSchema = z.object({
   content: z.string().min(1).max(5000).optional(),

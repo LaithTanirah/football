@@ -148,7 +148,7 @@ export function ProfileHeaderCard({ user, isViewingOtherUser = false }: ProfileH
                     "gap-1",
                     isViewingOtherUser && "border-brand-cyan/40 bg-brand-cyan/10"
                   )}>
-                    <MapPin className="h-3 w-3" />
+                    <MapPin className="h-3 w-3" style={{ color: '#22d3ee', fill: 'currentColor' }} />
                     {cityDisplay}
                   </Badge>
                 )}
@@ -165,7 +165,7 @@ export function ProfileHeaderCard({ user, isViewingOtherUser = false }: ProfileH
                 onClick={() => setEditModalOpen(true)}
                 className="gap-2"
               >
-                <Edit className="h-4 w-4" />
+                <Edit className="h-4 w-4" style={{ color: '#22d3ee', fill: 'currentColor' }} />
                 {t("profile.editProfile")}
               </Button>
               <Button
@@ -174,7 +174,7 @@ export function ProfileHeaderCard({ user, isViewingOtherUser = false }: ProfileH
                 onClick={handleLogout}
                 className="text-destructive hover:text-destructive"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4" style={{ color: '#f87171', fill: 'currentColor' }} />
               </Button>
             </div>
           )}

@@ -116,33 +116,33 @@ export function FixturesList({ matches, leagueId, isLeagueOwner, userTeamIds }: 
           .sort(([a], [b]) => parseInt(a) - parseInt(b))
           .map(([round, roundMatches]) => (
             <div key={round}>
-              <h3 className="mb-4 text-lg font-semibold">Round {round}</h3>
+              <h3 className="mb-4 text-lg font-semibold text-foreground">Round {round}</h3>
               <div className="grid gap-4 md:grid-cols-2">
                 {roundMatches.map((match) => (
-                  <Card key={match.id} className="card-elevated">
+                  <Card key={match.id} className="glass-neon-strong rounded-2xl border-2 border-cyan-400/20">
                     <CardHeader>
-                      <CardTitle className="text-base">
+                      <CardTitle className="text-base text-foreground">
                         {match.homeTeam?.name || 'TBD'} vs {match.awayTeam?.name || 'TBD'}
                       </CardTitle>
-                      <CardDescription className="flex items-center gap-4">
+                      <CardDescription className="flex items-center gap-4 text-gray-300 dark:text-gray-300">
                         {match.scheduledDate && (
                           <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            {format(new Date(match.scheduledDate), 'MMM dd, yyyy')}
+                            <Calendar className="h-3 w-3 text-cyan-400" />
+                            <span className="text-foreground">{format(new Date(match.scheduledDate), 'MMM dd, yyyy')}</span>
                           </span>
                         )}
-                        {match.scheduledTime && <span>{match.scheduledTime}</span>}
+                        {match.scheduledTime && <span className="text-foreground">{match.scheduledTime}</span>}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       {match.result ? (
-                        <div className="flex items-center justify-center gap-4 text-2xl font-bold">
+                        <div className="flex items-center justify-center gap-4 text-2xl font-bold text-foreground">
                           <span>{match.result.homeScore}</span>
-                          <span className="text-muted-foreground">-</span>
+                          <span className="text-gray-400 dark:text-gray-400">-</span>
                           <span>{match.result.awayScore}</span>
                         </div>
                       ) : (
-                        <div className="text-center text-muted-foreground">Not played</div>
+                        <div className="text-center text-gray-400 dark:text-gray-400">Not played</div>
                       )}
                       <div className="mt-4 flex items-center justify-between">
                         <Badge variant={match.status === 'PLAYED' ? 'success' : 'outline'}>

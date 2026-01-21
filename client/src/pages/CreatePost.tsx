@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { postsApi, pitchesApi, teamsApi, uploadsApi } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/ui2/components/ui/use-toast';
+import { Button } from '@/ui2/components/ui/Button';
+import { Input } from '@/ui2/components/ui/Input';
+import { Label } from '@/ui2/components/ui/Label';
+import { Textarea } from '@/ui2/components/ui/Textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui2/components/ui/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { CitySelect } from '@/components/CitySelect';
 import { Upload, X, Image as ImageIcon } from 'lucide-react';
@@ -68,13 +68,23 @@ export function CreatePost() {
       }));
       toast({
         title: t('common.success'),
-        description: t('community.post.createdSuccess'),
+        description: 'Image uploaded successfully',
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      // Reset image state on upload failure
+      setImagePreview(null);
+      setFormData(prev => ({
+        ...prev,
+        mediaType: 'none',
+        mediaUrl: '',
+      }));
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       toast({
         title: t('common.error'),
-        description: t('community.post.createError'),
+        description: error.response?.data?.message || 'Failed to upload image. Please try again.',
         variant: 'destructive',
       });
     },
@@ -193,6 +203,26 @@ export function CreatePost() {
       return;
     }
 
+    // Validate that if mediaType is 'image', mediaUrl must be present
+    if (formData.mediaType === 'image' && (!formData.mediaUrl || !formData.mediaUrl.trim())) {
+      toast({
+        title: t('common.error'),
+        description: 'Please wait for image upload to complete or remove the image',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // If image preview exists but upload hasn't completed, wait
+    if (imagePreview && !formData.mediaUrl && uploadImageMutation.isPending) {
+      toast({
+        title: t('common.error'),
+        description: 'Please wait for image upload to complete',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     // Prepare payload - ensure empty strings become undefined
     const payload: any = {
       content: formData.content.trim(),
@@ -216,9 +246,20 @@ export function CreatePost() {
       payload.teamId = formData.teamId;
     }
 
-    // Only include mediaUrl if it has a value
-    if (formData.mediaUrl && formData.mediaUrl.trim()) {
+    // If mediaType is 'image', mediaUrl must be included
+    if (formData.mediaType === 'image') {
+      if (!formData.mediaUrl || !formData.mediaUrl.trim()) {
+        toast({
+          title: t('common.error'),
+          description: 'Image URL is required when media type is image',
+          variant: 'destructive',
+        });
+        return;
+      }
       payload.mediaUrl = formData.mediaUrl.trim();
+    } else {
+      // If mediaType is 'none', don't include mediaUrl
+      payload.mediaType = 'none';
     }
 
     console.log('Creating post with payload:', payload);
@@ -235,10 +276,10 @@ export function CreatePost() {
         className="mb-6"
       />
 
-      <Card>
+      <Card className="glass-neon-strong rounded-3xl shadow-md">
         <CardHeader>
-          <CardTitle className="text-section-title">{t('community.createPost')}</CardTitle>
-          <CardDescription className="text-caption">{t('community.subtitle')}</CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground">{t('community.createPost')}</CardTitle>
+          <CardDescription className="text-muted-foreground dark:text-gray-300">{t('community.subtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -254,7 +295,7 @@ export function CreatePost() {
                 maxLength={5000}
                 required
               />
-              <div className="text-sm text-text-muted text-right">
+              <div className="text-sm text-muted-foreground dark:text-gray-300 text-right">
                 {t('community.post.charCount', { count: formData.content.length })}
               </div>
             </div>
@@ -327,10 +368,10 @@ export function CreatePost() {
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   className={cn(
-                    'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
+                    'border border-dashed rounded-2xl glass-neon-subtle border-cyan-400/15 p-8 text-center cursor-pointer transition-colors',
                     isDragging
-                      ? 'border-brand-blue bg-brand-blue/5'
-                      : 'border-border-soft hover:border-brand-blue/50'
+                      ? 'border-cyan-400/20 bg-cyan-500/5'
+                      : 'border-cyan-400/12 hover:border-cyan-400/18'
                   )}
                   onClick={() => fileInputRef.current?.click()}
                 >
@@ -354,7 +395,7 @@ export function CreatePost() {
                   <img
                     src={imagePreview || formData.mediaUrl || ''}
                     alt="Preview"
-                    className="w-full h-auto max-h-96 rounded-lg object-cover"
+                    className="w-full h-auto max-h-96 rounded-2xl object-cover"
                   />
                   <Button
                     type="button"
@@ -367,8 +408,8 @@ export function CreatePost() {
                     <X className="h-4 w-4" />
                   </Button>
                   {uploadImageMutation.isPending && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg">
-                      <p className="text-white">{t('common.loading')}</p>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-2xl backdrop-blur-sm">
+                      <p className="text-foreground">{t('common.loading')}</p>
                     </div>
                   )}
                 </div>
@@ -376,7 +417,7 @@ export function CreatePost() {
             </div>
 
             {/* Submit */}
-            <div className="flex gap-4 justify-end pt-6 border-t-2 border-border-soft">
+            <div className="flex gap-4 justify-end pt-6 border-t border-cyan-400/10">
               <Button
                 type="button"
                 variant="outline"
@@ -388,7 +429,7 @@ export function CreatePost() {
               <Button
                 type="submit"
                 disabled={createPostMutation.isPending || uploadImageMutation.isPending}
-                className="font-bold"
+                className="font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-foreground shadow-soft hover:shadow-glow"
               >
                 {createPostMutation.isPending
                   ? t('community.post.creating')

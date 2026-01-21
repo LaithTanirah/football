@@ -4,8 +4,8 @@ import { useAuthStore } from "@/store/authStore";
 import { useLocation } from "react-router-dom";
 import { usersApi, bookingsApi, teamsApi, leaguesApi } from "@/lib/api";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/ui2/components/ui/Skeleton";
+import { Card } from "@/ui2/components/ui/Card";
 import { ProfileHeaderCard } from "@/components/profile/ProfileHeaderCard";
 import { ProfileStats } from "@/components/profile/ProfileStats";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
@@ -83,7 +83,7 @@ export function Profile() {
 
   if (!targetUserId) {
     return (
-      <div className="container mx-auto max-w-[1200px] px-4 py-6">
+      <div className="container mx-auto max-w-[1200px] px-4 pt-24 pb-6 relative">
         <div className="text-center py-12">
           <p className="text-muted-foreground">{t("profile.loading")}</p>
         </div>
@@ -93,11 +93,11 @@ export function Profile() {
 
   if (profileLoading) {
     return (
-      <div className="container mx-auto max-w-[1200px] px-4 py-6 page-section">
-        <Breadcrumbs items={[{ label: t("profile.title") }]} className="mb-6" />
+      <div className="container mx-auto max-w-[1200px] px-4 pt-24 pb-6 relative">
+        <Breadcrumbs items={[{ label: t("profile.title") }]} className="mb-3" />
         <div className="space-y-6">
           <Card className="p-6">
-            <Skeleton className="h-32 w-full" />
+            <Skeleton className="h-32 w-full rounded-xl" />
           </Card>
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
@@ -120,8 +120,9 @@ export function Profile() {
   }
 
   return (
-    <div className="container mx-auto max-w-[1200px] px-4 py-6 page-section">
-      <Breadcrumbs items={[{ label: t("profile.title") }]} className="mb-6" />
+    <div className="container mx-auto max-w-[1200px] px-4 pt-24 pb-6 relative">
+      <div className="relative z-10">
+        <Breadcrumbs items={[{ label: t("profile.title") }]} className="mb-3" />
 
       {/* Header Card - Enhanced for other users */}
       <ProfileHeaderCard user={profile || currentUser} isViewingOtherUser={isViewingOtherUser} />
@@ -132,17 +133,17 @@ export function Profile() {
         <div className="lg:col-span-2 space-y-6">
           {/* About/Bio Card - Enhanced styling */}
           <Card className={cn(
-            "p-6 card-elevated",
-            isViewingOtherUser && "border-2 border-brand-blue/20 bg-gradient-to-br from-bg-surface to-brand-blue/5"
+            "p-6 glass-neon-strong rounded-2xl",
+            isViewingOtherUser && "bg-gradient-to-br from-cyan-500/10 to-cyan-500/5 shadow-md"
           )}>
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-1 w-1 rounded-full bg-brand-blue" />
-              <h2 className="text-section-title font-bold text-text-primary">{t("profile.about")}</h2>
+              <div className="h-1 w-1 rounded-full bg-cyan-400" />
+              <h2 className="text-xl font-bold text-foreground">{t("profile.about")}</h2>
             </div>
             {profile?.bio ? (
-              <p className="text-body text-text-muted whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
+              <p className="text-base text-muted-foreground dark:text-gray-300 whitespace-pre-wrap leading-relaxed">{profile.bio}</p>
             ) : (
-              <p className="text-body text-text-muted italic">{t("profile.noBio")}</p>
+              <p className="text-base text-muted-foreground dark:text-gray-300 italic">{t("profile.noBio")}</p>
             )}
           </Card>
 
@@ -153,25 +154,25 @@ export function Profile() {
 
           {/* Summary Stats for Other Users */}
           {isViewingOtherUser && (
-            <Card className="p-6 card-elevated border-2 border-brand-cyan/20 bg-gradient-to-br from-bg-surface to-brand-cyan/5">
+            <Card className="p-6 glass-neon-strong rounded-2xl bg-gradient-to-br from-cyan-500/10 to-cyan-500/5">
               <div className="flex items-center gap-3 mb-4">
-                <div className="h-1 w-1 rounded-full bg-brand-cyan" />
-                <h2 className="text-section-title font-bold text-text-primary">{t("profile.activity") || "Activity Summary"}</h2>
+                <div className="h-1 w-1 rounded-full bg-cyan-400" />
+                <h2 className="text-xl font-bold text-foreground">{t("profile.activity") || "Activity Summary"}</h2>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-bg-surface border border-border-soft">
+                <div className="p-4 rounded-2xl glass-neon-subtle">
                   <div className="flex items-center gap-2 mb-2">
-                    <Users className="h-5 w-5 text-brand-blue" />
-                    <span className="text-sm font-medium text-text-muted">{t("profile.teamsCount")}</span>
+                    <Users className="h-5 w-5" style={{ color: '#22d3ee', fill: 'currentColor' }} />
+                    <span className="text-sm font-medium text-muted-foreground dark:text-gray-300">{t("profile.teamsCount")}</span>
                   </div>
-                  <p className="text-2xl font-bold text-text-primary">{teams.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{teams.length}</p>
                 </div>
-                <div className="p-4 rounded-lg bg-bg-surface border border-border-soft">
+                <div className="p-4 rounded-2xl glass-neon-subtle">
                   <div className="flex items-center gap-2 mb-2">
-                    <Trophy className="h-5 w-5 text-brand-orange" />
-                    <span className="text-sm font-medium text-text-muted">{t("profile.leaguesCount")}</span>
+                    <Trophy className="h-5 w-5" style={{ color: '#c084fc', fill: 'currentColor' }} />
+                    <span className="text-sm font-medium text-muted-foreground dark:text-gray-300">{t("profile.leaguesCount")}</span>
                   </div>
-                  <p className="text-2xl font-bold text-text-primary">{leagues.length}</p>
+                  <p className="text-2xl font-bold text-foreground">{leagues.length}</p>
                 </div>
               </div>
             </Card>
@@ -193,25 +194,25 @@ export function Profile() {
         <div className="space-y-6">
           {!isViewingOtherUser && <ProfileSidebarActions />}
           {isViewingOtherUser && (
-            <Card className="p-6 card-elevated border border-border-soft">
-              <h3 className="text-lg font-semibold mb-4 text-text-primary">{t("profile.quickInfo") || "Quick Info"}</h3>
+            <Card className="p-6 glass-neon-strong rounded-2xl">
+              <h3 className="text-lg font-semibold mb-4 text-foreground">{t("profile.quickInfo") || "Quick Info"}</h3>
               <div className="space-y-3">
                 {profile?.email && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Mail className="h-4 w-4 text-text-muted" />
-                    <span className="text-text-muted">{profile.email}</span>
+                    <Mail className="h-4 w-4 text-muted-foreground dark:text-gray-300" />
+                    <span className="text-muted-foreground dark:text-gray-300">{profile.email}</span>
                   </div>
                 )}
                 {profile?.city && (
                   <div className="flex items-center gap-2 text-sm">
-                    <MapPin className="h-4 w-4 text-text-muted" />
-                    <span className="text-text-muted">{getCityDisplayName(profile.city, locale)}</span>
+                    <MapPin className="h-4 w-4 text-muted-foreground dark:text-gray-300" />
+                    <span className="text-muted-foreground dark:text-gray-300">{getCityDisplayName(profile.city, locale)}</span>
                   </div>
                 )}
                 {profile?.createdAt && (
                   <div className="flex items-center gap-2 text-sm">
-                    <Calendar className="h-4 w-4 text-text-muted" />
-                    <span className="text-text-muted">
+                    <Calendar className="h-4 w-4 text-muted-foreground dark:text-gray-300" />
+                    <span className="text-muted-foreground dark:text-gray-300">
                       {t("profile.memberSince") || "Member since"} {new Date(profile.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -220,6 +221,7 @@ export function Profile() {
             </Card>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

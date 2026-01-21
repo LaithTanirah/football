@@ -209,7 +209,15 @@ export function TeamLogoUpload({ value, onChange, teamName = '' }: TeamLogoUploa
               type="button"
               variant="destructive"
               size="icon"
-              className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+              style={{
+                position: 'absolute',
+                top: '-8px',
+                [isRTL ? 'left' : 'right']: '-8px',
+                width: '24px',
+                height: '24px',
+                zIndex: 10,
+              }}
+              className="rounded-full"
               onClick={handleRemove}
               aria-label={t('teams.removePlayer')}
             >

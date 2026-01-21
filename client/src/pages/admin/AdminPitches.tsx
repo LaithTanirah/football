@@ -7,7 +7,7 @@ import { LayoutContainer } from '@/components/admin/LayoutContainer';
 import { DataTableToolbar } from '@/components/admin/DataTableToolbar';
 import { DataTable } from '@/components/admin/DataTable';
 import { RowActionsMenu } from '@/components/admin/RowActionsMenu';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui2/components/ui/Button';
 import { Plus, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -17,15 +17,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from '@/ui2/components/ui/Dialog';
+import { Input } from '@/ui2/components/ui/Input';
+import { Label } from '@/ui2/components/ui/Label';
+import { Textarea } from '@/ui2/components/ui/Textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
 import { CitySelect } from '@/components/CitySelect';
 import { pitchesApi, adminApi } from '@/lib/api';
 import { useDirection } from '@/hooks/useDirection';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/ui2/components/ui/use-toast';
 import { JORDAN_CITIES, getCityDisplayName } from '@/lib/cities';
 import { useLocaleStore } from '@/store/localeStore';
 
@@ -66,6 +66,9 @@ export function AdminPitches() {
         description: t('admin.pitches.deleteSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ['admin', 'pitches'] });
+      queryClient.invalidateQueries({ queryKey: ['pitches'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      queryClient.refetchQueries({ queryKey: ['admin', 'pitches'] });
       setDeleteConfirmOpen(false);
       setPitchToDelete(null);
     },
@@ -243,7 +246,7 @@ export function AdminPitches() {
         <DataTable
           columns={columns}
           data={pitches}
-          isLoading={isLoading}
+          isLoading={isLoading || deleteMutation.isPending}
           emptyMessage={t('admin.pitches.empty')}
           emptyDescription={t('admin.pitches.emptyDesc')}
           actions={(row) => (
@@ -382,7 +385,15 @@ export function AdminPitches() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent>
+        <DialogContent className="relative">
+          {deleteMutation.isPending && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+              </div>
+            </div>
+          )}
           <DialogHeader>
             <DialogTitle>{t('admin.pitches.deleteConfirmTitle')}</DialogTitle>
             <DialogDescription>

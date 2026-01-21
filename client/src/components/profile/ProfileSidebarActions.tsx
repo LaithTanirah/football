@@ -19,19 +19,19 @@ export function ProfileSidebarActions() {
         <div className="space-y-3">
           <Link to="/teams/create" className="block">
             <Button variant="outline" className="w-full justify-start gap-2">
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" style={{ color: '#22d3ee', fill: 'currentColor' }} />
               {t("profile.createTeam")}
             </Button>
           </Link>
           <Link to="/leagues" className="block">
             <Button variant="outline" className="w-full justify-start gap-2">
-              <Trophy className="h-4 w-4" />
+              <Trophy className="h-4 w-4" style={{ color: '#facc15', fill: 'currentColor' }} />
               {t("profile.joinLeague")}
             </Button>
           </Link>
           <Link to="/pitches" className="block">
             <Button variant="outline" className="w-full justify-start gap-2">
-              <Search className="h-4 w-4" />
+              <Search className="h-4 w-4" style={{ color: '#c084fc', fill: 'currentColor' }} />
               {t("profile.browsePitches")}
             </Button>
           </Link>
@@ -60,12 +60,12 @@ export function ProfileSidebarActions() {
             >
               {theme === "dark" ? (
                 <>
-                  <Moon className="h-3 w-3" />
+                  <Moon className="h-3 w-3" style={{ color: '#22d3ee', fill: 'currentColor' }} />
                   {t("profile.dark")}
                 </>
               ) : (
                 <>
-                  <Sun className="h-3 w-3" />
+                  <Sun className="h-3 w-3" style={{ color: '#facc15', fill: 'currentColor' }} />
                   {t("profile.light")}
                 </>
               )}

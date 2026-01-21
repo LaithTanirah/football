@@ -1,23 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { leaguesApi, matchesApi, teamsApi } from "@/lib/api";
-import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/ui2/components/ui/use-toast";
+import { Button } from "@/ui2/components/ui/Button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { StandingsTable } from "@/components/StandingsTable";
-import { FixturesList } from "@/components/FixturesList";
+} from "@/ui2/components/ui/Card";
+import { Skeleton } from "@/ui2/components/ui/Skeleton";
 import {
   Dialog,
   DialogContent,
@@ -25,25 +17,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/ui2/components/ui/Dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/ui2/components/ui/Select";
 import { useAuthStore } from "@/store/authStore";
-import {
-  Trophy,
-  MapPin,
-  Users,
-  Calendar,
-  Lock,
-  Play,
-  Plus,
-} from "lucide-react";
-import { format } from "date-fns";
+import { LeagueDetailsUI } from "@/ui/league-details";
 
 export function LeagueDetail() {
   const { t } = useTranslation();
@@ -162,13 +145,13 @@ export function LeagueDetail() {
 
   if (leagueLoading) {
     return (
-      <div className="container mx-auto max-w-7xl px-4 py-8">
+      <div className="container mx-auto max-w-7xl px-4 pt-20 md:pt-24 pb-8 md:pb-12">
         <Skeleton className="mb-6 h-6 w-48" />
         <Card>
-          <CardHeader>
+          <CardContent>
             <Skeleton className="h-8 w-64" />
             <Skeleton className="mt-2 h-4 w-32" />
-          </CardHeader>
+          </CardContent>
         </Card>
       </div>
     );
@@ -176,11 +159,14 @@ export function LeagueDetail() {
 
   if (!league) {
     return (
-      <div className="container mx-auto max-w-7xl px-4 py-8">
-        <Card>
+      <div className="container mx-auto max-w-7xl px-4 pt-20 md:pt-24 pb-8 md:pb-12">
+        <Card className="glass-neon-strong rounded-3xl border-2 border-cyan-400/20">
           <CardContent className="py-12 text-center">
-            <p className="text-muted-foreground">League not found</p>
-            <Button onClick={() => navigate("/leagues")} className="mt-4">
+            <p className="text-gray-300 dark:text-gray-300 mb-4">League not found</p>
+            <Button 
+              onClick={() => navigate("/leagues")} 
+              className="glass-neon-subtle border border-cyan-400/30 text-foregroundhover:border-cyan-400/50"
+            >
               Back to Leagues
             </Button>
           </CardContent>
@@ -189,289 +175,53 @@ export function LeagueDetail() {
     );
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "DRAFT":
-        return <Badge variant="outline">{t("leagues.draft")}</Badge>;
-      case "ACTIVE":
-        return <Badge variant="success">{t("leagues.active")}</Badge>;
-      case "COMPLETED":
-        return <Badge variant="secondary">{t("leagues.completed")}</Badge>;
-      default:
-        return null;
-    }
-  };
-
   const hasSchedule = matches.length > 0;
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8 page-section">
-      <Breadcrumbs
-        items={[
-          { label: t("nav.leagues"), href: "/leagues" },
-          { label: league.name },
-        ]}
-        className="mb-6"
+    <>
+      <LeagueDetailsUI
+        league={league}
+        standings={standings}
+        matches={matches}
+        hasSchedule={hasSchedule}
+        isLeagueOwner={isLeagueOwner || false}
+        userTeamIds={userTeamIds}
+        canLock={(league.teams?.length || 0) >= 2}
+        onAddTeam={() => setAddTeamDialogOpen(true)}
+        onLockLeague={() => lockMutation.mutate()}
+        onGenerateSchedule={() => generateScheduleMutation.mutate()}
+        isGenerating={generateScheduleMutation.isPending}
+        breadcrumbLabel={t("nav.leagues")}
+        overviewLabel={t("leagueDetail.overview")}
+        teamsLabel={t("leagueDetail.teams")}
+        fixturesLabel={t("leagueDetail.fixtures")}
+        standingsLabel={t("leagueDetail.standings")}
+        resultsLabel={t("leagueDetail.results")}
+        statusLabel={t(`leagues.${league.status.toLowerCase()}`)}
+        seasonLabel={t("leagues.season")}
+        teamsRegisteredLabel={t("leagueDetail.teamsRegistered")}
+        ownerLabel={t("leagueDetail.owner") || "Owner"}
+        addTeamLabel={t("leagueDetail.addTeam")}
+        lockLeagueLabel={t("leagueDetail.lockLeague")}
+        generateScheduleLabel={t("leagueDetail.generateSchedule")}
+        generatingLabel={t("leagueDetail.generating")}
+        leagueOverviewLabel={t("leagueDetail.leagueOverview")}
+        startDateLabel={t("leagueDetail.startDate")}
+        matchesScheduledLabel={t("leagueDetail.matchesScheduled")}
+        viewTeamLabel={t("teams.viewTeam")}
+        noStandingsAvailableLabel={t("leagueDetail.noStandingsAvailable")}
+        noResultsYetLabel={t("leagueDetail.noResultsYet")}
+        noScheduleMessage={
+          league.status === "DRAFT"
+            ? "Lock the league and generate schedule to see fixtures"
+            : "Schedule not generated yet"
+        }
+        lockLeagueMessage={
+          league.status === "DRAFT"
+            ? "Lock the league and generate schedule to see fixtures"
+            : "Schedule not generated yet"
+        }
       />
-
-      <Card className="card-elevated mb-6">
-        <CardHeader>
-          <div className="flex items-start justify-between">
-            <div>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Trophy className="h-6 w-6" />
-                {league.name}
-              </CardTitle>
-              <CardDescription className="mt-2 flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {league.city}
-                </span>
-                {league.season && <span>Season: {league.season}</span>}
-                {league.startDate && (
-                  <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(league.startDate), "MMM dd, yyyy")}
-                  </span>
-                )}
-              </CardDescription>
-            </div>
-            {getStatusBadge(league.status)}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Users className="h-4 w-4" />
-              <span>{league.teams?.length || 0} teams</span>
-            </div>
-            {league.owner && (
-              <div className="text-sm text-muted-foreground">
-                Owner: {league.owner.name}
-              </div>
-            )}
-            {isLeagueOwner && league.status === "DRAFT" && (
-              <div className="ml-auto flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setAddTeamDialogOpen(true)}
-                >
-                  <Plus className="mr-2 h-4 w-4" />
-                  {t("leagueDetail.addTeam")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => lockMutation.mutate()}
-                  disabled={
-                    lockMutation.isPending || (league.teams?.length || 0) < 2
-                  }
-                >
-                  <Lock className="mr-2 h-4 w-4" />
-                  {t("leagueDetail.lockLeague")}
-                </Button>
-              </div>
-            )}
-            {isLeagueOwner && league.status === "ACTIVE" && !hasSchedule && (
-              <Button
-                className="ml-auto"
-                onClick={() => generateScheduleMutation.mutate()}
-                disabled={generateScheduleMutation.isPending}
-              >
-                <Play className="mr-2 h-4 w-4" />
-                {generateScheduleMutation.isPending
-                  ? t("leagueDetail.generating")
-                  : t("leagueDetail.generateSchedule")}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">
-            {t("leagueDetail.overview")}
-          </TabsTrigger>
-          <TabsTrigger value="teams">{t("leagueDetail.teams")}</TabsTrigger>
-          <TabsTrigger value="fixtures">
-            {t("leagueDetail.fixtures")}
-          </TabsTrigger>
-          <TabsTrigger value="standings">
-            {t("leagueDetail.standings")}
-          </TabsTrigger>
-          <TabsTrigger value="results">{t("leagueDetail.results")}</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview" className="mt-6">
-          <Card className="card-elevated">
-            <CardHeader>
-              <CardTitle>{t("leagueDetail.leagueOverview")}</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium">
-                  {t("leagueDetail.status")}
-                </p>
-                <p className="text-sm text-muted-foreground">{league.status}</p>
-              </div>
-              {league.season && (
-                <div>
-                  <p className="text-sm font-medium">{t("leagues.season")}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {league.season}
-                  </p>
-                </div>
-              )}
-              {league.startDate && (
-                <div>
-                  <p className="text-sm font-medium">
-                    {t("leagueDetail.startDate")}
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    {format(new Date(league.startDate), "MMMM dd, yyyy")}
-                  </p>
-                </div>
-              )}
-              <div>
-                <p className="text-sm font-medium">{t("leagueDetail.teams")}</p>
-                <p className="text-sm text-muted-foreground">
-                  {league.teams?.length || 0}{" "}
-                  {t("leagueDetail.teamsRegistered")}
-                </p>
-              </div>
-              {hasSchedule && (
-                <div>
-                  <p className="text-sm font-medium">Matches</p>
-                  <p className="text-sm text-muted-foreground">
-                    {matches.length} {t("leagueDetail.matchesScheduled")}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="teams" className="mt-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {league.teams?.map((leagueTeam: any) => (
-              <Card key={leagueTeam.team.id} className="card-elevated">
-                <CardHeader>
-                  {leagueTeam.team.logoUrl && (
-                    <div className="mb-4 flex justify-center">
-                      <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-border bg-muted">
-                        <img
-                          src={leagueTeam.team.logoUrl}
-                          alt={leagueTeam.team.name}
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).style.display = "none";
-                          }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  <CardTitle>{leagueTeam.team.name}</CardTitle>
-                  <CardDescription className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    {leagueTeam.team.city}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Link to={`/teams/${leagueTeam.team.id}`}>
-                    <Button variant="outline" size="sm" className="w-full">
-                      {t("teams.viewTeam")}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="fixtures" className="mt-6">
-          {hasSchedule ? (
-            <FixturesList
-              matches={matches}
-              leagueId={id!}
-              isLeagueOwner={isLeagueOwner || false}
-              userTeamIds={userTeamIds}
-            />
-          ) : (
-            <Card className="card-elevated">
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  {league.status === "DRAFT"
-                    ? "Lock the league and generate schedule to see fixtures"
-                    : "Schedule not generated yet"}
-                </p>
-                {isLeagueOwner && league.status === "ACTIVE" && (
-                  <Button
-                    className="mt-4"
-                    onClick={() => generateScheduleMutation.mutate()}
-                    disabled={generateScheduleMutation.isPending}
-                  >
-                    <Play className="mr-2 h-4 w-4" />
-                    Generate Schedule
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="standings" className="mt-6">
-          {standings.length > 0 ? (
-            <Card className="card-elevated">
-              <CardHeader>
-                <CardTitle>{t("leagueDetail.standings")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <StandingsTable 
-                  standings={standings.map((standing: any) => {
-                    // Find team logo from league teams
-                    const leagueTeam = league.teams?.find(
-                      (lt: any) => lt.team.id === standing.teamId
-                    );
-                    return {
-                      ...standing,
-                      logoUrl: leagueTeam?.team?.logoUrl,
-                    };
-                  })}
-                />
-              </CardContent>
-            </Card>
-          ) : (
-            <Card className="card-elevated">
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  {t("leagueDetail.noStandingsAvailable")}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="results" className="mt-6">
-          {hasSchedule ? (
-            <FixturesList
-              matches={matches.filter((m: any) => m.result)}
-              leagueId={id!}
-              isLeagueOwner={isLeagueOwner || false}
-              userTeamIds={userTeamIds}
-            />
-          ) : (
-            <Card className="card-elevated">
-              <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground">
-                  {t("leagueDetail.noResultsYet")}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      </Tabs>
 
       <Dialog open={addTeamDialogOpen} onOpenChange={setAddTeamDialogOpen}>
         <DialogContent>
@@ -555,6 +305,6 @@ export function LeagueDetail() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

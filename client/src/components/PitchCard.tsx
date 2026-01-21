@@ -22,7 +22,7 @@ export function PitchCard({ pitch }: PitchCardProps) {
   const { t } = useTranslation();
 
   return (
-    <Card className="card-elevated overflow-hidden h-full flex flex-col">
+    <Card className="card-hover overflow-hidden h-full flex flex-col">
       {/* Image Section - Fixed Height */}
       {pitch.images && pitch.images.length > 0 && (
         <div className="h-48 w-full overflow-hidden bg-muted flex-shrink-0">

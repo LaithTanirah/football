@@ -1,4 +1,6 @@
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
+import { useDirection } from "@/hooks/useDirection";
 
 interface StatusBadgeProps {
   status: string;
@@ -6,6 +8,9 @@ interface StatusBadgeProps {
 }
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
+  const { t } = useTranslation();
+  const { isRTL } = useDirection();
+
   const getVariant = (status: string) => {
     switch (status.toUpperCase()) {
       case "DRAFT":
@@ -19,15 +24,31 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
     }
   };
 
+  const getTranslatedStatus = (status: string): string => {
+    const upperStatus = status.toUpperCase();
+    switch (upperStatus) {
+      case "DRAFT":
+        return t("leagues.draft");
+      case "ACTIVE":
+        return t("leagues.active");
+      case "COMPLETED":
+        return t("leagues.completed");
+      default:
+        return status;
+    }
+  };
+
   return (
     <span
       className={cn(
-        "sports-badge border-2 font-bold",
+        "sports-badge border-2 font-bold inline-block",
         getVariant(status),
+        isRTL ? "text-end" : "text-start",
         className
       )}
+      dir={isRTL ? "rtl" : "ltr"}
     >
-      {status}
+      {getTranslatedStatus(status)}
     </span>
   );
 }

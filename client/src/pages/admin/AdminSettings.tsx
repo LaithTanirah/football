@@ -2,18 +2,18 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageHeader } from '@/components/admin/PageHeader';
 import { LayoutContainer } from '@/components/admin/LayoutContainer';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui2/components/ui/Card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui2/components/ui/Tabs';
+import { Button } from '@/ui2/components/ui/Button';
+import { Label } from '@/ui2/components/ui/Label';
+import { Input } from '@/ui2/components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
+import { Badge } from '@/ui2/components/ui/Badge';
+import { Switch } from '@/ui2/components/ui/Switch';
 import { useLocaleStore } from '@/store/localeStore';
 import { Globe, Shield, Bell, Palette, Save } from 'lucide-react';
 import { useDirection } from '@/hooks/useDirection';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/ui2/components/ui/use-toast';
 
 export function AdminSettings() {
   const { t } = useTranslation();
@@ -69,7 +69,7 @@ export function AdminSettings() {
 
           {/* General Settings */}
           <TabsContent value="general" className="space-y-6">
-            <Card className="card-elevated">
+            <Card className="glass-neon-strong rounded-2xl border-2 border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{t('admin.settings.general.title')}</CardTitle>
                 <CardDescription>{t('admin.settings.general.desc')}</CardDescription>
@@ -107,7 +107,7 @@ export function AdminSettings() {
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label htmlFor="app-name-display">{t('admin.settings.general.appNameDisplay')}</Label>
-                    <p className="text-sm text-text-muted">{t('admin.settings.general.appNameDisplayDesc')}</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">{t('admin.settings.general.appNameDisplayDesc')}</p>
                   </div>
                   <Switch
                     id="app-name-display"
@@ -121,7 +121,7 @@ export function AdminSettings() {
 
           {/* Branding Settings */}
           <TabsContent value="branding" className="space-y-6">
-            <Card className="card-elevated">
+            <Card className="glass-neon-strong rounded-2xl border-2 border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{t('admin.settings.branding.title')}</CardTitle>
                 <CardDescription>{t('admin.settings.branding.desc')}</CardDescription>
@@ -129,15 +129,15 @@ export function AdminSettings() {
               <CardContent className="space-y-6 pt-6">
                 <div className="space-y-2">
                   <Label>{t('admin.settings.branding.logoPreview')}</Label>
-                  <div className="flex items-center gap-4 p-4 border-2 border-border-soft rounded-lg bg-bg-surface">
-                    <div className="flex-shrink-0 w-16 h-16 p-2 rounded-xl bg-white border-2 border-border-soft shadow-sm flex items-center justify-center">
+                  <div className="flex items-center gap-4 p-4 border-2 border-cyan-400/20 rounded-2xl glass-neon-subtle">
+                    <div className="flex-shrink-0 w-16 h-16 p-2 rounded-2xl glass-neon-subtle border-2 border-cyan-400/20 shadow-sm flex items-center justify-center">
                       <img src="/Logo.jpg" alt="PLAYRO LEAGUE" className="w-full h-full object-contain" onError={(e) => {
                         (e.target as HTMLImageElement).style.display = 'none';
                       }} />
                     </div>
                     <div>
-                      <p className="font-semibold text-text-primary">PLAYRO LEAGUE</p>
-                      <p className="text-sm text-text-muted">{t('admin.settings.branding.logoReadOnly')}</p>
+                      <p className="font-semibold text-foreground">PLAYRO LEAGUE</p>
+                      <p className="text-sm text-muted-foreground dark:text-gray-300">{t('admin.settings.branding.logoReadOnly')}</p>
                     </div>
                   </div>
                 </div>
@@ -145,10 +145,10 @@ export function AdminSettings() {
                 <div className="space-y-2">
                   <Label>{t('admin.settings.branding.primaryColor')}</Label>
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-lg bg-brand-blue border-2 border-border-soft shadow-sm" />
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-cyan-500/30 to-cyan-500/20 border-2 border-cyan-400/20 shadow-sm" />
                     <div>
-                      <p className="font-semibold text-text-primary">Playro Blue</p>
-                      <p className="text-sm text-text-muted">#0080FF</p>
+                      <p className="font-semibold text-foreground">Playro Blue</p>
+                      <p className="text-sm text-muted-foreground dark:text-gray-300">#0080FF</p>
                     </div>
                   </div>
                 </div>
@@ -162,7 +162,7 @@ export function AdminSettings() {
 
           {/* Security Settings */}
           <TabsContent value="security" className="space-y-6">
-            <Card className="card-elevated">
+            <Card className="glass-neon-strong rounded-2xl border-2 border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{t('admin.settings.security.title')}</CardTitle>
                 <CardDescription>{t('admin.settings.security.desc')}</CardDescription>
@@ -170,18 +170,18 @@ export function AdminSettings() {
               <CardContent className="space-y-6 pt-6">
                 <div className="space-y-2">
                   <Label>{t('admin.settings.security.passwordRules')}</Label>
-                  <div className="p-4 border-2 border-border-soft rounded-lg bg-bg-surface space-y-2">
-                    <p className="text-sm text-text-muted">• Minimum 8 characters</p>
-                    <p className="text-sm text-text-muted">• At least one uppercase letter</p>
-                    <p className="text-sm text-text-muted">• At least one lowercase letter</p>
-                    <p className="text-sm text-text-muted">• At least one number</p>
+                  <div className="p-4 border-2 border-cyan-400/20 rounded-2xl glass-neon-subtle space-y-2">
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">• Minimum 8 characters</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">• At least one uppercase letter</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">• At least one lowercase letter</p>
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">• At least one number</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label>{t('admin.settings.security.sessionSettings')}</Label>
-                  <div className="p-4 border-2 border-border-soft rounded-lg bg-bg-surface">
-                    <p className="text-sm text-text-muted">{t('admin.settings.security.sessionTimeout')}: 24 hours</p>
+                  <div className="p-4 border-2 border-cyan-400/20 rounded-2xl glass-neon-subtle">
+                    <p className="text-sm text-muted-foreground dark:text-gray-300">{t('admin.settings.security.sessionTimeout')}: 24 hours</p>
                   </div>
                 </div>
 
@@ -194,7 +194,7 @@ export function AdminSettings() {
 
           {/* Notifications Settings */}
           <TabsContent value="notifications" className="space-y-6">
-            <Card className="card-elevated">
+            <Card className="glass-neon-strong rounded-2xl border-2 border-cyan-400/30 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
               <CardHeader>
                 <CardTitle className="text-xl font-bold">{t('admin.settings.notifications.title')}</CardTitle>
                 <CardDescription>{t('admin.settings.notifications.desc')}</CardDescription>

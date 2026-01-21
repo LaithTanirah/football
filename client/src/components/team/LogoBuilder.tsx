@@ -1092,10 +1092,10 @@ export function LogoBuilder({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-6xl max-h-[90vh] overflow-y-auto"
+        className="max-w-6xl w-[calc(100vw-2rem)] sm:w-[calc(100vw-3rem)] md:w-[calc(100vw-4rem)] lg:w-[90vw] xl:max-w-6xl overflow-x-hidden pb-8"
         dir={dir}
       >
-        <DialogHeader>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t("teams.createLogo")}</DialogTitle>
           <DialogDescription>{t("teams.createLogoDesc")}</DialogDescription>
         </DialogHeader>
@@ -1103,9 +1103,9 @@ export function LogoBuilder({
         <Tabs
           value={activeTab}
           onValueChange={(v) => setActiveTab(v as "upload" | "create")}
-          className="w-full"
+          className="w-full flex flex-col flex-1 min-h-0 overflow-visible"
         >
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-2 flex-shrink-0">
             <TabsTrigger value="upload">
               <Upload className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")} />
               {t("teams.uploadLogo")}
@@ -1116,7 +1116,7 @@ export function LogoBuilder({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="upload" className="space-y-4 mt-4">
+          <TabsContent value="upload" className="space-y-4 mt-4 flex-1 overflow-y-auto min-h-0 custom-scrollbar">
             <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg">
               <Upload className="h-12 w-12 text-muted-foreground mb-4" />
               <Label htmlFor="logo-upload" className="cursor-pointer">
@@ -1138,11 +1138,11 @@ export function LogoBuilder({
             </div>
           </TabsContent>
 
-          <TabsContent value="create" className="mt-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <TabsContent value="create" className="mt-4 flex-1 min-h-0 flex flex-col overflow-visible">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1 min-h-0 overflow-visible">
               {/* Preview Panel */}
-              <div className="lg:col-span-1 space-y-4">
-                <div className="sticky top-4">
+              <div className="lg:col-span-1 flex flex-col overflow-visible relative">
+                <div className="flex flex-col overflow-visible pb-8">
                   <Label className="text-lg font-semibold">
                     {t("teams.preview")}
                   </Label>
@@ -1174,13 +1174,14 @@ export function LogoBuilder({
                     </Select>
                   </div>
 
-                  <div className="flex gap-2 mt-4">
+                  <div className="flex gap-2 mt-6 relative z-[100]">
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={resetToDefaults}
-                      className="flex-1"
+                      className="flex-1 relative z-[100]"
+                      style={{ zIndex: 100 }}
                     >
                       <RotateCcw
                         className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")}
@@ -1192,7 +1193,8 @@ export function LogoBuilder({
                       variant="outline"
                       size="sm"
                       onClick={randomize}
-                      className="flex-1"
+                      className="flex-1 relative z-[100]"
+                      style={{ zIndex: 100 }}
                     >
                       <Sparkles
                         className={cn("h-4 w-4", isRTL ? "ml-2" : "mr-2")}
@@ -1204,7 +1206,7 @@ export function LogoBuilder({
               </div>
 
               {/* Controls Panel */}
-              <div className="lg:col-span-2 space-y-6 max-h-[70vh] overflow-y-auto pr-2">
+              <div className="lg:col-span-2 space-y-6 pr-2 overflow-y-auto custom-scrollbar flex-1 min-h-0">
                 {/* Text Section */}
                 <div className="space-y-4 border-b pb-4">
                   <h3 className="font-semibold text-lg">
@@ -1229,7 +1231,7 @@ export function LogoBuilder({
                     </div>
                     <div className="space-y-2">
                       <Label>
-                        {t("teams.subtitle")} ({t("teams.optional")})
+                        {t("teams.logoSubtitleLabel")} ({t("teams.optional")})
                       </Label>
                       <Input
                         value={subtitle}
@@ -1710,7 +1712,7 @@ export function LogoBuilder({
           </TabsContent>
         </Tabs>
 
-        <DialogFooter>
+        <DialogFooter className="flex-shrink-0 border-t pt-4 mt-4">
           <Button
             type="button"
             variant="outline"

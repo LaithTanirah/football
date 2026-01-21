@@ -3,26 +3,25 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const badgeVariants = cva(
-  'inline-flex items-center rounded-full border-2 px-3 py-1 text-xs font-bold transition-colors uppercase tracking-wide focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'glass-subtle inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-brand-blue text-text-invert',
-        secondary: 'border-transparent bg-brand-green text-text-invert',
-        accent: 'border-transparent bg-brand-orange text-text-invert',
-        cyan: 'border-transparent bg-brand-cyan text-text-invert',
-        outline: 'border-border-strong text-text-primary bg-bg-panel',
-        success: 'border-transparent bg-success text-success-foreground',
-        warning: 'border-transparent bg-warning text-warning-foreground',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground',
+        default: 'border-glass-border bg-gradient-to-r from-playro-blue/20 to-playro-blue/10 text-playro-blue',
+        secondary: 'border-glass-border bg-glass-bg text-foreground',
+        accent: 'border-glass-border bg-glass-bg text-foreground',
+        outline: 'text-foreground border-glass-border bg-transparent',
+        success: 'border-glass-border bg-gradient-to-r from-playro-green/20 to-playro-green/10 text-playro-green',
+        warning: 'border-glass-border bg-gradient-to-r from-playro-orange/20 to-playro-orange/10 text-playro-orange',
+        destructive: 'border-glass-border bg-gradient-to-r from-error/20 to-error/10 text-error',
         // Status variants
-        draft: 'border-transparent bg-muted text-muted-foreground',
-        active: 'border-transparent bg-brand-green text-text-invert',
-        completed: 'border-transparent bg-brand-orange text-text-invert',
+        draft: 'border-glass-border bg-glass-bg text-muted-foreground',
+        active: 'border-glass-border bg-gradient-to-r from-playro-green/20 to-playro-green/10 text-playro-green',
+        completed: 'border-glass-border bg-glass-bg text-muted-foreground',
         // Difficulty variants
-        easy: 'border-transparent bg-brand-green text-text-invert',
-        medium: 'border-transparent bg-brand-orange text-text-invert',
-        hard: 'border-transparent bg-destructive text-destructive-foreground',
+        easy: 'border-glass-border bg-gradient-to-r from-playro-green/20 to-playro-green/10 text-playro-green',
+        medium: 'border-glass-border bg-gradient-to-r from-playro-orange/20 to-playro-orange/10 text-playro-orange',
+        hard: 'border-glass-border bg-gradient-to-r from-error/20 to-error/10 text-error',
       },
     },
     defaultVariants: {

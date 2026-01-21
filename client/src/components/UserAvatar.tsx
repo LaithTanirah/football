@@ -66,7 +66,7 @@ export function UserAvatar({ user, size = 'md', className, showFallback = true }
     return (
       <div
         className={cn(
-          'rounded-full flex items-center justify-center font-bold text-white border-2 border-border-soft',
+          'rounded-full flex items-center justify-center font-bold text-foregroundborder-2 border-border-soft',
           sizeClasses[size],
           className
         )}

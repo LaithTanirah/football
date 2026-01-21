@@ -9,6 +9,7 @@ export default {
     extend: {
       colors: {
         border: 'hsl(var(--border))',
+        'border-subtle': 'hsl(var(--border-subtle))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
         background: 'hsl(var(--background))',
@@ -53,27 +54,38 @@ export default {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        // PLAYRO LEAGUE Brand Colors
-        'brand-blue': 'hsl(var(--brand-blue))',
-        'brand-cyan': 'hsl(var(--brand-cyan))',
-        'brand-green': 'hsl(var(--brand-green))',
-        'brand-orange': 'hsl(var(--brand-orange))',
-        'brand-navy': 'hsl(var(--brand-navy))',
-        // Semantic surface colors
+        // Surface levels
+        'surface-1': 'hsl(var(--surface-1))',
+        'surface-2': 'hsl(var(--surface-2))',
+        'surface-3': 'hsl(var(--surface-3))',
+        // Text hierarchy
+        text: 'hsl(var(--text))',
+        'text-muted': 'hsl(var(--text-muted))',
+        'text-subtle': 'hsl(var(--text-subtle))',
+        // Brand accents (15% usage)
+        'playro-blue': 'hsl(var(--playro-blue))',
+        'playro-green': 'hsl(var(--playro-green))',
+        'playro-orange': 'hsl(var(--playro-orange))',
+        // Legacy aliases for compatibility
+        'brand-blue': 'hsl(var(--playro-blue))',
+        'brand-green': 'hsl(var(--playro-green))',
+        'brand-orange': 'hsl(var(--playro-orange))',
         'bg-page': 'hsl(var(--bg-page))',
         'bg-surface': 'hsl(var(--bg-surface))',
         'bg-panel': 'hsl(var(--bg-panel))',
         'text-primary': 'hsl(var(--text-primary))',
-        'text-muted': 'hsl(var(--text-muted))',
         'text-invert': 'hsl(var(--text-invert))',
         'border-soft': 'hsl(var(--border-soft))',
         'border-strong': 'hsl(var(--border-strong))',
       },
       borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-        'brand': '14px',
+        lg: 'var(--radius-lg)',
+        DEFAULT: 'var(--radius)',
+        md: 'var(--radius)',
+        sm: 'var(--radius-sm)',
+        xl: 'var(--radius-xl)',
+        '2xl': 'var(--radius-2xl)',
+        full: 'var(--radius-full)',
       },
       spacing: {
         'page': '1.5rem',
@@ -87,15 +99,21 @@ export default {
         'caption': ['0.875rem', { lineHeight: '1.5', fontWeight: '500' }],
       },
       boxShadow: {
-        'soft': '0 2px 8px hsl(var(--brand-blue) / 0.08)',
-        'medium': '0 4px 12px hsl(var(--brand-blue) / 0.12)',
-        'strong': '0 8px 24px hsl(var(--brand-blue) / 0.16)',
-        'brand': '0 4px 12px hsl(var(--brand-orange) / 0.3)',
+        'sm': 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow)',
+        'md': 'var(--shadow-md)',
+        'lg': 'var(--shadow-lg)',
+        'soft': 'var(--glow-subtle)',
+        'glow': 'var(--glow-soft)',
+        'focus': 'var(--glow-focus)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in',
         'fade-in-up': 'fadeInUp 0.5s ease-out',
         'slide-in': 'slideIn 0.3s ease-out',
+        'float': 'float 20s ease-in-out infinite',
+        'float-slow': 'floatSlow 15s ease-in-out infinite',
+        'gradient-shift': 'gradientShift 20s ease infinite',
       },
       keyframes: {
         fadeIn: {
@@ -110,6 +128,25 @@ export default {
           '0%': { transform: 'translateX(-10px)', opacity: '0' },
           '100%': { transform: 'translateX(0)', opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0) translateX(0) rotate(0deg)' },
+          '33%': { transform: 'translateY(-20px) translateX(10px) rotate(120deg)' },
+          '66%': { transform: 'translateY(10px) translateX(-10px) rotate(240deg)' },
+        },
+        floatSlow: {
+          '0%, 100%': { transform: 'translateY(0) translateX(0)' },
+          '50%': { transform: 'translateY(-30px) translateX(15px)' },
+        },
+        gradientShift: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.8', transform: 'scale(1.1)' },
+        },
+      },
+      backdropBlur: {
+        xs: '2px',
+        glass: '16px',
+        'glass-strong': '18px',
+        'glass-subtle': '12px',
       },
     },
   },

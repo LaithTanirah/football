@@ -157,8 +157,12 @@ export const adminApi = {
     api.patch<ApiResponse<any>>(`/admin/users/${id}`, data),
   updateLeague: (id: string, data: { name?: string; city?: string; season?: string | null; startDate?: string | null; status?: string }) =>
     api.patch<ApiResponse<any>>(`/admin/leagues/${id}`, data),
+  deleteLeague: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/leagues/${id}`),
   updatePost: (id: string, data: { content?: string; mediaType?: string; mediaUrl?: string | null }) =>
     api.patch<ApiResponse<any>>(`/admin/posts/${id}`, data),
+  deletePost: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/posts/${id}`),
+  deleteUser: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/users/${id}`),
+  deletePitch: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/pitches/${id}`),
   getStats: () => api.get<ApiResponse<{ usersCount: number; teamsCount: number; leaguesCount: number; pitchesCount: number }>>('/admin/stats'),
   deleteTeam: (id: string) => api.delete<ApiResponse<{ message: string }>>(`/admin/teams/${id}`),
 };

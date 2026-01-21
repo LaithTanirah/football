@@ -7,6 +7,11 @@
     overflow-x: hidden !important;
     max-width: 100vw;
     width: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: 100%;
   }
   
   body {
@@ -14,8 +19,11 @@
     max-width: 100vw;
     width: 100%;
     position: relative;
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: 100%;
   }
   
   /* Prevent scroll-lock library from adding margin that causes layout gaps */
@@ -88,120 +96,335 @@
   #root {
     max-width: 100vw;
     overflow-x: hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: 100%;
+  }
+
+  /* Admin layout - ensure no top spacing */
+  body:has([data-admin-layout]) {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  [data-admin-layout] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    top: 0 !important;
   }
 }
 
 @layer base {
   :root {
-    /* PLAYRO LEAGUE Brand Theme - Derived from Logo */
-    --background: 0 0% 100%; /* Pure white - base background */
-    --foreground: 220 50% 15%; /* Dark navy - text and contrast */
-    --primary: 210 100% 50%; /* Primary Blue - navigation, headers, structure */
+    /* ============================================
+       GLASSMORPHISM + GRADIENT THEME SYSTEM
+       Premium Glass UI with Soft 3D Depth
+       ============================================ */
+    
+    /* Brand Accents - Glow Sources */
+    --playro-blue: 210 100% 50%;
+    --playro-green: 142 70% 50%;
+    --playro-orange: 25 95% 55%;
+    
+    /* Light Theme - Bright Airy Futuristic */
+    /* Background Gradients */
+    --bg-main: 220 100% 98%; /* Soft sky blue base */
+    --bg-gradient-1: 210 100% 97%; /* Light blue */
+    --bg-gradient-2: 240 100% 96%; /* Soft purple */
+    
+    /* Glass Surfaces */
+    --glass-bg: 255 255 255 / 0.7; /* Translucent white */
+    --glass-border: 255 255 255 / 0.3; /* Soft white border */
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    --glass-hover: 255 255 255 / 0.85;
+    
+    /* Text */
+    --text-main: 220 13% 18%;
+    --text-muted: 220 9% 46%;
+    
+    /* Accent Glows */
+    --accent-blue: 210 100% 60%;
+    --accent-green: 142 70% 55%;
+    --accent-orange: 25 95% 60%;
+    --glow-soft: 0 0 40px rgba(37, 99, 235, 0.2);
+    
+    /* Border Radius - Organic Rounded */
+    --radius-xl: 1.5rem; /* 24px */
+    --radius-2xl: 2rem; /* 32px */
+    --radius-full: 9999px;
+    
+    /* Legacy compatibility - map to glass */
+    --background: var(--bg-main);
+    --foreground: var(--text-main);
+    --surface-1: var(--glass-bg);
+    --surface-2: var(--glass-hover);
+    --surface-3: 255 255 255 / 0.9;
+    --text: var(--text-main);
+    --text-subtle: var(--text-muted);
+    --border: var(--glass-border);
+    --border-subtle: 255 255 255 / 0.2;
+    --input: var(--glass-bg);
+    --input-foreground: var(--text-main);
+    --ring: var(--accent-blue);
+    --primary: var(--accent-blue);
     --primary-foreground: 0 0% 100%;
-    --secondary: 142 70% 50%; /* Green - growth, play, success, football energy */
-    --secondary-foreground: 0 0% 100%;
-    --accent: 25 95% 55%; /* Orange - important actions (Create/Play/CTA) */
-    --accent-foreground: 0 0% 100%;
-    --muted: 220 15% 96%; /* Very light blue-gray */
-    --muted-foreground: 220 20% 45%; /* Muted text */
-    --border: 220 20% 90%; /* Light border */
-    --input: 0 0% 100%; /* Pure white */
-    --input-foreground: 220 50% 15%;
-    --ring: 210 100% 50%; /* Primary Blue */
-    --radius: 0.5rem; /* 8px - clean geometry */
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 50% 15%;
-    --card: 0 0% 100%; /* Pure white */
-    --card-foreground: 220 50% 15%;
-    --success: 142 70% 50%; /* Green - success states */
+    --secondary: var(--glass-bg);
+    --secondary-foreground: var(--text-main);
+    --accent: var(--glass-bg);
+    --accent-foreground: var(--text-main);
+    --success: var(--accent-green);
     --success-foreground: 0 0% 100%;
-    --warning: 38 90% 55%; /* Amber */
-    --warning-foreground: 220 50% 15%;
-    --error: 0 75% 55%; /* Red */
+    --warning: var(--accent-orange);
+    --warning-foreground: 0 0% 100%;
+    --error: 0 84% 60%;
     --error-foreground: 0 0% 100%;
-    --destructive: 0 75% 55%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-    /* PLAYRO LEAGUE Brand tokens - from logo */
-    --playro-blue: 210 100% 50%; /* Primary Blue - vibrant blue from logo */
-    --playro-green: 142 70% 50%; /* Green - bright green arrow from logo */
-    --playro-orange: 25 95% 55%; /* Orange - curved shape from logo */
-    --playro-navy: 220 50% 15%; /* Dark Navy - text color */
-    /* Brand color system */
-    --brand-blue: 210 100% 50%; /* Primary Blue */
-    --brand-cyan: 180 80% 55%; /* Secondary Cyan */
-    --brand-green: 142 70% 50%; /* Accent Green */
-    --brand-orange: 25 95% 55%; /* CTA Orange */
-    --brand-navy: 220 50% 15%; /* Deep Navy Text */
-    /* Semantic surface colors */
-    --bg-page: 0 0% 100%; /* Page background */
-    --bg-surface: 220 15% 98%; /* Surface background */
-    --bg-panel: 0 0% 100%; /* Panel background */
-    --text-primary: 220 50% 15%; /* Primary text */
-    --text-muted: 220 20% 45%; /* Muted text */
-    --text-invert: 0 0% 100%; /* Inverted text */
-    --border-soft: 220 20% 90%; /* Soft border */
-    --border-strong: 220 30% 70%; /* Strong border */
-    --radius: 14px; /* Consistent brand radius */
+    --muted: var(--glass-bg);
+    --muted-foreground: var(--text-muted);
+    --card: var(--glass-bg);
+    --card-foreground: var(--text-main);
+    --popover: var(--glass-bg);
+    --popover-foreground: var(--text-main);
+    --radius: var(--radius-xl);
+    --radius-sm: 0.75rem;
+    --radius-lg: var(--radius-xl);
+    --shadow-sm: var(--glass-shadow);
+    --shadow: var(--glass-shadow);
+    --shadow-md: 0 12px 40px 0 rgba(31, 38, 135, 0.2);
+    --shadow-lg: 0 16px 48px 0 rgba(31, 38, 135, 0.25);
+    --bg-page: var(--bg-main);
+    --bg-surface: var(--glass-bg);
+    --bg-panel: var(--glass-bg);
+    --text-primary: var(--text-main);
+    --text-invert: 0 0% 100%;
+    --border-soft: var(--border-subtle);
+    --border-strong: var(--glass-border);
   }
 
   .dark {
-    /* Dark mode - Still white-first philosophy, darker backgrounds */
-    --background: 220 30% 8%; /* Dark navy */
-    --foreground: 0 0% 98%; /* Near white */
-    --primary: 210 100% 55%; /* Primary Blue */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 142 70% 55%; /* Green */
-    --secondary-foreground: 0 0% 100%;
-    --accent: 25 95% 60%; /* Orange */
-    --accent-foreground: 0 0% 100%;
-    --muted: 220 25% 15%; /* Dark muted */
-    --muted-foreground: 220 15% 70%; /* Light gray */
-    --border: 220 25% 25%; /* Dark border */
-    --input: 220 25% 12%; /* Dark input */
-    --input-foreground: 0 0% 98%;
-    --ring: 210 100% 55%; /* Primary Blue */
-    --popover: 220 25% 12%;
-    --popover-foreground: 0 0% 98%;
-    --card: 220 25% 12%; /* Dark card */
-    --card-foreground: 0 0% 98%;
-    --success: 142 70% 55%; /* Green */
-    --success-foreground: 0 0% 98%;
-    --warning: 38 85% 60%; /* Amber */
-    --warning-foreground: 220 30% 8%;
-    --error: 0 70% 60%; /* Red */
-    --error-foreground: 0 0% 98%;
-    --destructive: 0 70% 60%;
-    --destructive-foreground: 0 0% 98%;
-    /* PLAYRO LEAGUE Brand tokens */
+    /* ============================================
+       DARK MODE - Deep Indigo Purple Premium
+       ============================================ */
+    
+    /* Brand Accents - Brighter for dark */
     --playro-blue: 210 100% 55%;
     --playro-green: 142 70% 55%;
     --playro-orange: 25 95% 60%;
-    --playro-navy: 220 30% 8%;
-    /* Brand color system */
-    --brand-blue: 210 100% 55%;
-    --brand-cyan: 180 80% 60%;
-    --brand-green: 142 70% 55%;
-    --brand-orange: 25 95% 60%;
-    --brand-navy: 220 30% 8%;
-    /* Semantic surface colors */
-    --bg-page: 220 30% 8%;
-    --bg-surface: 220 25% 12%;
-    --bg-panel: 220 25% 12%;
-    --text-primary: 0 0% 98%;
-    --text-muted: 220 15% 70%;
-    --text-invert: 220 50% 15%;
-    --border-soft: 220 25% 25%;
-    --border-strong: 220 20% 40%;
-    --radius: 14px;
+    
+    /* Background Gradients - Deep Night */
+    --bg-main: 240 30% 8%; /* Deep navy base */
+    --bg-gradient-1: 250 40% 12%; /* Indigo */
+    --bg-gradient-2: 270 50% 10%; /* Deep purple */
+    
+    /* Glass Surfaces - Dark Glass */
+    --glass-bg: 240 20% 15% / 0.6; /* Translucent dark */
+    --glass-border: 255 255 255 / 0.1; /* Subtle white border */
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    --glass-hover: 240 20% 18% / 0.7;
+    
+    /* Text */
+    --text-main: 220 9% 95%;
+    --text-muted: 220 9% 65%;
+    
+    /* Accent Glows - Neon Soft */
+    --accent-blue: 210 100% 60%;
+    --accent-green: 142 70% 60%;
+    --accent-orange: 25 95% 65%;
+    --glow-soft: 0 0 40px rgba(59, 130, 246, 0.3);
+    
+    /* Border Radius - Same organic */
+    --radius-xl: 1.5rem;
+    --radius-2xl: 2rem;
+    --radius-full: 9999px;
+    
+    /* Legacy compatibility */
+    --background: var(--bg-main);
+    --foreground: var(--text-main);
+    --surface-1: var(--glass-bg);
+    --surface-2: var(--glass-hover);
+    --surface-3: 240 20% 20% / 0.8;
+    --text: var(--text-main);
+    --text-subtle: var(--text-muted);
+    --border: var(--glass-border);
+    --border-subtle: 255 255 255 / 0.05;
+    --input: var(--glass-bg);
+    --input-foreground: var(--text-main);
+    --ring: var(--accent-blue);
+    --primary: var(--accent-blue);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--glass-bg);
+    --secondary-foreground: var(--text-main);
+    --accent: var(--glass-bg);
+    --accent-foreground: var(--text-main);
+    --success: var(--accent-green);
+    --success-foreground: 0 0% 100%;
+    --warning: var(--accent-orange);
+    --warning-foreground: 0 0% 100%;
+    --error: 0 84% 65%;
+    --error-foreground: 0 0% 100%;
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --muted: var(--glass-bg);
+    --muted-foreground: var(--text-muted);
+    --card: var(--glass-bg);
+    --card-foreground: var(--text-main);
+    --popover: var(--glass-bg);
+    --popover-foreground: var(--text-main);
+    --radius: var(--radius-xl);
+    --radius-sm: 0.75rem;
+    --radius-lg: var(--radius-xl);
+    --shadow-sm: var(--glass-shadow);
+    --shadow: var(--glass-shadow);
+    --shadow-md: 0 12px 40px 0 rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 16px 48px 0 rgba(0, 0, 0, 0.6);
+    --bg-page: var(--bg-main);
+    --bg-surface: var(--glass-bg);
+    --bg-panel: var(--glass-bg);
+    --text-primary: var(--text-main);
+    --text-invert: 220 13% 18%;
+    --border-soft: var(--border-subtle);
+    --border-strong: var(--glass-border);
   }
 
   body {
-    background: hsl(var(--background));
+    background: linear-gradient(135deg, hsl(var(--bg-gradient-1)) 0%, hsl(var(--bg-gradient-2)) 100%);
+    background-attachment: fixed;
     color: hsl(var(--foreground));
     position: relative;
     min-height: 100vh;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Arabic", "Helvetica Neue", Arial, sans-serif;
-    font-weight: 500; /* Bolder default for sports feel */
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  /* Animated gradient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(34, 197, 94, 0.1) 0%, transparent 50%);
+    animation: gradientShift 20s ease infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .dark body::before {
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.25) 0%, transparent 50%),
+      radial-gradient(circle at 40% 20%, rgba(34, 197, 94, 0.15) 0%, transparent 50%);
+  }
+
+  @keyframes gradientShift {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+  }
+
+  /* Floating football spheres - Multiple spheres with different animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    33% { transform: translateY(-20px) translateX(10px) rotate(120deg); }
+    66% { transform: translateY(10px) translateX(-10px) rotate(240deg); }
+  }
+
+  @keyframes floatSlow {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    50% { transform: translateY(-30px) translateX(15px); }
+  }
+
+  @keyframes floatReverse {
+    0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); }
+    33% { transform: translateY(15px) translateX(-15px) rotate(-120deg); }
+    66% { transform: translateY(-15px) translateX(15px) rotate(-240deg); }
+  }
+
+  /* Football sphere container */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .football-sphere {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.25), rgba(37, 99, 235, 0.08));
+    filter: blur(50px);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Sphere 1 - Top Left */
+  .football-sphere:nth-child(1) {
+    width: 250px;
+    height: 250px;
+    top: 10%;
+    left: 5%;
+    animation: float 25s ease-in-out infinite;
+    animation-delay: 0s;
+  }
+
+  /* Sphere 2 - Top Right */
+  .football-sphere:nth-child(2) {
+    width: 200px;
+    height: 200px;
+    top: 15%;
+    right: 10%;
+    animation: floatReverse 30s ease-in-out infinite;
+    animation-delay: 5s;
+  }
+
+  /* Sphere 3 - Middle Left */
+  .football-sphere:nth-child(3) {
+    width: 180px;
+    height: 180px;
+    top: 50%;
+    left: 8%;
+    animation: floatSlow 35s ease-in-out infinite;
+    animation-delay: 10s;
+  }
+
+  /* Sphere 4 - Bottom Right */
+  .football-sphere:nth-child(4) {
+    width: 220px;
+    height: 220px;
+    bottom: 15%;
+    right: 5%;
+    animation: float 28s ease-in-out infinite;
+    animation-delay: 15s;
+  }
+
+  /* Sphere 5 - Center */
+  .football-sphere:nth-child(5) {
+    width: 150px;
+    height: 150px;
+    top: 40%;
+    left: 50%;
+    animation: floatReverse 32s ease-in-out infinite;
+    animation-delay: 8s;
+  }
+
+  .dark .football-sphere {
+    background: radial-gradient(circle at 30% 30%, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.08));
+    opacity: 0.25;
   }
 
   /* Arabic font support */
@@ -290,82 +513,81 @@
     padding-left: 1rem;
   }
 
-  /* Dark mode - clean neutral background, no gradients */
-  .dark body {
-    background: hsl(var(--background));
-  }
-
-  /* Ensure content is above background effects */
+  /* Clean, minimal utilities */
   #root {
     position: relative;
     z-index: 1;
   }
 
-  /* Sports tile cards - bold, confident */
-  .card-elevated {
-    background: hsl(var(--card));
-    border: 2px solid hsl(var(--border));
-    border-radius: var(--radius);
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  }
-
-  /* Surface container - consistent padding for bordered containers */
-  .surface {
-    padding: 1rem; /* p-4 */
-    border-radius: 1rem; /* rounded-2xl */
-  }
-
-  @media (min-width: 768px) {
-    .surface {
-      padding: 1.5rem; /* md:p-6 */
-    }
-  }
-
-  .card-elevated:hover {
-    border-color: hsl(var(--primary));
-    box-shadow: 0 4px 12px hsl(var(--primary) / 0.2);
-    transform: translateY(-2px);
-  }
-
-  .dark .card-elevated {
-    background: hsl(var(--card));
-    border: 2px solid hsl(var(--border));
-  }
-
-  .dark .card-elevated:hover {
-    border-color: hsl(var(--primary));
-    box-shadow: 0 4px 12px hsl(var(--primary) / 0.3);
-  }
-
-  /* Smooth page transitions */
-  .page-section {
-    animation: fadeInUp 0.5s ease-out;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Button press feedback */
-  button:active {
-    transform: scale(0.98);
-  }
-
-  /* Smooth transitions for interactive elements */
+  /* Smooth transitions - 120-220ms, no bouncy animations */
   * {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
+
+  /* Glass morphism utilities - Premium Soft Glow */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.15);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--glass-hover);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.18);
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-subtle {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.12);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Subtle hover lift for glass cards */
+  .card-hover {
+    transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: rgba(var(--glass-hover));
+    border-color: hsl(var(--neon-cyan) / 0.2);
+  }
+
+  /* Soft Glow effects - Premium */
+  .glow-blue {
+    box-shadow: 0 0 24px hsl(var(--neon-cyan) / 0.08), var(--glass-shadow);
+  }
+
+  .glow-green {
+    box-shadow: 0 0 24px hsl(var(--neon-green) / 0.08), var(--glass-shadow);
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 24px hsl(var(--neon-orange) / 0.08), var(--glass-shadow);
+  }
+
+  .dark .glow-blue {
+    box-shadow: 0 0 24px hsl(var(--neon-cyan) / 0.12), var(--glass-shadow);
+  }
+
+  .dark .glow-green {
+    box-shadow: 0 0 24px hsl(var(--neon-green) / 0.12), var(--glass-shadow);
+  }
+
+  .dark .glow-orange {
+    box-shadow: 0 0 24px hsl(var(--neon-orange) / 0.12), var(--glass-shadow);
+  }
+
 
   /* Global cursor styles for interactive elements */
   button,
@@ -437,66 +659,105 @@
     cursor: wait;
   }
 
-  /* Match poster header background - angled sections inspired by logo arrow */
-  .match-header-bg {
-    position: relative;
-    background: linear-gradient(135deg, hsl(var(--primary) / 0.08), hsl(var(--secondary) / 0.05));
-    overflow: hidden;
-  }
-
-  .match-header-bg::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent 30%, hsl(var(--primary) / 0.03) 50%, transparent 70%);
-    transform: rotate(-15deg);
-    pointer-events: none;
-  }
-
-  .match-header-bg::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, 
-      hsl(var(--primary)) 0%, 
-      hsl(var(--secondary)) 50%, 
-      hsl(var(--accent)) 100%
-    );
-    clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
-  }
-
-  /* Action button - bold orange */
-  .btn-action {
-    background: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
+  /* Typography improvements */
+  h1, h2, h3, h4, h5, h6 {
     font-weight: 600;
-    border: none;
-    box-shadow: 0 2px 8px hsl(var(--accent) / 0.3);
-    transition: all 0.2s ease;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
-  .btn-action:hover {
-    background: hsl(var(--accent) / 0.9);
-    box-shadow: 0 4px 12px hsl(var(--accent) / 0.4);
-    transform: translateY(-1px);
+  /* Number formatting for tables */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
+}
 
-  /* Sports badge */
-  .sports-badge {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.25rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+/* Ensure Dialog is always centered - works for both dialog components */
+[data-radix-dialog-content],
+[role="dialog"] {
+  position: fixed !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+[data-radix-dialog-content][data-state="open"],
+[role="dialog"][data-state="open"] {
+  transform: translate(-50%, -50%) !important;
+}
+
+[data-radix-dialog-content][data-state="closed"],
+[role="dialog"][data-state="closed"] {
+  transform: translate(-50%, -50%) !important;
+}
+
+/* Custom Neon Scrollbar Styling - Enhanced Theme Match */
+/* Placed outside @layer for higher specificity */
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(6, 182, 212, 0.8) rgba(139, 92, 246, 0.15) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: linear-gradient(
+    180deg,
+    rgba(139, 92, 246, 0.08) 0%,
+    rgba(6, 182, 212, 0.08) 100%
+  ) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(6, 182, 212, 0.1) !important;
+  margin: 4px 0 !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 0.95) 0%,
+    rgba(139, 92, 246, 0.95) 50%,
+    rgba(236, 72, 153, 0.75) 100%
+  ) !important;
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(6, 182, 212, 0.5) !important;
+  box-shadow: 
+    0 0 12px rgba(6, 182, 212, 0.6),
+    0 0 24px rgba(139, 92, 246, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 1) 0%,
+    rgba(139, 92, 246, 1) 50%,
+    rgba(236, 72, 153, 0.9) 100%
+  ) !important;
+  box-shadow: 
+    0 0 15px rgba(6, 182, 212, 0.7),
+    0 0 30px rgba(139, 92, 246, 0.5),
+    0 0 40px rgba(236, 72, 153, 0.3),
+    inset 0 0 15px rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(6, 182, 212, 0.6) !important;
+  transform: scaleX(1.1) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 1) 0%,
+    rgba(139, 92, 246, 1) 50%,
+    rgba(236, 72, 153, 1) 100%
+  ) !important;
+  box-shadow: 
+    0 0 20px rgba(6, 182, 212, 0.9),
+    0 0 40px rgba(139, 92, 246, 0.7),
+    inset 0 0 20px rgba(255, 255, 255, 0.2) !important;
 }
 

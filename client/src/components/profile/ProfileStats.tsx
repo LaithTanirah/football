@@ -38,24 +38,28 @@ export function ProfileStats({ stats, isLoading }: ProfileStatsProps) {
       value: stats?.teamsCount || 0,
       icon: Users,
       color: "text-blue-500",
+      iconColor: "#3b82f6", // blue-500
     },
     {
       label: t("profile.leaguesCount"),
       value: stats?.leaguesCount || 0,
       icon: Trophy,
       color: "text-yellow-500",
+      iconColor: "#eab308", // yellow-500
     },
     {
       label: t("profile.bookingsCount"),
       value: stats?.bookingsCount || 0,
       icon: Calendar,
       color: "text-green-500",
+      iconColor: "#22c55e", // green-500
     },
     {
       label: t("profile.postsCount"),
       value: stats?.postsCount || 0,
       icon: FileText,
       color: "text-purple-500",
+      iconColor: "#a855f7", // purple-500
     },
   ];
 
@@ -71,7 +75,7 @@ export function ProfileStats({ stats, isLoading }: ProfileStatsProps) {
               className="text-center p-4 rounded-xl bg-muted/50 border border-border/30 hover:bg-muted/70 transition-colors"
             >
               <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-background/50 mb-2 ${item.color}`}>
-                <Icon className="h-6 w-6" />
+                <Icon className="h-6 w-6" style={{ color: item.iconColor, fill: 'currentColor' }} />
               </div>
               <div className="text-2xl font-bold mb-1">{item.value}</div>
               <div className="text-sm text-muted-foreground">{item.label}</div>

@@ -43,16 +43,16 @@ export function ProfileTabs({
         )}>
           {!isViewingOtherUser && (
             <TabsTrigger value="bookings" className="gap-2">
-              <Calendar className="h-4 w-4" />
+              <Calendar className="h-4 w-4" style={{ color: '#4ade80', fill: 'currentColor' }} />
               {t("profile.myBookings")}
             </TabsTrigger>
           )}
           <TabsTrigger value="teams" className="gap-2">
-            <Users className="h-4 w-4" />
+            <Users className="h-4 w-4" style={{ color: '#60a5fa', fill: 'currentColor' }} />
             {isViewingOtherUser ? t("profile.theirTeams") || t("profile.myTeams") : t("profile.myTeams")}
           </TabsTrigger>
           <TabsTrigger value="leagues" className="gap-2">
-            <Trophy className="h-4 w-4" />
+            <Trophy className="h-4 w-4" style={{ color: '#facc15', fill: 'currentColor' }} />
             {isViewingOtherUser ? t("profile.theirLeagues") || t("profile.myLeagues") : t("profile.myLeagues")}
           </TabsTrigger>
         </TabsList>
@@ -66,7 +66,7 @@ export function ProfileTabs({
             </div>
           ) : bookings.length === 0 ? (
             <EmptyState
-              icon={<Calendar className="h-12 w-12" />}
+              icon={<Calendar className="h-12 w-12" style={{ color: '#4ade80', fill: 'currentColor' }} />}
               title={t("profile.noBookings")}
               description={t("profile.noBookingsDesc")}
               action={{
@@ -92,7 +92,7 @@ export function ProfileTabs({
                       {booking.pitch && (
                         <Link to={`/pitches/${booking.pitch.id}`}>
                           <Button variant="ghost" size="sm">
-                            <ExternalLink className="h-4 w-4" />
+                            <ExternalLink className="h-4 w-4" style={{ color: '#22d3ee', fill: 'currentColor' }} />
                           </Button>
                         </Link>
                       )}
@@ -120,7 +120,7 @@ export function ProfileTabs({
             </div>
           ) : teams.length === 0 ? (
             <EmptyState
-              icon={<Users className="h-12 w-12" />}
+              icon={<Users className="h-12 w-12" style={{ color: '#60a5fa', fill: 'currentColor' }} />}
               title={t("profile.noTeams")}
               description={t("profile.noTeamsDesc")}
               action={{
@@ -173,7 +173,7 @@ export function ProfileTabs({
             </div>
           ) : leagues.length === 0 ? (
             <EmptyState
-              icon={<Trophy className="h-12 w-12" />}
+              icon={<Trophy className="h-12 w-12" style={{ color: '#facc15', fill: 'currentColor' }} />}
               title={t("profile.noLeagues")}
               description={t("profile.noLeaguesDesc")}
               action={{

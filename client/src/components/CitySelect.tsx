@@ -8,8 +8,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
+} from '@/ui2/components/ui/Select';
+import { Input } from '@/ui2/components/ui/Input';
 import { cn } from '@/lib/utils';
 import { useDirection } from '@/hooks/useDirection';
 
@@ -24,22 +24,10 @@ interface CitySelectProps {
 
 // Separate component for city item content to handle RTL properly
 function CitySelectItemContent({ city, locale }: { city: City; locale: 'ar' | 'en' }) {
-  const { isRTL } = useDirection();
   return (
-    <div className={cn(
-      'flex items-center w-full',
-      isRTL ? 'flex-row-reverse justify-between' : 'justify-between'
-    )}>
-      <span>{locale === 'ar' ? city.ar : city.en}</span>
-      {locale !== 'ar' && (
-        <span className={cn(
-          'text-xs text-muted-foreground',
-          isRTL ? 'ml-2' : 'mr-2'
-        )}>
-          {city.ar}
-        </span>
-      )}
-    </div>
+    <span className="text-gray-200 dark:text-gray-100">
+      {locale === 'ar' ? city.ar : city.en}
+    </span>
   );
 }
 
@@ -95,19 +83,19 @@ export function CitySelect({
 
   // Always render controlled Select with a valid value
   return (
-    <Select 
-      value={normalizedValue} 
-      onValueChange={handleValueChange} 
-      required={required}
-    >
-        <SelectTrigger className={cn('w-full', className)}>
+      <Select 
+        value={normalizedValue} 
+        onValueChange={handleValueChange} 
+        required={required}
+      >
+        <SelectTrigger className={cn('w-full h-11 glass-neon-subtle border border-cyan-400/20 text-foregroundplaceholder:text-gray-400 focus:border-cyan-400/50', className)}>
           <SelectValue placeholder={placeholderText}>
             {displayValue || placeholderText}
           </SelectValue>
         </SelectTrigger>
-        <SelectContent className="max-h-[300px]">
+        <SelectContent className="max-h-[300px] z-[200] glass-neon-strong border-cyan-400/30">
           {/* Search input */}
-          <div className="p-2 border-b sticky top-0 bg-popover z-10">
+          <div className="p-2 border-b border-cyan-400/20 sticky top-0 bg-popover z-10">
             <Input
               placeholder={t('common.search', 'Search...')}
               value={searchQuery}
@@ -122,7 +110,7 @@ export function CitySelect({
                   setSearchQuery('');
                 }
               }}
-              className="h-8"
+              className="h-8 text-gray-200 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500"
               autoFocus
             />
           </div>
@@ -136,7 +124,7 @@ export function CitySelect({
 
           {/* Filtered cities list */}
           {filteredCities.length === 0 ? (
-            <div className="px-2 py-6 text-center text-sm text-muted-foreground">
+            <div className="px-2 py-6 text-center text-sm text-gray-300 dark:text-gray-400">
               {t('common.noResults', 'No results found')}
             </div>
           ) : (

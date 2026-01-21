@@ -1,0 +1,157 @@
+/* Default durations */
+.authAnimationContainer {
+  --orb-float-duration: 6s;
+  --ring-spin-duration-1: 12s;
+  --ring-spin-duration-2: 16s;
+  --scanline-duration: 3s;
+  --particle-drift-duration: 10s;
+  --particle-twinkle-duration: 2.5s;
+}
+
+/* Grid Background */
+.gridBackground {
+  background-image: 
+    linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* Keyframes */
+@keyframes orbFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(3deg);
+  }
+}
+
+@keyframes ringSpin1 {
+  from { transform: scaleY(0.8) rotate(0deg); }
+  to { transform: scaleY(0.8) rotate(360deg); }
+}
+
+@keyframes ringSpin2 {
+  from { transform: scaleY(0.75) rotateX(30deg) rotate(0deg); }
+  to { transform: scaleY(0.75) rotateX(30deg) rotate(-360deg); }
+}
+
+@keyframes scanline {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+.scanline {
+  background: linear-gradient(
+    -45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 60%
+  );
+  background-size: 200% 200%;
+  animation: scanline var(--scanline-duration) linear infinite;
+}
+
+@keyframes particleTwinkle {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.particle {
+  animation: particleTwinkle var(--particle-twinkle-duration) ease-in-out infinite;
+}
+
+/* Particle Drift Animations */
+@keyframes particleDrift0 {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(15px, -20px); }
+  50% { transform: translate(-10px, -30px); }
+  75% { transform: translate(-20px, -10px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes particleDrift1 {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-15px, 20px); }
+  50% { transform: translate(10px, 30px); }
+  75% { transform: translate(20px, 10px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes particleDrift2 {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(20px, -15px); }
+  66% { transform: translate(-15px, 25px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes particleDrift3 {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-20px, 15px); }
+  66% { transform: translate(15px, -25px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes particleDrift4 {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(25px, 20px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes particleDrift5 {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-25px, -20px); }
+  100% { transform: translate(0, 0); }
+}
+
+.particleDrift0 { animation: particleDrift0 var(--particle-drift-duration) ease-in-out infinite; }
+.particleDrift1 { animation: particleDrift1 var(--particle-drift-duration) ease-in-out infinite; }
+.particleDrift2 { animation: particleDrift2 var(--particle-drift-duration) ease-in-out infinite; }
+.particleDrift3 { animation: particleDrift3 var(--particle-drift-duration) ease-in-out infinite; }
+.particleDrift4 { animation: particleDrift4 var(--particle-drift-duration) ease-in-out infinite; }
+.particleDrift5 { animation: particleDrift5 var(--particle-drift-duration) ease-in-out infinite; }
+
+/* Spotlight Glow Animation */
+@keyframes spotlightPulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.3; }
+}
+
+.spotlightGlow {
+  animation: spotlightPulse 4s ease-in-out infinite;
+}
+
+/* Apply animations */
+.orbFloat {
+  animation: orbFloat var(--orb-float-duration) ease-in-out infinite;
+}
+
+.ringSpin1 {
+  animation: ringSpin1 var(--ring-spin-duration-1) linear infinite;
+}
+
+.ringSpin2 {
+  animation: ringSpin2 var(--ring-spin-duration-2) linear infinite;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .authAnimationContainer *,
+  .authAnimationContainer::before,
+  .authAnimationContainer::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+  .particle {
+    opacity: 0.7 !important;
+  }
+  .spotlightGlow {
+    opacity: 0.15 !important;
+  }
+}
+
+.reducedMotion {
+  /* Additional reduced motion styles if needed */
+}

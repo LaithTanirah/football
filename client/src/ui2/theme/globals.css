@@ -1,0 +1,1145 @@
+/* ============================================
+   MODERN GLOBAL STYLES
+   Elegant neon aesthetic with animated background
+   ============================================ */
+
+@import './tokens.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* HTML base styles */
+  html {
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+  }
+
+  /* Body base styles - Rich gradient */
+  /* Light mode - softer gradients for readability */
+  body {
+    background: hsl(var(--bg-base));
+    background-image: 
+      radial-gradient(circle at 20% 30%, hsl(var(--neon-blue) / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsl(var(--neon-pink) / 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(var(--neon-purple) / 0.06) 0%, transparent 60%),
+      radial-gradient(circle at 10% 80%, hsl(var(--neon-cyan) / 0.05) 0%, transparent 40%);
+    background-attachment: fixed;
+    background-color: hsl(var(--bg-base));
+    color: hsl(var(--foreground));
+    position: relative;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans Arabic", "Helvetica Neue", Arial, sans-serif;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden !important;
+    max-width: 100vw;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Dark mode body - stronger gradients */
+  html.dark body,
+  html.dark #root,
+  .dark body,
+  .dark #root {
+    background: hsl(var(--bg-base));
+    background-image: 
+      radial-gradient(circle at 20% 30%, hsl(var(--neon-blue) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 70%, hsl(var(--neon-pink) / 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, hsl(var(--neon-purple) / 0.12) 0%, transparent 60%);
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Set base color for dark mode html - highest priority */
+  html.dark {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* AGGRESSIVE: Force ALL text to be light in dark mode - UNIVERSAL OVERRIDE */
+  /* BUT: Exclude SVG elements to prevent solid icon fills */
+  html.dark *:not(svg):not(svg *),
+  html.dark *::before:not(svg *),
+  html.dark *::after:not(svg *) {
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  /* SVG elements in dark mode - use icon color, not forced white */
+  html.dark svg,
+  html.dark svg * {
+    color: hsl(var(--icon-fg)) !important;
+  }
+
+  /* Ensure text-foreground class works in dark mode */
+  html.dark .text-foreground,
+  html.dark [class*="text-foreground"],
+  .dark .text-foreground,
+  .dark [class*="text-foreground"] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* SVG icons - allow their colors to show through */
+  /* Handled in global section below */
+
+  /* Override any inline styles or classes that might force black */
+  html.dark [style*="color: black"],
+  html.dark [style*="color:#000"],
+  html.dark [style*="color:rgb(0"],
+  html.dark [style*="color:rgba(0"],
+  html.dark .text-black,
+  html.dark [class*="text-black"] {
+    color: hsl(var(--foreground)) !important;
+  }
+
+  /* Animated Background - Floating Orbs */
+  /* Light mode - softer gradients */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 15% 25%, hsl(var(--neon-blue) / 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 75%, hsl(var(--neon-pink) / 0.06) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, hsl(var(--neon-purple) / 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 70% 20%, hsl(var(--neon-cyan) / 0.04) 0%, transparent 35%);
+    animation: floatOrbs 20s ease-in-out infinite;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Dark mode - stronger gradients */
+  html.dark body::before,
+  .dark body::before {
+    background: 
+      radial-gradient(circle at 15% 25%, hsl(var(--neon-blue) / 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 85% 75%, hsl(var(--neon-pink) / 0.12) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, hsl(var(--neon-purple) / 0.1) 0%, transparent 50%);
+  }
+
+  @keyframes floatOrbs {
+    0%, 100% { 
+      transform: translate(0, 0) scale(1);
+      opacity: 1;
+    }
+    33% { 
+      transform: translate(30px, -30px) scale(1.1);
+      opacity: 0.9;
+    }
+    66% { 
+      transform: translate(-20px, 20px) scale(0.95);
+      opacity: 0.85;
+    }
+  }
+
+  /* Subtle Wave Pattern */
+  /* Light mode - softer pattern */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--neon-pink) / 0.03) 2px,
+        hsl(var(--neon-pink) / 0.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--neon-blue) / 0.03) 2px,
+        hsl(var(--neon-blue) / 0.03) 4px
+      );
+    background-size: 100px 100px, 100px 100px;
+    animation: waveShift 15s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.3;
+  }
+
+  /* Dark mode - slightly more visible */
+  html.dark body::after,
+  .dark body::after {
+    background-image: 
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--neon-pink) / 0.03) 2px,
+        hsl(var(--neon-pink) / 0.03) 4px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 2px,
+        hsl(var(--neon-blue) / 0.03) 2px,
+        hsl(var(--neon-blue) / 0.03) 4px
+      );
+    opacity: 0.3;
+  }
+
+  @keyframes waveShift {
+    0% {
+      background-position: 0 0, 0 0;
+    }
+    100% {
+      background-position: 100px 100px, -100px -100px;
+    }
+  }
+
+  /* Prevent scroll-lock library from adding margin */
+  body[data-scroll-locked],
+  html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+
+  [dir="rtl"] body[data-scroll-locked],
+  [dir="rtl"] html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+
+  [dir="ltr"] body[data-scroll-locked],
+  [dir="ltr"] html[data-scroll-locked] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    padding-inline-end: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+
+  /* Prevent Radix Portal from causing overflow */
+  [data-radix-portal] {
+    position: fixed;
+    z-index: 9999;
+    max-width: 100vw;
+  }
+
+  [data-radix-popper-content-wrapper] {
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    overflow: visible !important;
+    contain: layout style paint;
+  }
+
+  [data-radix-popper-content-wrapper] > * {
+    max-width: calc(100vw - 16px) !important;
+  }
+
+  body:has([data-radix-portal]) {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
+  }
+
+  [style*="position: fixed"] {
+    max-width: 100vw;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  @keyframes floatSlow {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-15px) translateX(5px) scale(1.01) rotate(1deg);
+    }
+    50% {
+      transform: translateY(-25px) translateX(0px) scale(1.02) rotate(0deg);
+    }
+    75% {
+      transform: translateY(-15px) translateX(-5px) scale(1.01) rotate(-1deg);
+    }
+  }
+
+  @keyframes pulseSlow {
+    0%, 100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% {
+      box-shadow: var(--glow-subtle);
+    }
+    50% {
+      box-shadow: var(--glow-soft);
+    }
+  }
+
+  .animate-float-slow {
+    animation: floatSlow 8s ease-in-out infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulseSlow 5s ease-in-out infinite;
+  }
+
+  .animate-glow-pulse {
+    animation: glowPulse 3s ease-in-out infinite;
+  }
+
+  /* Root container */
+  #root {
+    position: relative;
+    z-index: 1;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  /* Smooth transitions */
+  * {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  /* ============================================
+     GLOBAL RTL FOUNDATION
+     Systematic RTL support across the app
+     ============================================ */
+
+  /* Arabic font support */
+  [dir="rtl"] {
+    font-family: "Cairo", "Noto Sans Arabic", -apple-system, sans-serif;
+  }
+
+  /* Default text alignment - use logical properties */
+  body,
+  html {
+    text-align: start;
+  }
+
+  /* Ensure all text elements use logical alignment */
+  h1, h2, h3, h4, h5, h6,
+  p, span, div, a, button, label,
+  td, th, li, input, textarea, select {
+    text-align: start;
+  }
+
+  /* RTL Form Controls */
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+    direction: rtl;
+  }
+
+  /* LTR Form Controls - explicit alignment */
+  [dir="ltr"] input,
+  [dir="ltr"] textarea,
+  [dir="ltr"] select {
+    text-align: left;
+    direction: ltr;
+  }
+
+  [dir="rtl"] input::placeholder,
+  [dir="rtl"] textarea::placeholder {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="rtl"] select {
+    padding-right: 0.75rem;
+    padding-left: 2.5rem;
+    background-position: left 0.5rem center;
+    background-size: 1.5em 1.5em;
+  }
+
+  [dir="ltr"] select {
+    padding-left: 0.75rem;
+    padding-right: 2.5rem;
+    background-position: right 0.5rem center;
+    background-size: 1.5em 1.5em;
+  }
+
+  [dir="rtl"] option {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="rtl"] [data-radix-select-trigger] {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="rtl"] [data-radix-select-content] {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="rtl"] [data-radix-select-value] {
+    text-align: right;
+    direction: rtl;
+    width: 100%;
+  }
+
+  [dir="ltr"] [data-radix-select-value] {
+    text-align: left;
+    direction: ltr;
+    width: 100%;
+  }
+
+  [dir="rtl"] [data-radix-select-value][data-placeholder] {
+    text-align: right;
+    direction: rtl;
+  }
+
+  [dir="ltr"] [data-radix-select-value][data-placeholder] {
+    text-align: left;
+    direction: ltr;
+  }
+
+  [dir="rtl"] input[type="text"],
+  [dir="rtl"] input[type="email"],
+  [dir="rtl"] input[type="password"],
+  [dir="rtl"] input[type="url"],
+  [dir="rtl"] input[type="search"],
+  [dir="rtl"] textarea {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+
+  /* Typography */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+}
+
+@layer utilities {
+  /* Premium Glass Morphism - Soft Glow System */
+  /* Light mode - subtle borders and soft shadows */
+  .glass-neon {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.15);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass-neon {
+    border: 1px solid hsl(var(--neon-cyan) / 0.18);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-neon-strong {
+    background: var(--glass-hover);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.18);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass-neon-strong {
+    border: 1px solid hsl(var(--neon-cyan) / 0.22);
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-neon-subtle {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.12);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass-neon-subtle {
+    border: 1px solid hsl(var(--neon-cyan) / 0.15);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @keyframes slowZoom {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { 
+      box-shadow: var(--glow-subtle);
+    }
+    50% { 
+      box-shadow: var(--glow-soft);
+    }
+  }
+
+  /* Compatibility aliases - Soft Premium Glow */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.15);
+    box-shadow: var(--glass-shadow);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass {
+    border: 1px solid hsl(var(--neon-cyan) / 0.18);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-strong {
+    background: var(--glass-hover);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.18);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass-strong {
+    border: 1px solid hsl(var(--neon-cyan) / 0.22);
+    box-shadow: var(--shadow-md);
+  }
+
+  .glass-subtle {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid hsl(var(--neon-cyan) / 0.12);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Dark mode - subtle borders */
+  html.dark .glass-subtle {
+    border: 1px solid hsl(var(--neon-cyan) / 0.15);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Card hover effects - Soft Premium Glow */
+  .card-hover-neon {
+    transition: all 0.2s ease;
+  }
+  
+  /* Light mode hover */
+  .card-hover-neon:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: hsl(var(--neon-cyan) / 0.2);
+  }
+
+  /* Dark mode hover */
+  html.dark .card-hover-neon:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: hsl(var(--neon-cyan) / 0.25);
+  }
+
+  /* Scrollbar hide utility */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Custom Scrollbar Styling - Premium Soft Glow */
+.custom-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(6, 182, 212, 0.4) rgba(139, 92, 246, 0.08) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(139, 92, 246, 0.04) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(6, 182, 212, 0.08) !important;
+  margin: 4px 0 !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 0.5) 0%,
+    rgba(139, 92, 246, 0.4) 50%,
+    rgba(236, 72, 153, 0.3) 100%
+  ) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(6, 182, 212, 0.2) !important;
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.15) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 0.6) 0%,
+    rgba(139, 92, 246, 0.5) 50%,
+    rgba(236, 72, 153, 0.4) 100%
+  ) !important;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.2) !important;
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(
+    180deg,
+    rgba(6, 182, 212, 0.7) 0%,
+    rgba(139, 92, 246, 0.6) 50%,
+    rgba(236, 72, 153, 0.5) 100%
+  ) !important;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.25) !important;
+}
+
+/* ============================================
+   CRITICAL: Force proper text colors for both modes
+   Must be outside @layer for maximum priority
+   ============================================ */
+
+/* LIGHT MODE: Force dark text in light mode */
+html:not(.dark),
+html:not(.dark) body,
+html:not(.dark) #root {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Force common text elements to be dark in light mode */
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6,
+html:not(.dark) p,
+html:not(.dark) span,
+html:not(.dark) div,
+html:not(.dark) a,
+html:not(.dark) button,
+html:not(.dark) label,
+html:not(.dark) td,
+html:not(.dark) th,
+html:not(.dark) li,
+html:not(.dark) input,
+html:not(.dark) textarea,
+html:not(.dark) select {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* DARK MODE: Force light text in dark mode */
+html.dark,
+html.dark body,
+html.dark #root {
+  color: hsl(220 10% 98%) !important;
+}
+
+/* Force common text elements to be light */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6,
+html.dark p,
+html.dark span,
+html.dark div,
+html.dark a,
+html.dark button,
+html.dark label,
+html.dark td,
+html.dark th,
+html.dark li,
+html.dark input,
+html.dark textarea,
+html.dark select {
+  color: hsl(220 10% 98%) !important;
+}
+
+/* Allow all Tailwind color classes to override text rules in both modes */
+html:not(.dark) [class*="text-cyan"],
+html:not(.dark) [class*="text-blue"],
+html:not(.dark) [class*="text-purple"],
+html:not(.dark) [class*="text-pink"],
+html:not(.dark) [class*="text-green"],
+html:not(.dark) [class*="text-red"],
+html:not(.dark) [class*="text-yellow"],
+html:not(.dark) [class*="text-orange"],
+html:not(.dark) [class*="text-emerald"],
+html:not(.dark) [class*="text-teal"],
+html:not(.dark) [class*="text-indigo"],
+html:not(.dark) [class*="text-violet"],
+html:not(.dark) [class*="text-muted"],
+html:not(.dark) [class*="text-gray"],
+html:not(.dark) [class*="text-slate"],
+html.dark [class*="text-cyan"],
+html.dark [class*="text-blue"],
+html.dark [class*="text-purple"],
+html.dark [class*="text-pink"],
+html.dark [class*="text-green"],
+html.dark [class*="text-red"],
+html.dark [class*="text-yellow"],
+html.dark [class*="text-orange"],
+html.dark [class*="text-emerald"],
+html.dark [class*="text-teal"],
+html.dark [class*="text-indigo"],
+html.dark [class*="text-violet"],
+html.dark [class*="text-muted"],
+html.dark [class*="text-gray"],
+html.dark [class*="text-slate"] {
+  color: inherit !important;
+}
+
+/* ============================================
+   GLOBAL ICON BASELINE - OUTLINE ICONS ONLY
+   Prevents solid black/white fills
+   ROOT CAUSE FIX: Icons were becoming solid because:
+   1. html.dark * forced white color on all elements
+   2. fill: currentColor made icons solid white/black
+   ============================================ */
+
+/* Default: All UI icons are outline (stroke only, no fill) */
+/* Target all SVG icons except illustrations/logos/images */
+/* HIGHEST PRIORITY - must override everything */
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]):not(.is-filled),
+svg.ui-icon:not(.is-filled),
+[data-icon]:not(.is-filled) {
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.8 !important;
+  color: hsl(var(--icon-fg)) !important;
+}
+
+/* Icon badge containers - use accent color for icons inside */
+.iconBadge svg,
+[class*="iconBadge"] svg,
+[class*="icon-badge"] svg,
+.rounded-2xl.border svg:not([data-illustration]):not([data-logo]) {
+  color: hsl(var(--icon-accent)) !important;
+}
+
+/* Strong icons - for headings/critical icons */
+svg.ui-icon.is-strong,
+[data-icon].is-strong {
+  color: hsl(var(--icon-strong)) !important;
+}
+
+/* Override any internal fill attributes in icon paths - CRITICAL */
+/* This prevents hardcoded fill="black" or fill="white" from creating solid icons */
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) path,
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) circle,
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) rect,
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) g,
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) polygon,
+svg:not([data-illustration]):not([data-logo]):not([data-image]):not([data-filled="true"]) ellipse,
+svg.ui-icon:not(.is-filled) *,
+[data-icon]:not(.is-filled) * {
+  fill: none !important;
+}
+
+/* Opt-in for filled icons (rare cases like heart when liked) */
+svg.ui-icon.is-filled,
+[data-icon].is-filled,
+svg[data-filled="true"] {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+/* Icon color classes - stroke only, not fill */
+html:not(.dark) svg[class*="text-cyan"],
+html:not(.dark) svg[class*="text-blue"],
+html:not(.dark) svg[class*="text-purple"],
+html:not(.dark) svg[class*="text-pink"],
+html:not(.dark) svg[class*="text-green"],
+html:not(.dark) svg[class*="text-red"],
+html:not(.dark) svg[class*="text-yellow"],
+html:not(.dark) svg[class*="text-orange"],
+html:not(.dark) svg[class*="text-emerald"],
+html:not(.dark) svg[class*="text-teal"],
+html:not(.dark) svg[class*="text-indigo"],
+html:not(.dark) svg[class*="text-violet"],
+html.dark svg[class*="text-cyan"],
+html.dark svg[class*="text-blue"],
+html.dark svg[class*="text-purple"],
+html.dark svg[class*="text-pink"],
+html.dark svg[class*="text-green"],
+html.dark svg[class*="text-red"],
+html.dark svg[class*="text-yellow"],
+html.dark svg[class*="text-orange"],
+html.dark svg[class*="text-emerald"],
+html.dark svg[class*="text-teal"],
+html.dark svg[class*="text-indigo"],
+html.dark svg[class*="text-violet"] {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: currentColor !important;
+}
+
+/* Explicit fill classes - only when intended */
+svg[class*="fill-cyan"],
+svg[class*="fill-blue"],
+svg[class*="fill-purple"],
+svg[class*="fill-pink"],
+svg.is-filled,
+svg[data-filled="true"] {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+/* SVG inside color classes - stroke only, inherit color */
+html:not(.dark) [class*="text-cyan"] svg,
+html:not(.dark) [class*="text-blue"] svg,
+html:not(.dark) [class*="text-purple"] svg,
+html:not(.dark) [class*="text-pink"] svg,
+html:not(.dark) [class*="text-green"] svg,
+html:not(.dark) [class*="text-red"] svg,
+html:not(.dark) [class*="text-yellow"] svg,
+html:not(.dark) [class*="text-orange"] svg,
+html:not(.dark) [class*="text-emerald"] svg,
+html:not(.dark) [class*="text-teal"] svg,
+html:not(.dark) [class*="text-indigo"] svg,
+html:not(.dark) [class*="text-violet"] svg,
+html.dark [class*="text-cyan"] svg,
+html.dark [class*="text-blue"] svg,
+html.dark [class*="text-purple"] svg,
+html.dark [class*="text-pink"] svg,
+html.dark [class*="text-green"] svg,
+html.dark [class*="text-red"] svg,
+html.dark [class*="text-yellow"] svg,
+html.dark [class*="text-orange"] svg,
+html.dark [class*="text-emerald"] svg,
+html.dark [class*="text-teal"] svg,
+html.dark [class*="text-indigo"] svg,
+html.dark [class*="text-violet"] svg {
+  fill: none !important;
+  stroke: currentColor !important;
+  color: currentColor !important;
+}
+
+/* SVG child elements inside color classes */
+html:not(.dark) [class*="text-cyan"] svg *,
+html:not(.dark) [class*="text-blue"] svg *,
+html:not(.dark) [class*="text-purple"] svg *,
+html:not(.dark) [class*="text-pink"] svg *,
+html:not(.dark) [class*="text-green"] svg *,
+html:not(.dark) [class*="text-red"] svg *,
+html:not(.dark) [class*="text-yellow"] svg *,
+html:not(.dark) [class*="text-orange"] svg *,
+html.dark [class*="text-cyan"] svg *,
+html.dark [class*="text-blue"] svg *,
+html.dark [class*="text-purple"] svg *,
+html.dark [class*="text-pink"] svg *,
+html.dark [class*="text-green"] svg *,
+html.dark [class*="text-red"] svg *,
+html.dark [class*="text-yellow"] svg *,
+html.dark [class*="text-orange"] svg * {
+  fill: none !important;
+  stroke: currentColor !important;
+}
+
+
+/* Premium dropdown borders - soft glow */
+/* Light mode - subtle borders */
+[data-radix-select-content],
+[data-radix-dropdown-menu-content],
+[data-radix-popover-content] {
+  border-bottom-width: 1px !important;
+  border-bottom-color: hsl(var(--neon-cyan) / 0.15) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Dark mode - subtle borders */
+html.dark [data-radix-select-content],
+html.dark [data-radix-dropdown-menu-content],
+html.dark [data-radix-popover-content],
+.dark [data-radix-select-content],
+.dark [data-radix-dropdown-menu-content],
+.dark [data-radix-popover-content] {
+  border-bottom-color: hsl(var(--neon-cyan) / 0.18) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Force text color in dropdown menus - HIGHEST PRIORITY */
+/* Default/Light mode - dark text */
+[data-radix-dropdown-menu-content] {
+  color: hsl(220 13% 18%) !important;
+}
+
+/* Dark mode - light text (higher specificity) */
+html.dark [data-radix-dropdown-menu-content],
+body.dark [data-radix-dropdown-menu-content] {
+  color: hsl(220 9% 95%) !important;
+}
+
+[data-radix-dropdown-menu-content] *,
+[data-radix-dropdown-menu-content] *::before,
+[data-radix-dropdown-menu-content] *::after {
+  color: inherit !important;
+}
+
+/* Light mode - dark text for all elements */
+[data-radix-dropdown-menu-content] a,
+[data-radix-dropdown-menu-content] a:visited,
+[data-radix-dropdown-menu-content] a:hover,
+[data-radix-dropdown-menu-content] a:active,
+[data-radix-dropdown-menu-content] a:focus,
+[data-radix-dropdown-menu-content] button,
+[data-radix-dropdown-menu-content] button:visited,
+[data-radix-dropdown-menu-content] button:hover,
+[data-radix-dropdown-menu-content] button:active,
+[data-radix-dropdown-menu-content] button:focus,
+[data-radix-dropdown-menu-content] [role="menuitem"],
+[data-radix-dropdown-menu-content] [role="menuitem"] *,
+[data-radix-dropdown-menu-content] span,
+[data-radix-dropdown-menu-content] div,
+[data-radix-dropdown-menu-content] p,
+[data-radix-dropdown-menu-content] label {
+  color: hsl(220 13% 18%) !important;
+}
+
+/* Dark mode - light text for all elements (higher specificity) */
+html.dark [data-radix-dropdown-menu-content] a,
+html.dark [data-radix-dropdown-menu-content] a:visited,
+html.dark [data-radix-dropdown-menu-content] a:hover,
+html.dark [data-radix-dropdown-menu-content] a:active,
+html.dark [data-radix-dropdown-menu-content] a:focus,
+html.dark [data-radix-dropdown-menu-content] button,
+html.dark [data-radix-dropdown-menu-content] button:visited,
+html.dark [data-radix-dropdown-menu-content] button:hover,
+html.dark [data-radix-dropdown-menu-content] button:active,
+html.dark [data-radix-dropdown-menu-content] button:focus,
+html.dark [data-radix-dropdown-menu-content] [role="menuitem"],
+html.dark [data-radix-dropdown-menu-content] [role="menuitem"] *,
+html.dark [data-radix-dropdown-menu-content] span,
+html.dark [data-radix-dropdown-menu-content] div,
+html.dark [data-radix-dropdown-menu-content] p,
+html.dark [data-radix-dropdown-menu-content] label,
+body.dark [data-radix-dropdown-menu-content] a,
+body.dark [data-radix-dropdown-menu-content] a:visited,
+body.dark [data-radix-dropdown-menu-content] a:hover,
+body.dark [data-radix-dropdown-menu-content] a:active,
+body.dark [data-radix-dropdown-menu-content] a:focus,
+body.dark [data-radix-dropdown-menu-content] button,
+body.dark [data-radix-dropdown-menu-content] button:visited,
+body.dark [data-radix-dropdown-menu-content] button:hover,
+body.dark [data-radix-dropdown-menu-content] button:active,
+body.dark [data-radix-dropdown-menu-content] button:focus,
+body.dark [data-radix-dropdown-menu-content] [role="menuitem"],
+body.dark [data-radix-dropdown-menu-content] [role="menuitem"] *,
+body.dark [data-radix-dropdown-menu-content] span,
+body.dark [data-radix-dropdown-menu-content] div,
+body.dark [data-radix-dropdown-menu-content] p,
+body.dark [data-radix-dropdown-menu-content] label {
+  color: hsl(220 9% 95%) !important;
+}
+
+/* Dropdown menu icons - outline only */
+html:not(.dark) [data-radix-dropdown-menu-content] svg,
+html:not(.dark) [data-radix-dropdown-menu-content] svg *,
+html:not(.dark) [data-radix-dropdown-menu-content] svg path,
+html:not(.dark) [data-radix-dropdown-menu-content] svg circle,
+html:not(.dark) [data-radix-dropdown-menu-content] svg rect {
+  color: hsl(var(--icon-fg)) !important;
+  fill: none !important;
+  stroke: hsl(var(--icon-fg)) !important;
+}
+
+/* Dark mode - dropdown menu icons use outline style */
+html.dark [data-radix-dropdown-menu-content] svg,
+html.dark [data-radix-dropdown-menu-content] svg *,
+html.dark [data-radix-dropdown-menu-content] svg path,
+html.dark [data-radix-dropdown-menu-content] svg circle,
+html.dark [data-radix-dropdown-menu-content] svg rect,
+body.dark [data-radix-dropdown-menu-content] svg,
+body.dark [data-radix-dropdown-menu-content] svg *,
+body.dark [data-radix-dropdown-menu-content] svg path,
+body.dark [data-radix-dropdown-menu-content] svg circle,
+body.dark [data-radix-dropdown-menu-content] svg rect {
+  color: hsl(var(--icon-fg)) !important;
+  fill: none !important;
+  stroke: hsl(var(--icon-fg)) !important;
+}
+
+/* Override any black text colors - force override */
+[data-radix-dropdown-menu-content] .text-black,
+[data-radix-dropdown-menu-content] [class*="text-black"],
+[data-radix-dropdown-menu-content] [style*="color: black"],
+[data-radix-dropdown-menu-content] [style*="color:#000"],
+[data-radix-dropdown-menu-content] [style*="color:rgb(0"] {
+  color: hsl(var(--foreground)) !important;
+}
+
+/* ============================================
+   PITCH DETAILS PAGE - LIGHT MODE BACKGROUND
+   Softer, cleaner background for readability
+   ============================================ */
+html:not(.dark) .pitchDetailsPage {
+  background: 
+    radial-gradient(1200px 600px at 10% 10%, rgba(0, 207, 255, 0.10), transparent 55%),
+    radial-gradient(900px 500px at 90% 20%, rgba(255, 0, 200, 0.08), transparent 55%),
+    linear-gradient(180deg, #f7f9ff 0%, #eef2ff 100%) !important;
+  background-attachment: fixed;
+}
+
+html:not(.dark) .pitchDetailsPage::before {
+  background: 
+    radial-gradient(circle at 15% 25%, hsl(var(--neon-blue) / 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, hsl(var(--neon-pink) / 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, hsl(var(--neon-purple) / 0.03) 0%, transparent 50%) !important;
+}
+
+html:not(.dark) .pitchDetailsPage > div[class*="fixed"] {
+  opacity: 0.3 !important;
+}
+
+/* Dark mode - keep current dark background exactly as is */
+html.dark .pitchDetailsPage {
+  /* No changes - keep existing dark background */
+}
+
+/* Enhanced Date Input Calendar Popup Styling */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  inset-inline-end: 0;
+}
+
+/* Style the calendar popup background (Chrome/Safari) */
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 0;
+}
+
+/* Firefox date input */
+input[type="date"] {
+  color-scheme: dark;
+}
+
+/* Calendar popup styling attempt (limited browser support) */
+@supports (-webkit-appearance: none) {
+  input[type="date"]:focus::-webkit-calendar-picker-indicator {
+    opacity: 0;
+  }
+}
+
+/* ============================================
+   ADMIN LAYOUT - RTL/LTR DIRECTION-AWARE
+   Sidebar switches sides based on language
+   ============================================ */
+
+/* Admin Shell - Flexbox container */
+.adminShell {
+  display: flex;
+  min-height: 100vh;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* LTR: Sidebar left, Main right */
+.adminShell[data-dir="ltr"] {
+  flex-direction: row;
+}
+
+/* RTL: Sidebar right, Main left (via row-reverse) */
+.adminShell[data-dir="rtl"] {
+  flex-direction: row-reverse;
+}
+
+/* Sidebar - Fixed width, sticky */
+.adminSidebar {
+  flex: 0 0 256px;
+  width: 256px;
+  max-width: 256px;
+  min-width: 256px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  z-index: 40;
+  transition: width 0.3s ease, flex-basis 0.3s ease, max-width 0.3s ease, min-width 0.3s ease;
+}
+
+/* Sidebar collapsed state */
+.adminShell[data-sidebar-collapsed="true"] .adminSidebar {
+  flex: 0 0 80px;
+  width: 80px;
+  max-width: 80px;
+  min-width: 80px;
+}
+
+/* Main content area - Fills remaining space */
+.adminMain {
+  min-width: 0;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+  background-color: transparent;
+}
+
+/* Main content scrollable area */
+.adminMainContent {
+  min-height: calc(100vh - 64px);
+  background-color: transparent;
+  z-index: 2;
+  position: relative;
+}
+
+/* Admin content wrapper */
+.adminMainContent > div {
+  min-height: 100%;
+  position: relative;
+  z-index: 2;
+  opacity: 1;
+  visibility: visible;
+  display: block;
+}
+
+/* RTL text alignment for admin */
+.adminShell[dir="rtl"] {
+  text-align: right;
+}
+
+.adminShell[dir="ltr"] {
+  text-align: left;
+}

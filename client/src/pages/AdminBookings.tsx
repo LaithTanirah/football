@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/ui2/components/ui/Card";
 import { format } from "date-fns";
 
 export function AdminBookings() {
@@ -30,18 +30,18 @@ export function AdminBookings() {
       <h1 className="mb-8 text-3xl font-bold">{t("admin.allBookings")}</h1>
 
       {bookings.length === 0 ? (
-        <Card>
-          <CardContent className="py-12 text-center text-muted-foreground">
+        <Card className="glass-neon-strong rounded-2xl shadow-md">
+          <CardContent className="py-12 text-center text-muted-foreground dark:text-gray-300">
             {t("admin.noBookingsFound")}
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4">
           {bookings.map((booking: any) => (
-            <Card key={booking.id}>
+            <Card key={booking.id} className="glass-neon-strong rounded-2xl hover:shadow-lg transition-all">
               <CardHeader>
-                <CardTitle>{booking.pitch?.name}</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-foreground">{booking.pitch?.name}</CardTitle>
+                <CardDescription className="text-muted-foreground dark:text-gray-300">
                   {booking.pitch?.city} • User: {booking.userId}
                 </CardDescription>
               </CardHeader>
@@ -59,12 +59,12 @@ export function AdminBookings() {
                   <p>
                     <span className="font-semibold">{t("admin.status")}:</span>{" "}
                     <span
-                      className={`inline-block rounded px-2 py-1 text-xs ${
+                      className={`inline-block rounded-full px-3 py-1 text-xs font-semibold ${
                         booking.status === "CONFIRMED"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          ? "glass-neon-subtle bg-gradient-to-r from-cyan-500/10 to-cyan-500/5 text-cyan-400"
                           : booking.status === "CANCELLED"
-                          ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200"
+                          ? "glass-neon-subtle bg-gradient-to-r from-red-500/10 to-red-500/5 text-red-400"
+                          : "glass-neon-subtle text-foreground dark:text-foreground"
                       }`}
                     >
                       {booking.status}

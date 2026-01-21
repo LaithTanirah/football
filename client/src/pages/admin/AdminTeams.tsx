@@ -7,7 +7,7 @@ import { LayoutContainer } from '@/components/admin/LayoutContainer';
 import { DataTableToolbar } from '@/components/admin/DataTableToolbar';
 import { DataTable } from '@/components/admin/DataTable';
 import { RowActionsMenu } from '@/components/admin/RowActionsMenu';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui2/components/ui/Button';
 import { Plus, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -17,15 +17,15 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from '@/ui2/components/ui/Dialog';
+import { Input } from '@/ui2/components/ui/Input';
+import { Label } from '@/ui2/components/ui/Label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
 import { CitySelect } from '@/components/CitySelect';
 import { TeamLogoUpload } from '@/components/team/TeamLogoUpload';
 import { teamsApi, adminApi, pitchesApi } from '@/lib/api';
 import { useDirection } from '@/hooks/useDirection';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/ui2/components/ui/use-toast';
 import { JORDAN_CITIES, getCityDisplayName } from '@/lib/cities';
 import { useLocaleStore } from '@/store/localeStore';
 
@@ -80,6 +80,10 @@ export function AdminTeams() {
         description: t('admin.teams.deleteSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ['admin', 'teams'] });
+      queryClient.invalidateQueries({ queryKey: ['teams'] });
+      queryClient.invalidateQueries({ queryKey: ['team'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      queryClient.refetchQueries({ queryKey: ['admin', 'teams'] });
       setDeleteConfirmOpen(false);
       setTeamToDelete(null);
     },
@@ -241,7 +245,7 @@ export function AdminTeams() {
         <DataTable
           columns={columns}
           data={teams}
-          isLoading={isLoading}
+          isLoading={isLoading || deleteMutation.isPending}
           emptyMessage={t('admin.teams.empty')}
           emptyDescription={t('admin.teams.emptyDesc')}
           actions={(row) => (
@@ -298,14 +302,14 @@ export function AdminTeams() {
               <div className="space-y-2">
                 <Label htmlFor="edit-pitch">{t('teams.preferredPitch') || 'Preferred Pitch'}</Label>
                 <Select
-                  value={editFormData.preferredPitchId}
-                  onValueChange={(value) => setEditFormData({ ...editFormData, preferredPitchId: value })}
+                  value={editFormData.preferredPitchId || "__NONE__"}
+                  onValueChange={(value) => setEditFormData({ ...editFormData, preferredPitchId: value === "__NONE__" ? "" : value })}
                 >
                   <SelectTrigger id="edit-pitch" dir={isRTL ? 'rtl' : 'ltr'}>
                     <SelectValue placeholder={t('teams.selectPitch') || 'Select a pitch'} />
                   </SelectTrigger>
                   <SelectContent dir={isRTL ? 'rtl' : 'ltr'}>
-                    <SelectItem value="">{t('common.none') || 'None'}</SelectItem>
+                    <SelectItem value="__NONE__">{t('common.none') || 'None'}</SelectItem>
                     {pitches.map((pitch: any) => (
                       <SelectItem key={pitch.id} value={pitch.id}>
                         {pitch.name}
@@ -341,7 +345,15 @@ export function AdminTeams() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent>
+        <DialogContent className="relative">
+          {deleteMutation.isPending && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+              </div>
+            </div>
+          )}
           <DialogHeader>
             <DialogTitle>{t('admin.teams.deleteConfirmTitle')}</DialogTitle>
             <DialogDescription>

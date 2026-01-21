@@ -1,29 +1,15 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/store/authStore';
-import { useToast } from '@/components/ui/use-toast';
-import { postsApi } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { EmptyState } from '@/components/EmptyState';
-import {
-  Heart,
-  MessageCircle,
-  ArrowLeft,
-  Trash2,
-  Copy,
-  Check,
-} from 'lucide-react';
-import { generateAvatarUrl } from '@/lib/avatar';
-import { formatTimeAgo } from '@/lib/timeAgo';
 import { useLocaleStore } from '@/store/localeStore';
-import { cn } from '@/lib/utils';
-import { PostCard } from '@/components/PostCard';
+import { useToast } from '@/ui2/components/ui/use-toast';
+import { postsApi } from '@/lib/api';
+import { Skeleton } from '@/ui2/components/ui/Skeleton';
+import { EmptyState } from '@/components/EmptyState';
+import { PostDetailUI } from '@/ui/post-details';
+import { Card, CardContent } from '@/ui2/components/ui/Card';
 
 export function PostDetail() {
   const { id } = useParams<{ id: string }>();
@@ -127,7 +113,7 @@ export function PostDetail() {
 
   if (postLoading) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-6">
+      <div className="container mx-auto max-w-4xl px-4 pt-20 md:pt-24 pb-8 md:pb-12">
         <Skeleton className="h-64 w-full mb-4" />
         <Skeleton className="h-32 w-full" />
       </div>
@@ -136,160 +122,55 @@ export function PostDetail() {
 
   if (!post) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-6">
-        <EmptyState
-          title="Post not found"
-          description="The post you're looking for doesn't exist."
-          action={{
-            label: t('common.back'),
-            href: '/community',
-          }}
-        />
+      <div className="container mx-auto max-w-4xl px-4 pt-20 md:pt-24 pb-8 md:pb-12">
+        <Card className="glass-neon-strong rounded-2xl border-2 border-cyan-400/20">
+          <CardContent className="py-12 text-center">
+            <EmptyState
+              title="Post not found"
+              description="The post you're looking for doesn't exist."
+              action={{
+                label: t('common.back'),
+                href: '/community',
+              }}
+            />
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-6 page-section">
-      <Breadcrumbs
-        items={[
-          { label: t('community.title'), to: '/community' },
-          { label: t('community.post.open') },
-        ]}
-        className="mb-6"
-      />
-
-      <div className="mb-4">
-        <Link to="/community">
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            {t('common.back')}
-          </Button>
-        </Link>
-      </div>
-
-      {/* Post */}
-      <PostCard post={post} />
-
-      {/* Copy Link */}
-      <div className="mt-4 flex justify-end">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleCopyLink}
-          className="gap-2"
-        >
-          {copied ? (
-            <>
-              <Check className="h-4 w-4" />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy className="h-4 w-4" />
-              Copy Link
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Comments Section */}
-      <Card className="mt-6 p-6">
-        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-          <MessageCircle className="h-5 w-5" />
-          {t('community.post.comments')} ({commentsData?.data.pagination?.total || 0})
-        </h2>
-
-        {/* Comment Form */}
-        {user ? (
-          <div className="mb-6 space-y-3">
-            <Textarea
-              placeholder={t('community.comment.placeholder')}
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              rows={3}
-              maxLength={1000}
-            />
-            <div className="flex justify-end">
-              <Button
-                onClick={handleSubmitComment}
-                disabled={!commentContent.trim() || createCommentMutation.isPending}
-              >
-                {createCommentMutation.isPending
-                  ? t('community.comment.posting')
-                  : t('community.comment.post')}
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <div className="mb-6 p-4 rounded-lg bg-muted text-center">
-            <p className="text-sm text-muted-foreground mb-2">
-              {t('community.post.loginRequiredDesc')}
-            </p>
-            <Link to="/auth/login">
-              <Button size="sm">{t('nav.login')}</Button>
-            </Link>
-          </div>
-        )}
-
-        {/* Comments List */}
-        {commentsLoading ? (
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <Skeleton key={i} className="h-20 w-full" />
-            ))}
-          </div>
-        ) : comments.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <MessageCircle className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>{t('community.comment.noComments')}</p>
-            <p className="text-sm">{t('community.comment.noCommentsDesc')}</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {comments.map((comment: any) => {
-              const isAuthor = user?.id === comment.authorId;
-              const avatarUrl = generateAvatarUrl(comment.authorName, comment.authorUsername);
-              const timeAgo = formatTimeAgo(comment.createdAt, locale);
-
-              return (
-                <div key={comment.id} className="flex gap-3 pb-4 border-b last:border-0">
-                  <img
-                    src={avatarUrl}
-                    alt={comment.authorName}
-                    className="w-10 h-10 rounded-full flex-shrink-0 object-cover"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2 mb-1">
-                      <div>
-                        <div className="font-semibold text-sm">{comment.authorName}</div>
-                        <div className="text-xs text-muted-foreground">
-                          @{comment.authorUsername} • {timeAgo}
-                        </div>
-                      </div>
-                      {isAuthor && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleDeleteComment(comment.id)}
-                          disabled={deleteCommentMutation.isPending}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      )}
-                    </div>
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                      {comment.content}
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </Card>
-    </div>
+    <PostDetailUI
+      post={post}
+      comments={comments}
+      commentsLoading={commentsLoading}
+      commentsTotal={commentsData?.data.pagination?.total || 0}
+      user={user}
+      commentContent={commentContent}
+      onCommentChange={setCommentContent}
+      copied={copied}
+      onCopyLink={handleCopyLink}
+      onSubmitComment={handleSubmitComment}
+      onDeleteComment={handleDeleteComment}
+      onDeletePost={() => navigate('/community')}
+      isSubmittingComment={createCommentMutation.isPending}
+      isDeletingComment={deleteCommentMutation.isPending}
+      breadcrumbLabel={t('community.title')}
+      backLabel={t('common.back')}
+      copyLinkLabel="Copy Link"
+      copiedLabel="Copied"
+      commentsLabel={t('community.post.comments')}
+      placeholderLabel={t('community.comment.placeholder')}
+      postLabel={t('community.comment.post')}
+      postingLabel={t('community.comment.posting')}
+      loginRequiredDescLabel={t('community.post.loginRequiredDesc')}
+      loginLabel={t('nav.login')}
+      noCommentsLabel={t('community.comment.noComments')}
+      noCommentsDescLabel={t('community.comment.noCommentsDesc')}
+      deleteConfirmLabel={t('community.comment.deleteConfirm')}
+      postNotFoundLabel="Post not found"
+      postNotFoundDescLabel="The post you're looking for doesn't exist."
+    />
   );
 }
 

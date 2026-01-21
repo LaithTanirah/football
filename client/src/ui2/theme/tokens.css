@@ -1,0 +1,194 @@
+/* ============================================
+   MODERN NEON THEME - REFINED & ELEGANT
+   Softer neon accents with premium feel
+   ============================================ */
+
+:root {
+  /* ============================================
+     LIGHT MODE - Clean & Bright
+     ============================================ */
+  
+  /* Refined Neon Color Palette */
+  --neon-blue: 210 100% 60%;        /* Soft electric blue */
+  --neon-purple: 270 85% 70%;       /* Rich purple */
+  --neon-pink: 330 85% 70%;         /* Vibrant pink */
+  --neon-cyan: 180 100% 55%;        /* Bright cyan */
+  --neon-green: 150 80% 55%;        /* Fresh green */
+  --neon-red: 0 85% 65%;            /* Warm red */
+  
+  /* Base Colors - Light Mode - Maximum vibrant */
+  --bg-base: 240 15% 99.5%;
+  --bg-surface: 240 10% 98%;
+  --bg-panel: 240 5% 96%;
+  --bg-overlay: 240 30% 20% / 0.9;
+  
+  /* Glass Morphism - Light Mode - Premium Soft Glow */
+  --glass-bg: 255 255 255 / 0.75;
+  --glass-border: 180 100% 50% / 0.15;  /* Thin, low opacity border */
+  --glass-hover: 255 255 255 / 0.85;
+  --glass-shadow: 0 4px 24px rgba(10, 16, 30, 0.08), 0 0 0 1px hsl(var(--neon-cyan) / 0.1);  /* Soft, wide shadow */
+  
+  /* Text Colors */
+  --text-primary: 240 30% 10%;
+  --text-secondary: 240 20% 40%;
+  --text-tertiary: 240 15% 60%;
+  --text-inverse: 0 0% 100%;
+  
+  /* Icon Colors - Light Mode - Dark/Navy for high contrast */
+  --icon-fg: 240 30% 20%;          /* Dark navy - default icon color */
+  --icon-strong: 240 30% 10%;      /* Darker navy - for important icons */
+  --icon-accent: 180 100% 50%;     /* Cyan - only for neon accent badges */
+  --icon-badge-fg: 240 30% 15%;    /* Dark navy for icon glyphs in badges */
+  
+  /* Border Radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+  --radius-full: 9999px;
+  
+  /* Legacy compatibility */
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --card: var(--glass-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--glass-bg);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--neon-blue);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--neon-purple);
+  --secondary-foreground: var(--text-inverse);
+  --muted: var(--bg-surface);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--neon-pink);
+  --accent-foreground: var(--text-inverse);
+  --destructive: var(--neon-red);
+  --destructive-foreground: var(--text-inverse);
+  --border: var(--glass-border);
+  --input: var(--glass-bg);
+  --input-foreground: var(--text-primary);
+  --ring: var(--neon-blue);
+  --radius: var(--radius-lg);
+  --surface-1: var(--glass-bg);
+  --surface-2: var(--glass-hover);
+  --surface-3: 255 255 255 / 0.95;
+  --text: var(--text-primary);
+  --text-subtle: var(--text-secondary);
+  --border-subtle: 180 100% 50% / 0.12;  /* Very subtle border */
+  
+  /* Premium Soft Glow Shadows - Unified System */
+  --shadow-sm: 0 2px 12px rgba(10, 16, 30, 0.06), 0 0 0 1px hsl(var(--neon-cyan) / 0.08);
+  --shadow: var(--glass-shadow);
+  --shadow-md: 0 6px 32px rgba(10, 16, 30, 0.1), 0 0 0 1px hsl(var(--neon-cyan) / 0.12);
+  --shadow-lg: 0 10px 48px rgba(10, 16, 30, 0.12), 0 0 0 1px hsl(var(--neon-cyan) / 0.15);
+  
+  /* Soft Glow Tokens - For hover/focus states */
+  --glow-subtle: 0 0 24px hsl(var(--neon-cyan) / 0.08);
+  --glow-soft: 0 0 32px hsl(var(--neon-cyan) / 0.12);
+  --glow-focus: 0 0 0 2px hsl(var(--neon-cyan) / 0.2), 0 0 16px hsl(var(--neon-cyan) / 0.1);
+  --bg-page: var(--bg-base);
+  --bg-surface: var(--glass-bg);
+  --bg-panel: var(--glass-bg);
+  --text-primary: var(--text-primary);
+  --text-invert: var(--text-inverse);
+  --border-soft: var(--border-subtle);
+  --border-strong: var(--glass-border);
+  --error: var(--neon-red);
+  --error-foreground: var(--text-inverse);
+  --success: var(--neon-green);
+  --success-foreground: var(--text-inverse);
+  --warning: var(--neon-pink);
+  --warning-foreground: var(--text-inverse);
+}
+
+.dark {
+  /* ============================================
+     DARK MODE - Modern Neon Theme
+     ============================================ */
+  
+  /* Refined Neon Color Palette - Softer */
+  --neon-blue: 210 100% 65%;        /* Softer blue */
+  --neon-purple: 270 90% 75%;       /* Softer purple */
+  --neon-pink: 330 90% 75%;         /* Softer pink */
+  --neon-cyan: 180 100% 60%;        /* Softer cyan */
+  --neon-green: 150 85% 60%;        /* Softer green */
+  --neon-red: 0 90% 70%;            /* Softer red */
+  
+  /* Base Colors - Deep Rich Dark */
+  --bg-base: 240 35% 6%;            /* Deep navy */
+  --bg-surface: 240 30% 8%;         /* Dark surface */
+  --bg-panel: 240 25% 10%;          /* Panel background */
+  --bg-overlay: 240 40% 3% / 0.95;  /* Dark overlay */
+  
+  /* Glass Morphism - Dark Mode - Premium Soft Glow */
+  --glass-bg: 240 30% 10% / 0.9;   /* Rich dark glass */
+  --glass-border: 180 100% 60% / 0.18;  /* Thin, low opacity border */
+  --glass-hover: 240 30% 14% / 0.95; /* Brighter hover */
+  --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.3), 0 0 0 1px hsl(var(--neon-cyan) / 0.12);  /* Soft, wide shadow */
+  
+  /* Text Colors */
+  --text-primary: 220 10% 98%;       /* Almost white */
+  --text-secondary: 220 10% 75%;     /* Light gray */
+  --text-tertiary: 220 10% 55%;      /* Medium gray */
+  --text-inverse: 240 35% 6%;       /* Dark for light backgrounds */
+  
+  /* Icon Colors - Dark Mode - Soft white/cyan */
+  --icon-fg: 220 10% 92%;            /* Soft white for icons in dark mode */
+  --icon-strong: 220 10% 98%;        /* Almost white for important icons */
+  --icon-accent: 180 100% 60%;       /* Cyan for neon accent badges */
+  --icon-badge-fg: 220 10% 90%;      /* Soft white for icon glyphs in badges */
+  
+  /* Legacy compatibility */
+  --background: var(--bg-base);
+  --foreground: var(--text-primary);
+  --card: var(--glass-bg);
+  --card-foreground: var(--text-primary);
+  --popover: var(--glass-bg);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--neon-blue);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--neon-purple);
+  --secondary-foreground: var(--text-inverse);
+  --muted: var(--bg-surface);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--neon-pink);
+  --accent-foreground: var(--text-inverse);
+  --destructive: var(--neon-red);
+  --destructive-foreground: var(--text-inverse);
+  --border: var(--glass-border);
+  --input: var(--glass-bg);
+  --input-foreground: var(--text-primary);
+  --ring: var(--neon-pink);
+  --radius: var(--radius-lg);
+  --surface-1: var(--glass-bg);
+  --surface-2: var(--glass-hover);
+  --surface-3: 240 30% 14% / 0.9;
+  --text: var(--text-primary);
+  --text-subtle: var(--text-secondary);
+  --border-subtle: 180 100% 60% / 0.15;  /* Very subtle border */
+  
+  /* Premium Soft Glow Shadows - Unified System */
+  --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.25), 0 0 0 1px hsl(var(--neon-cyan) / 0.1);
+  --shadow: var(--glass-shadow);
+  --shadow-md: 0 6px 32px rgba(0, 0, 0, 0.35), 0 0 0 1px hsl(var(--neon-cyan) / 0.15);
+  --shadow-lg: 0 10px 48px rgba(0, 0, 0, 0.4), 0 0 0 1px hsl(var(--neon-cyan) / 0.18);
+  
+  /* Soft Glow Tokens - For hover/focus states */
+  --glow-subtle: 0 0 24px hsl(var(--neon-cyan) / 0.12);
+  --glow-soft: 0 0 32px hsl(var(--neon-cyan) / 0.18);
+  --glow-focus: 0 0 0 2px hsl(var(--neon-cyan) / 0.25), 0 0 16px hsl(var(--neon-cyan) / 0.15);
+  --bg-page: var(--bg-base);
+  --bg-surface: var(--glass-bg);
+  --bg-panel: var(--glass-bg);
+  --text-primary: var(--text-primary);
+  --text-invert: 220 10% 98%;
+  --border-soft: var(--border-subtle);
+  --border-strong: var(--glass-border);
+  --error: var(--neon-red);
+  --error-foreground: var(--text-inverse);
+  --success: var(--neon-green);
+  --success-foreground: var(--text-inverse);
+  --warning: var(--neon-pink);
+  --warning-foreground: var(--text-inverse);
+}

@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { teamsApi, pitchesApi } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/ui2/components/ui/use-toast';
+import { Button } from '@/ui2/components/ui/Button';
+import { Input } from '@/ui2/components/ui/Input';
+import { Label } from '@/ui2/components/ui/Label';
+import { Textarea } from '@/ui2/components/ui/Textarea';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui2/components/ui/Card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { CitySelect } from '@/components/CitySelect';
 import { TeamLogoUpload } from '@/components/team/TeamLogoUpload';
@@ -87,7 +87,7 @@ export function CreateTeam() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8 page-section">
+    <div className="container mx-auto max-w-2xl px-4 pt-20 md:pt-24 pb-8 page-section">
       <Breadcrumbs
         items={[
           { label: t('teams.title'), href: '/teams' },
@@ -96,22 +96,22 @@ export function CreateTeam() {
         className="mb-6"
       />
 
-      <Card>
+      <Card className="glass-neon-strong rounded-3xl shadow-md">
         <CardHeader>
-          <CardTitle className="text-section-title">{t('teams.createNewTeam')}</CardTitle>
-          <CardDescription className="text-caption">{t('teams.createTeamSubtitle')}</CardDescription>
+          <CardTitle className="text-2xl font-bold text-foreground">{t('teams.createNewTeam')}</CardTitle>
+          <CardDescription className="text-muted-foreground dark:text-gray-300">{t('teams.createTeamSubtitle')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-8">
             {/* Basics Section */}
             <div className="flex flex-col gap-6">
-              <div className="pb-2 border-b-2 border-border-soft">
-                <h3 className="text-lg font-bold text-text-primary">{t('teams.teamName')}</h3>
-                <p className="text-sm text-text-muted mt-1">{t('teams.createTeamSubtitle')}</p>
+              <div className="pb-2 border-b border-cyan-400/10">
+                <h3 className="text-lg font-bold text-foreground">{t('teams.teamName')}</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-300 mt-1">{t('teams.createTeamSubtitle')}</p>
               </div>
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="name" className="text-sm font-semibold text-text-primary">
+                  <Label htmlFor="name" className="text-sm font-semibold text-foreground">
                     {t('teams.teamName')} <span className="text-destructive">*</span>
                   </Label>
                   <Input
@@ -124,7 +124,7 @@ export function CreateTeam() {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <Label htmlFor="city" className="text-sm font-semibold text-text-primary">
+                  <Label htmlFor="city" className="text-sm font-semibold text-foreground">
                     {t('teams.city')} <span className="text-destructive">*</span>
                   </Label>
                   <CitySelect
@@ -140,9 +140,9 @@ export function CreateTeam() {
 
             {/* Logo Section */}
             <div className="flex flex-col gap-6">
-              <div className="pb-2 border-b-2 border-border-soft">
-                <h3 className="text-lg font-bold text-text-primary">{t('teams.teamLogo')}</h3>
-                <p className="text-sm text-text-muted mt-1">{t('teams.uploadLogo')}</p>
+              <div className="pb-2 border-b border-cyan-400/10">
+                <h3 className="text-lg font-bold text-foreground">{t('teams.teamLogo')}</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-300 mt-1">{t('teams.uploadLogo')}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <TeamLogoUpload
@@ -155,12 +155,12 @@ export function CreateTeam() {
 
             {/* Location Section */}
             <div className="flex flex-col gap-6">
-              <div className="pb-2 border-b-2 border-border-soft">
-                <h3 className="text-lg font-bold text-text-primary">{t('teams.preferredPitch')}</h3>
-                <p className="text-sm text-text-muted mt-1">{t('teams.preferredPitch')}</p>
+              <div className="pb-2 border-b border-cyan-400/10">
+                <h3 className="text-lg font-bold text-foreground">{t('teams.preferredPitch')}</h3>
+                <p className="text-sm text-muted-foreground dark:text-gray-300 mt-1">{t('teams.preferredPitch')}</p>
               </div>
               <div className="flex flex-col gap-2">
-                <Label htmlFor="preferredPitch" className="text-sm font-semibold text-text-primary">
+                <Label htmlFor="preferredPitch" className="text-sm font-semibold text-foreground">
                   {t('teams.preferredPitch')}
                 </Label>
                 <Select
@@ -182,7 +182,7 @@ export function CreateTeam() {
               </div>
             </div>
 
-            <div className="flex gap-4 pt-6 border-t-2 border-border-soft">
+            <div className="flex gap-4 pt-6 border-t border-cyan-400/10">
               <Button
                 type="button"
                 variant="outline"
@@ -191,7 +191,7 @@ export function CreateTeam() {
               >
                 {t('common.cancel')}
               </Button>
-              <Button type="submit" disabled={createMutation.isPending} className="flex-1 font-bold">
+              <Button type="submit" disabled={createMutation.isPending} className="flex-1 font-bold bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-foreground shadow-soft hover:shadow-glow">
                 {createMutation.isPending ? t('teams.creating') : t('teams.createTeam')}
               </Button>
             </div>

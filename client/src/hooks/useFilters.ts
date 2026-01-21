@@ -176,8 +176,9 @@ export function useFilters(options: UseFiltersOptions = {}) {
   const apiParams = useMemo(() => {
     const params: Record<string, string | number | undefined> = {};
 
-    if (includeSearch && filters.search) {
-      params.search = filters.search;
+    // Use debouncedSearch for search to avoid too many API calls
+    if (includeSearch && debouncedSearch) {
+      params.search = debouncedSearch;
     }
     if (includeCity && filters.city) {
       params.city = filters.city;
@@ -202,7 +203,7 @@ export function useFilters(options: UseFiltersOptions = {}) {
     }
 
     return params;
-  }, [filters, includeSearch, includeCity, includeType, includeStatus, includePrice]);
+  }, [filters, debouncedSearch, includeSearch, includeCity, includeType, includeStatus, includePrice]);
 
   return {
     filters,

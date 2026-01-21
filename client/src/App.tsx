@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   BrowserRouter,
   Routes,
@@ -9,8 +9,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/store/authStore";
 import { useDirection } from "@/hooks/useDirection";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/ui2/components/ui/Toaster";
 import { Navbar } from "@/components/Navbar";
+import { AppLoader } from "@/components/common/AppLoader";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { Home } from "@/pages/Home";
 import { Login } from "@/pages/Login";
@@ -48,6 +49,7 @@ function AppContent() {
   const { fetchUser, isLoading, setLoading } = useAuthStore();
   const { dir } = useDirection();
   const location = useLocation();
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   useEffect(() => {
     // Don't fetch user on login/register pages to avoid unnecessary /auth/me calls
@@ -62,19 +64,47 @@ function AppContent() {
     }
   }, [fetchUser, location.pathname, setLoading]);
 
+  // Track initial load - hide loader after minimum display time
+  useEffect(() => {
+    if (!isLoading && isInitialLoad) {
+      // Show loader for initial load
+      const timer = setTimeout(() => {
+        setIsInitialLoad(false);
+      }, 1200); // Hide after 1200ms (loader shows for 800ms + fade time)
+      return () => clearTimeout(timer);
+    }
+  }, [isLoading, isInitialLoad]);
+
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">{t("common.loading")}</div>
-      </div>
+      <>
+        <AppLoader initialLoad={isInitialLoad} />
+      </>
     );
   }
 
   const isAdminRoute = location.pathname.startsWith('/admin');
 
   return (
-    <div className="min-h-screen overflow-x-hidden" dir={dir}>
-      {!isAdminRoute && <Navbar />}
+    <>
+      <AppLoader initialLoad={isInitialLoad} />
+      <div 
+        className={isAdminRoute ? "overflow-x-hidden" : "min-h-screen overflow-x-hidden relative"} 
+        dir={dir}
+        style={isAdminRoute ? { 
+          margin: 0, 
+          padding: 0, 
+          marginTop: 0, 
+          paddingTop: 0,
+          position: 'relative',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '100vh',
+          minHeight: '100vh'
+        } : {}}
+      >
+        {!isAdminRoute && <Navbar />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/login" element={<Login />} />
@@ -175,7 +205,8 @@ function AppContent() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <Toaster />
-    </div>
+      </div>
+    </>
   );
 }
 

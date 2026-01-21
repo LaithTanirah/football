@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/store/authStore";
@@ -6,7 +6,6 @@ import { useDirection } from "@/hooks/useDirection";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
 import { UserAvatar } from "@/components/UserAvatar";
-import { AppLoader } from "@/components/common/AppLoader";
 import {
   LayoutDashboard,
   Users,
@@ -31,7 +30,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import logoImage from "@/assets/Logo.jpg?url";
+import logoImageSmall from "@/assets/small-icon.jpg?url";
+import logoImageLarge from "@/assets/large-icon.jpg?url";
 
 interface NavItem {
   to: string;
@@ -47,16 +47,6 @@ export function AdminLayout() {
   const { user, logout } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  // Track initial load - hide loader after minimum display time
-  useEffect(() => {
-    // Show loader for initial load
-    const timer = setTimeout(() => {
-      setIsInitialLoad(false);
-    }, 850); // Hide after 850ms (loader shows for 800ms + fade time)
-    return () => clearTimeout(timer);
-  }, []);
 
   const navItems: NavItem[] = [
     {
@@ -92,60 +82,47 @@ export function AdminLayout() {
 
   return (
     <>
-      {/* App Loader */}
-      <AppLoader initialLoad={isInitialLoad} />
-
-      {/* Main Layout - Using Flex for stable layout */}
-      {/* Do not use gap/justify-between here - sidebar and main must touch with zero gap */}
-      {/* RTL: sidebar on right, LTR: sidebar on left */}
+      {/* Main Layout - Flexbox for RTL/LTR switching */}
       <div
-        className="min-h-screen bg-bg-page w-full flex"
+        className="adminShell w-full"
         dir={isRTL ? "rtl" : "ltr"}
-        style={{
-          flexDirection: isRTL ? "row-reverse" : "row",
-          gap: 0,
-        }}
+        data-dir={isRTL ? "rtl" : "ltr"}
+        data-sidebar-collapsed={sidebarCollapsed ? "true" : "false"}
+        data-admin-layout
       >
         {/* Sidebar - Desktop */}
-        {/* Width controlled by single style prop - no Tailwind width classes */}
-        {/* RTL: sidebar on right (order: 2), LTR: sidebar on left (order: 1) */}
         <aside
           className={cn(
-            "hidden lg:flex flex-col bg-bg-surface transition-all duration-300",
-            isRTL
-              ? "border-s border-border-soft"
-              : "border-e border-border-soft"
+            "adminSidebar glass-strong hidden lg:flex flex-col transition-all duration-300",
+            isRTL ? "border-l border-glass-border" : "border-r border-glass-border"
           )}
-          style={{
-            width: sidebarWidthPx,
-            flex: "0 0 auto",
-            position: "sticky",
-            top: 0,
-            height: "100dvh",
-            overflowY: "auto",
-            order: isRTL ? 2 : 1,
-          }}
         >
           {/* Logo Section */}
           <div
             className={cn(
-              "h-16 flex items-center gap-3 px-6 border-b border-border-soft",
-              sidebarCollapsed && "justify-center"
+              "flex-shrink-0 flex flex-col border-b border-glass-border py-4",
+              isRTL ? "items-end pr-5 pl-4" : "items-start pl-5 pr-4"
             )}
           >
-            <div className="flex-shrink-0 w-10 h-10 p-2 rounded-xl bg-white border-2 border-border-soft shadow-sm flex items-center justify-center">
+            <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center mb-2">
+              <picture>
+                <source media="(min-width: 768px)" srcSet={logoImageLarge} />
               <img
-                src={logoImage}
+                  src={logoImageSmall}
                 alt="PLAYRO LEAGUE"
                 className="w-full h-full object-contain"
               />
+              </picture>
             </div>
             {!sidebarCollapsed && (
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-brand-blue leading-tight">
+              <div className={cn(
+                "flex flex-col",
+                isRTL ? "items-end" : "items-start"
+              )}>
+                <span className="text-sm font-semibold text-foreground leading-tight">
                   PLAYRO
                 </span>
-                <span className="text-xs font-semibold text-text-muted leading-tight">
+                <span className="text-xs text-gray-300 leading-tight">
                   LEAGUE
                 </span>
               </div>
@@ -153,7 +130,7 @@ export function AdminLayout() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-4 space-y-1" dir={isRTL ? "rtl" : "ltr"}>
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.to);
@@ -162,21 +139,23 @@ export function AdminLayout() {
                   key={item.to}
                   to={item.to}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all relative group",
+                    "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 relative min-w-0",
                     active
-                      ? "bg-brand-blue text-white shadow-sm"
-                      : "text-text-muted hover:bg-bg-surface hover:text-text-primary",
-                    sidebarCollapsed && "justify-center px-3"
+                      ? "glass-strong bg-gradient-to-r from-cyan-500/10 to-purple-500/5 text-foreground shadow-sm glow-blue"
+                      : "text-muted-foreground hover:bg-cyan-500/10 hover:text-foreground",
+                    sidebarCollapsed && "justify-center px-2",
+                    !isRTL && "flex-row",
+                    isRTL && "flex-row-reverse"
                   )}
                   title={sidebarCollapsed ? item.label : undefined}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
-                  {!sidebarCollapsed && <span>{item.label}</span>}
+                  {!sidebarCollapsed && <span className="truncate min-w-0 text-start">{item.label}</span>}
                   {active && !sidebarCollapsed && (
                     <div
                       className={cn(
-                        "absolute inset-y-0 w-1 bg-white rounded-r-full",
-                        isRTL ? "left-0" : "right-0"
+                        "absolute inset-y-0 w-1 bg-foreground",
+                        isRTL ? "left-0 rounded-l-full" : "right-0 rounded-r-full"
                       )}
                     />
                   )}
@@ -186,7 +165,7 @@ export function AdminLayout() {
           </nav>
 
           {/* Collapse Toggle */}
-          <div className="p-4 border-t border-border-soft">
+          <div className="flex-shrink-0 p-4 border-t border-glass-border">
             <Button
               variant="ghost"
               size="icon"
@@ -221,11 +200,11 @@ export function AdminLayout() {
           />
         )}
 
-        {/* Sidebar - Mobile - Fixed positioning, not part of flex layout */}
+        {/* Sidebar - Mobile - Drawer overlay */}
         <aside
           className={cn(
-            "fixed inset-y-0 z-50 w-64 bg-bg-surface border-e border-border-soft transform transition-transform duration-300 lg:hidden",
-            isRTL ? "right-0 border-s" : "left-0 border-e",
+            "glass-strong fixed inset-y-0 z-50 w-64 border-r border-glass-border transform transition-transform duration-300 lg:hidden overflow-x-hidden",
+            isRTL ? "right-0 border-l border-r-0" : "left-0",
             sidebarOpen
               ? "translate-x-0"
               : isRTL
@@ -233,20 +212,29 @@ export function AdminLayout() {
               : "-translate-x-full"
           )}
         >
-          <div className="h-16 flex items-center justify-between px-6 border-b border-border-soft">
-            <div className="flex items-center gap-3">
-              <div className="flex-shrink-0 w-10 h-10 p-2 rounded-xl bg-white border-2 border-border-soft shadow-sm flex items-center justify-center">
+          <div className="flex items-center justify-between px-4 border-b border-glass-border relative py-4">
+            <div className={cn(
+              "absolute inset-0 flex flex-col justify-center",
+              isRTL ? "items-end pr-5 pl-4" : "items-start pl-5 pr-4"
+            )}>
+              <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center mb-2">
+                <picture>
+                  <source media="(min-width: 768px)" srcSet={logoImageLarge} />
                 <img
-                  src={logoImage}
+                    src={logoImageSmall}
                   alt="PLAYRO LEAGUE"
                   className="w-full h-full object-contain"
                 />
+                </picture>
               </div>
-              <div className="flex flex-col">
-                <span className="text-sm font-bold text-brand-blue leading-tight">
+              <div className={cn(
+                "flex flex-col",
+                isRTL ? "items-end" : "items-start"
+              )}>
+                <span className="text-sm font-semibold text-foreground leading-tight">
                   PLAYRO
                 </span>
-                <span className="text-xs font-semibold text-text-muted leading-tight">
+                <span className="text-xs text-gray-300 leading-tight">
                   LEAGUE
                 </span>
               </div>
@@ -255,13 +243,16 @@ export function AdminLayout() {
               variant="ghost"
               size="icon"
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden"
+              className={cn(
+                "lg:hidden relative z-10",
+                isRTL ? "mr-auto" : "ml-auto"
+              )}
             >
               <X className="h-5 w-5" />
             </Button>
           </div>
 
-          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden p-4 space-y-1" dir={isRTL ? "rtl" : "ltr"}>
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.to);
@@ -271,22 +262,16 @@ export function AdminLayout() {
                   to={item.to}
                   onClick={() => setSidebarOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all relative",
+                    "flex items-center gap-3 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 relative min-w-0",
                     active
-                      ? "bg-brand-blue text-white shadow-sm"
-                      : "text-text-muted hover:bg-bg-surface hover:text-text-primary"
+                      ? "glass-strong bg-gradient-to-r from-cyan-500/10 to-purple-500/5 text-foreground shadow-sm glow-blue"
+                      : "text-gray-300 hover:bg-cyan-500/10 hover:text-foreground",
+                    !isRTL && "flex-row",
+                    isRTL && "flex-row-reverse"
                   )}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
-                  <span>{item.label}</span>
-                  {active && (
-                    <div
-                      className={cn(
-                        "absolute inset-y-0 w-1 bg-white rounded-r-full",
-                        isRTL ? "left-0" : "right-0"
-                      )}
-                    />
-                  )}
+                  <span className="truncate min-w-0 text-start">{item.label}</span>
                 </Link>
               );
             })}
@@ -294,26 +279,15 @@ export function AdminLayout() {
         </aside>
 
         {/* Main Content */}
-        {/* Do not use gap/justify-between here - main must touch sidebar with zero gap */}
-        {/* RTL: main on left (order: 1), LTR: main on right (order: 2) */}
-        <div
-          className="flex flex-col relative min-w-0 flex-1"
-          style={{
-            flex: "1 1 auto",
-            minWidth: 0,
-            overflowX: "hidden",
-            maxWidth: "100%",
-            order: isRTL ? 1 : 2,
-          }}
-        >
+        <div className="adminMain flex flex-col min-w-0 overflow-hidden flex-1">
           {/* Top Bar */}
           <header
-            className="h-16 bg-bg-surface border-b border-border-soft flex items-center justify-between px-4 lg:px-6 sticky top-0 z-30 shadow-sm"
+            className="glass-strong flex-shrink-0 h-16 border-b border-glass-border flex items-center justify-between px-6 sticky top-0 z-30"
             style={{ overflow: "visible" }}
           >
             <div
               className="flex items-center gap-4 flex-1 min-w-0"
-              style={{ overflow: "visible" }}
+              style={{ overflow: "visible", maxWidth: "100%" }}
             >
               <Button
                 variant="ghost"
@@ -324,10 +298,10 @@ export function AdminLayout() {
                 <Menu className="h-5 w-5" />
               </Button>
 
-              {/* Global Search */}
+              {/* Global Search - Never gets cut off */}
               <div
-                className="hidden md:block flex-1 min-w-0"
-                style={{ overflow: "visible" }}
+                className="hidden md:block flex-1 min-w-0 max-w-full"
+                style={{ overflow: "visible", width: "100%" }}
               >
                 <GlobalSearch sidebarCollapsed={sidebarCollapsed} />
               </div>
@@ -354,16 +328,16 @@ export function AdminLayout() {
                   <DropdownMenuItem asChild>
                     <Link
                       to="/profile"
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer text-foreground"
                     >
-                      <User className="h-4 w-4" />
+                      <User className="h-4 w-4 text-foreground" />
                       {t("profile.title")}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link
                       to="/"
-                      className="flex items-center gap-2 cursor-pointer"
+                      className="flex items-center gap-2 cursor-pointer text-foreground"
                     >
                       {t("admin.backToSite")}
                     </Link>
@@ -382,8 +356,13 @@ export function AdminLayout() {
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 overflow-y-auto overflow-x-hidden bg-bg-page">
-            <Outlet />
+          <main className="adminMainContent flex-1 min-h-0 overflow-y-auto overflow-x-hidden relative">
+            <div 
+              className="max-w-full p-6" 
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              <Outlet />
+            </div>
           </main>
         </div>
       </div>

@@ -25,16 +25,16 @@ export function StandingsTable({ standings }: StandingsTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 z-10 bg-background">Pos</TableHead>
-            <TableHead className="sticky left-12 z-10 bg-background min-w-[200px]">Team</TableHead>
-            <TableHead className="text-center">P</TableHead>
-            <TableHead className="text-center">W</TableHead>
-            <TableHead className="text-center">D</TableHead>
-            <TableHead className="text-center">L</TableHead>
-            <TableHead className="text-center">GF</TableHead>
-            <TableHead className="text-center">GA</TableHead>
-            <TableHead className="text-center">GD</TableHead>
-            <TableHead className="text-center font-bold">Pts</TableHead>
+            <TableHead className="sticky left-0 z-10 bg-background text-foreground">Pos</TableHead>
+            <TableHead className="sticky left-12 z-10 bg-background min-w-[200px] text-foreground">Team</TableHead>
+            <TableHead className="text-center text-foreground">P</TableHead>
+            <TableHead className="text-center text-foreground">W</TableHead>
+            <TableHead className="text-center text-foreground">D</TableHead>
+            <TableHead className="text-center text-foreground">L</TableHead>
+            <TableHead className="text-center text-foreground">GF</TableHead>
+            <TableHead className="text-center text-foreground">GA</TableHead>
+            <TableHead className="text-center text-foreground">GD</TableHead>
+            <TableHead className="text-center font-bold text-foreground">Pts</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,16 +43,16 @@ export function StandingsTable({ standings }: StandingsTableProps) {
               key={standing.teamId}
               className={index < 3 ? 'bg-muted/50' : ''}
             >
-              <TableCell className="sticky left-0 z-10 bg-background font-medium">
+              <TableCell className="sticky left-0 z-10 bg-background font-medium text-foreground">
                 {index === 0 && <Badge variant="success" className="mr-2">1st</Badge>}
                 {index === 1 && <Badge variant="secondary" className="mr-2">2nd</Badge>}
                 {index === 2 && <Badge variant="outline" className="mr-2">3rd</Badge>}
                 {index > 2 && <span className="ml-8">{index + 1}</span>}
               </TableCell>
-              <TableCell className="sticky left-12 z-10 bg-background font-medium">
+              <TableCell className="sticky left-12 z-10 bg-background font-medium text-foreground">
                 <div className="flex items-center gap-3">
                   {standing.logoUrl && (
-                    <div className="h-8 w-8 overflow-hidden rounded-full border border-border bg-muted flex-shrink-0">
+                    <div className="h-8 w-8 overflow-hidden rounded-full border border-cyan-400/12 bg-muted flex-shrink-0">
                       <img
                         src={standing.logoUrl}
                         alt={standing.teamName}
@@ -66,17 +66,17 @@ export function StandingsTable({ standings }: StandingsTableProps) {
                   <span>{standing.teamName}</span>
                 </div>
               </TableCell>
-              <TableCell className="text-center">{standing.played}</TableCell>
-              <TableCell className="text-center">{standing.won}</TableCell>
-              <TableCell className="text-center">{standing.drawn}</TableCell>
-              <TableCell className="text-center">{standing.lost}</TableCell>
-              <TableCell className="text-center">{standing.goalsFor}</TableCell>
-              <TableCell className="text-center">{standing.goalsAgainst}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="text-center text-foreground">{standing.played}</TableCell>
+              <TableCell className="text-center text-foreground">{standing.won}</TableCell>
+              <TableCell className="text-center text-foreground">{standing.drawn}</TableCell>
+              <TableCell className="text-center text-foreground">{standing.lost}</TableCell>
+              <TableCell className="text-center text-foreground">{standing.goalsFor}</TableCell>
+              <TableCell className="text-center text-foreground">{standing.goalsAgainst}</TableCell>
+              <TableCell className="text-center text-foreground">
                 {standing.goalDifference > 0 ? '+' : ''}
                 {standing.goalDifference}
               </TableCell>
-              <TableCell className="text-center font-bold">{standing.points}</TableCell>
+              <TableCell className="text-center font-bold text-foreground">{standing.points}</TableCell>
             </TableRow>
           ))}
         </TableBody>

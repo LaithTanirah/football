@@ -139,7 +139,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
       <>
         {parts.map((part, i) =>
           part.toLowerCase() === query.toLowerCase() ? (
-            <mark key={i} className="bg-brand-orange/30 text-text-primary font-semibold">
+            <mark key={i} className="bg-primary/20 text-foreground font-medium">
               {part}
             </mark>
           ) : (
@@ -162,7 +162,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
         >
           <Search
             className={cn(
-              'absolute top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted z-10 pointer-events-none',
+              'absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground z-10 pointer-events-none',
               isRTL ? 'right-3' : 'left-3'
             )}
           />
@@ -179,7 +179,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
             }}
             onKeyDown={handleKeyDown}
             className={cn(
-              'w-full',
+              'w-full glass-neon-subtle border border-cyan-400/20 text-foreground placeholder:text-muted-foreground focus:border-cyan-400/50',
               isRTL 
                 ? (query ? 'pr-10 pl-10' : 'pr-10 pl-4')
                 : (query ? 'pl-10 pr-10' : 'pl-10 pr-4')
@@ -190,7 +190,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
             <button
               onClick={handleClear}
               className={cn(
-                'absolute top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted hover:text-text-primary transition-colors z-10',
+                'absolute top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors z-10',
                 isRTL ? 'left-3' : 'right-3'
               )}
               aria-label={t('common.close')}
@@ -213,14 +213,14 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
         <div ref={resultsRef} className="max-h-[400px] overflow-y-auto">
           {isLoading && (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-text-muted" />
-              <span className="ml-2 text-sm text-text-muted">{t('common.loading')}</span>
+              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <span className="ml-2 text-sm text-muted-foreground">{t('common.loading')}</span>
             </div>
           )}
 
           {isEmpty && !isLoading && (
             <div className="py-8 text-center">
-              <p className="text-sm text-text-muted">{t('admin.search.noResults')}</p>
+              <p className="text-sm text-gray-300">{t('admin.search.noResults')}</p>
             </div>
           )}
 
@@ -229,7 +229,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
               {/* Users Section */}
               {groupedResults.users.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-soft">
+                  <div className="px-4 py-2 text-xs font-semibold text-gray-300 uppercase tracking-wide border-b border-cyan-400/20">
                     {t(typeLabels.user)}
                   </div>
                   {groupedResults.users.map((result, idx) => {
@@ -240,20 +240,20 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
                         data-index={globalIndex}
                         onClick={() => handleSelectResult(result)}
                         className={cn(
-                          'w-full px-4 py-3 text-left hover:bg-bg-surface transition-colors',
-                          selectedIndex === globalIndex && 'bg-brand-blue/10',
+                          'w-full px-4 py-2 text-left hover:bg-cyan-500/10 transition-colors glass-neon-subtle',
+                          selectedIndex === globalIndex && 'bg-cyan-500/20',
                           isRTL && 'text-right'
                         )}
                         dir="auto"
                       >
                         <div className="flex items-center gap-3">
-                          <Users className="h-4 w-4 text-brand-blue flex-shrink-0" />
+                          <Users className="h-4 w-4 text-primary flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-text-primary truncate">
+                            <div className="font-medium text-foreground truncate">
                               {highlightText(result.title, debouncedQuery)}
                             </div>
                             {result.meta && (
-                              <div className="text-xs text-text-muted truncate mt-0.5">
+                              <div className="text-xs text-gray-300 truncate mt-0.5">
                                 {result.meta}
                               </div>
                             )}
@@ -268,7 +268,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
               {/* Teams Section */}
               {groupedResults.teams.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-soft">
+                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-border">
                     {t(typeLabels.team)}
                   </div>
                   {groupedResults.teams.map((result, idx) => {
@@ -279,20 +279,20 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
                         data-index={globalIndex}
                         onClick={() => handleSelectResult(result)}
                         className={cn(
-                          'w-full px-4 py-3 text-left hover:bg-bg-surface transition-colors',
-                          selectedIndex === globalIndex && 'bg-brand-blue/10',
+                          'w-full px-4 py-2 text-left hover:bg-cyan-500/10 transition-colors glass-neon-subtle',
+                          selectedIndex === globalIndex && 'bg-cyan-500/20',
                           isRTL && 'text-right'
                         )}
                         dir="auto"
                       >
                         <div className="flex items-center gap-3">
-                          <UsersRound className="h-4 w-4 text-brand-orange flex-shrink-0" />
+                          <UsersRound className="h-4 w-4 text-primary flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-text-primary truncate">
+                            <div className="font-medium text-foreground truncate">
                               {highlightText(result.title, debouncedQuery)}
                             </div>
                             {result.meta && (
-                              <div className="text-xs text-text-muted truncate mt-0.5">
+                              <div className="text-xs text-gray-300 truncate mt-0.5">
                                 {result.meta}
                               </div>
                             )}
@@ -307,7 +307,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
               {/* Leagues Section */}
               {groupedResults.leagues.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-soft">
+                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-border">
                     {t(typeLabels.league)}
                   </div>
                   {groupedResults.leagues.map((result, idx) => {
@@ -318,20 +318,20 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
                         data-index={globalIndex}
                         onClick={() => handleSelectResult(result)}
                         className={cn(
-                          'w-full px-4 py-3 text-left hover:bg-bg-surface transition-colors',
-                          selectedIndex === globalIndex && 'bg-brand-blue/10',
+                          'w-full px-4 py-2 text-left hover:bg-cyan-500/10 transition-colors glass-neon-subtle',
+                          selectedIndex === globalIndex && 'bg-cyan-500/20',
                           isRTL && 'text-right'
                         )}
                         dir="auto"
                       >
                         <div className="flex items-center gap-3">
-                          <Trophy className="h-4 w-4 text-brand-green flex-shrink-0" />
+                          <Trophy className="h-4 w-4 text-primary flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-text-primary truncate">
+                            <div className="font-medium text-foreground truncate">
                               {highlightText(result.title, debouncedQuery)}
                             </div>
                             {result.meta && (
-                              <div className="text-xs text-text-muted truncate mt-0.5">
+                              <div className="text-xs text-gray-300 truncate mt-0.5">
                                 {result.meta}
                               </div>
                             )}
@@ -346,7 +346,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
               {/* Pitches Section */}
               {groupedResults.pitches.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-soft">
+                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-border">
                     {t(typeLabels.pitch)}
                   </div>
                   {groupedResults.pitches.map((result, idx) => {
@@ -357,20 +357,20 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
                         data-index={globalIndex}
                         onClick={() => handleSelectResult(result)}
                         className={cn(
-                          'w-full px-4 py-3 text-left hover:bg-bg-surface transition-colors',
-                          selectedIndex === globalIndex && 'bg-brand-blue/10',
+                          'w-full px-4 py-2 text-left hover:bg-cyan-500/10 transition-colors glass-neon-subtle',
+                          selectedIndex === globalIndex && 'bg-cyan-500/20',
                           isRTL && 'text-right'
                         )}
                         dir="auto"
                       >
                         <div className="flex items-center gap-3">
-                          <MapPin className="h-4 w-4 text-brand-blue flex-shrink-0" />
+                          <MapPin className="h-4 w-4 text-primary flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-text-primary truncate">
+                            <div className="font-medium text-foreground truncate">
                               {highlightText(result.title, debouncedQuery)}
                             </div>
                             {result.meta && (
-                              <div className="text-xs text-text-muted truncate mt-0.5">
+                              <div className="text-xs text-gray-300 truncate mt-0.5">
                                 {result.meta}
                               </div>
                             )}
@@ -385,7 +385,7 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
               {/* Posts Section */}
               {groupedResults.posts.length > 0 && (
                 <div className="mb-2">
-                  <div className="px-4 py-2 text-xs font-semibold text-text-muted uppercase tracking-wide border-b border-border-soft">
+                  <div className="px-4 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide border-b border-border">
                     {t(typeLabels.post)}
                   </div>
                   {groupedResults.posts.map((result, idx) => {
@@ -396,20 +396,20 @@ export function GlobalSearch({ className, sidebarCollapsed }: GlobalSearchProps)
                         data-index={globalIndex}
                         onClick={() => handleSelectResult(result)}
                         className={cn(
-                          'w-full px-4 py-3 text-left hover:bg-bg-surface transition-colors',
-                          selectedIndex === globalIndex && 'bg-brand-blue/10',
+                          'w-full px-4 py-2 text-left hover:bg-cyan-500/10 transition-colors glass-neon-subtle',
+                          selectedIndex === globalIndex && 'bg-cyan-500/20',
                           isRTL && 'text-right'
                         )}
                         dir="auto"
                       >
                         <div className="flex items-center gap-3">
-                          <FileText className="h-4 w-4 text-brand-orange flex-shrink-0" />
+                          <FileText className="h-4 w-4 text-primary flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-medium text-text-primary truncate">
+                            <div className="font-medium text-foreground truncate">
                               {highlightText(result.title, debouncedQuery)}
                             </div>
                             {result.meta && (
-                              <div className="text-xs text-text-muted truncate mt-0.5">
+                              <div className="text-xs text-gray-300 truncate mt-0.5">
                                 {result.meta}
                               </div>
                             )}

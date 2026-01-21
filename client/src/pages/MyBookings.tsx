@@ -3,8 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { bookingsApi } from "@/lib/api";
-import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
+import { useToast } from "@/ui2/components/ui/use-toast";
+import { Button } from "@/ui2/components/ui/Button";
 import {
   Card,
   CardContent,
@@ -12,9 +12,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/ui2/components/ui/Card";
+import { Badge } from "@/ui2/components/ui/Badge";
+import { Skeleton } from "@/ui2/components/ui/Skeleton";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/ui2/components/ui/Dialog";
 import { EmptyState } from "@/components/EmptyState";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { format, isPast, parseISO } from "date-fns";
@@ -122,17 +122,17 @@ export function MyBookings() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto max-w-[1200px] px-4 py-6">
-        <Skeleton className="mb-6 h-8 w-48" />
+      <div className="container mx-auto max-w-[1200px] px-4 py-6 relative">
+        <Skeleton className="mb-6 h-8 w-48 rounded-xl" />
         <div className="grid gap-4">
           {[...Array(3)].map((_, i) => (
-            <Card key={i} className="card-elevated">
+            <Card key={i}>
               <CardHeader>
-                <Skeleton className="h-6 w-48" />
-                <Skeleton className="mt-2 h-4 w-32" />
+                <Skeleton className="h-6 w-48 rounded-xl" />
+                <Skeleton className="mt-2 h-4 w-32 rounded-xl" />
               </CardHeader>
               <CardContent>
-                <Skeleton className="h-20 w-full" />
+                <Skeleton className="h-20 w-full rounded-xl" />
               </CardContent>
             </Card>
           ))}
@@ -142,10 +142,17 @@ export function MyBookings() {
   }
 
   return (
-    <div className="container mx-auto max-w-[1200px] px-4 py-6 page-section">
-      <Breadcrumbs items={[{ label: t("bookings.title") }]} className="mb-6" />
+    <div className="container mx-auto max-w-[1200px] px-4 py-6 relative">
+      {/* Floating Football Spheres */}
+      <div className="football-sphere" style={{ top: '8%', right: '5%', animationDelay: '0s', width: '120px', height: '120px' }} />
+      <div className="football-sphere" style={{ bottom: '10%', left: '8%', animationDelay: '6s', width: '100px', height: '100px' }} />
+      
+      <div className="relative z-10">
+        <Breadcrumbs items={[{ label: t("bookings.title") }]} className="mb-6" />
 
-      <h1 className="mb-8 text-3xl font-bold">{t("bookings.title")}</h1>
+        <div className="glass-neon-strong rounded-2xl border-2 border-cyan-400/30 p-6 mb-8 shadow-[0_0_20px_rgba(6,182,212,0.2)]">
+          <h1 className="text-3xl font-bold text-foreground">{t("bookings.title")}</h1>
+        </div>
 
       {bookings.length === 0 ? (
         <EmptyState
@@ -168,7 +175,7 @@ export function MyBookings() {
                 {upcoming.map((booking: any) => (
                   <Card
                     key={booking.id}
-                    className="card-elevated overflow-hidden"
+                    className="glass-neon-strong rounded-2xl border-2 border-cyan-400/20 hover:border-cyan-400/40 transition-all overflow-hidden hover:shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                   >
                     {booking.pitch?.images?.[0] && (
                       <div className="aspect-video w-full overflow-hidden bg-muted">
@@ -261,7 +268,7 @@ export function MyBookings() {
                 {past.map((booking: any) => (
                   <Card
                     key={booking.id}
-                    className="card-elevated overflow-hidden opacity-75"
+                    className="glass-neon-subtle rounded-2xl border-2 border-cyan-400/10 overflow-hidden opacity-75"
                   >
                     {booking.pitch?.images?.[0] && (
                       <div className="aspect-video w-full overflow-hidden bg-muted">
@@ -351,6 +358,7 @@ export function MyBookings() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }

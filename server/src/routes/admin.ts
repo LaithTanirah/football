@@ -11,6 +11,9 @@ import {
   teams,
   teamMembers,
   leagues,
+  leagueTeams,
+  matches,
+  matchResults,
   posts,
 } from "../db/schema.js";
 import { authenticate, requireRole, AuthRequest } from "../middleware/auth.js";
@@ -649,6 +652,167 @@ adminRouter.patch("/leagues/:id", async (req: AuthRequest, res) => {
       });
     }
     console.error("Update league error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: "INTERNAL_ERROR" });
+  }
+});
+
+// Delete league (admin only - cascade delete)
+adminRouter.delete("/leagues/:id", async (req: AuthRequest, res) => {
+  try {
+    const leagueId = req.params.id;
+
+    // Get league
+    const [league] = await db
+      .select()
+      .from(leagues)
+      .where(eq(leagues.id, leagueId))
+      .limit(1);
+
+    if (!league) {
+      return res
+        .status(404)
+        .json({ message: "League not found", code: "NOT_FOUND" });
+    }
+
+    // Admin can delete league regardless of status or dependencies
+    // Cascade deletion will handle:
+    // - leagueTeams (via foreign key cascade)
+    // - matches (via foreign key cascade)
+    // - matchResults (via foreign key cascade on matches)
+
+    // Delete league (cascade will handle related records)
+    await db.delete(leagues).where(eq(leagues.id, leagueId));
+
+    res.json({ data: { message: "League deleted successfully" } });
+  } catch (error) {
+    console.error("Delete league error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: "INTERNAL_ERROR" });
+  }
+});
+
+// Delete user (admin only)
+adminRouter.delete("/users/:id", async (req: AuthRequest, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Get user
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found", code: "NOT_FOUND" });
+    }
+
+    // Prevent deleting yourself
+    if (user.id === req.userId) {
+      return res.status(400).json({
+        message: "Cannot delete your own account",
+        code: "CANNOT_DELETE_SELF",
+      });
+    }
+
+    // Admin can delete user - cascade will handle:
+    // - teams (via captainId/ownerId cascade)
+    // - leagues (via ownerId cascade)
+    // - bookings (via userId cascade)
+    // - posts (via authorId cascade)
+    // - comments (via authorId cascade)
+    // - teamMembers (via userId cascade)
+    // - matchResults (via recordedBy cascade)
+
+    await db.delete(users).where(eq(users.id, userId));
+
+    res.json({ data: { message: "User deleted successfully" } });
+  } catch (error) {
+    console.error("Delete user error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: "INTERNAL_ERROR" });
+  }
+});
+
+// Delete pitch (admin only)
+adminRouter.delete("/pitches/:id", async (req: AuthRequest, res) => {
+  try {
+    const pitchId = req.params.id;
+
+    // Get pitch
+    const [pitch] = await db
+      .select()
+      .from(pitches)
+      .where(eq(pitches.id, pitchId))
+      .limit(1);
+
+    if (!pitch) {
+      return res
+        .status(404)
+        .json({ message: "Pitch not found", code: "NOT_FOUND" });
+    }
+
+    // Admin can delete pitch - cascade will handle:
+    // - pitchImages (via foreign key cascade)
+    // - pitchWorkingHours (via foreign key cascade)
+    // - blockedSlots (via foreign key cascade)
+    // - bookings (pitchId will be set to null)
+    // - matches (pitchId will be set to null)
+
+    // Delete pitch images first
+    await db.delete(pitchImages).where(eq(pitchImages.pitchId, pitchId));
+
+    // Delete working hours
+    await db.delete(pitchWorkingHours).where(eq(pitchWorkingHours.pitchId, pitchId));
+
+    // Delete blocked slots
+    await db.delete(blockedSlots).where(eq(blockedSlots.pitchId, pitchId));
+
+    // Delete pitch
+    await db.delete(pitches).where(eq(pitches.id, pitchId));
+
+    res.json({ data: { message: "Pitch deleted successfully" } });
+  } catch (error) {
+    console.error("Delete pitch error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", code: "INTERNAL_ERROR" });
+  }
+});
+
+// Delete post (admin only)
+adminRouter.delete("/posts/:id", async (req: AuthRequest, res) => {
+  try {
+    const postId = req.params.id;
+
+    // Get post
+    const [post] = await db
+      .select()
+      .from(posts)
+      .where(eq(posts.id, postId))
+      .limit(1);
+
+    if (!post) {
+      return res
+        .status(404)
+        .json({ message: "Post not found", code: "NOT_FOUND" });
+    }
+
+    // Admin can delete post - cascade will handle:
+    // - comments (via foreign key cascade)
+    // - postLikes (via foreign key cascade)
+
+    await db.delete(posts).where(eq(posts.id, postId));
+
+    res.json({ data: { message: "Post deleted successfully" } });
+  } catch (error) {
+    console.error("Delete post error:", error);
     res
       .status(500)
       .json({ message: "Internal server error", code: "INTERNAL_ERROR" });

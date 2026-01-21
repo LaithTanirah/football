@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { pitchesApi, adminApi } from '@/lib/api';
-import { useToast } from '@/components/ui/use-toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/ui2/components/ui/use-toast';
+import { Button } from '@/ui2/components/ui/Button';
+import { Input } from '@/ui2/components/ui/Input';
+import { Label } from '@/ui2/components/ui/Label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/ui2/components/ui/Card';
 import { CitySelect } from '@/components/CitySelect';
 
 export function AdminPitches() {
@@ -78,9 +78,9 @@ export function AdminPitches() {
       </div>
 
       {isCreating && (
-        <Card className="mb-8">
+        <Card className="mb-8 glass-neon-strong rounded-2xl shadow-md">
           <CardHeader>
-            <CardTitle>Create New Pitch</CardTitle>
+            <CardTitle className="text-foreground">Create New Pitch</CardTitle>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -157,10 +157,10 @@ export function AdminPitches() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {pitches.map((pitch: any) => (
-          <Card key={pitch.id}>
+          <Card key={pitch.id} className="glass-neon-strong rounded-2xl hover:shadow-lg transition-all">
             <CardHeader>
-              <CardTitle>{pitch.name}</CardTitle>
-              <CardDescription>{pitch.city}</CardDescription>
+              <CardTitle className="text-foreground">{pitch.name}</CardTitle>
+              <CardDescription className="text-muted-foreground dark:text-gray-300">{pitch.city}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-sm">{pitch.pricePerHour} {t('pitches.pricePerHour')}</p>

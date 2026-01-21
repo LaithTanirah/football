@@ -6,7 +6,7 @@ import { AdminPageHeader } from '@/components/admin/AdminPageHeader';
 import { AdminFiltersBar } from '@/components/admin/AdminFiltersBar';
 import { AdminTable } from '@/components/admin/AdminTable';
 import { RowActionsMenu } from '@/components/admin/RowActionsMenu';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui2/components/ui/Button';
 import { Loader2 } from 'lucide-react';
 import {
   Dialog,
@@ -15,14 +15,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+} from '@/ui2/components/ui/Dialog';
+import { Textarea } from '@/ui2/components/ui/Textarea';
+import { Label } from '@/ui2/components/ui/Label';
+import { Input } from '@/ui2/components/ui/Input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/ui2/components/ui/Select';
 import { postsApi, adminApi } from '@/lib/api';
 import { useDirection } from '@/hooks/useDirection';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/ui2/components/ui/use-toast';
 
 export function AdminPosts() {
   const { t } = useTranslation();
@@ -54,6 +54,9 @@ export function AdminPosts() {
         description: t('admin.posts.deleteSuccess'),
       });
       queryClient.invalidateQueries({ queryKey: ['admin', 'posts'] });
+      queryClient.invalidateQueries({ queryKey: ['posts'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'stats'] });
+      queryClient.refetchQueries({ queryKey: ['admin', 'posts'] });
       setDeleteConfirmOpen(false);
       setPostToDelete(null);
     },
@@ -174,7 +177,7 @@ export function AdminPosts() {
       <AdminTable
         columns={columns}
         data={posts}
-        isLoading={isLoading}
+        isLoading={isLoading || deleteMutation.isPending}
         emptyMessage={t('admin.posts.empty')}
         emptyDescription={t('admin.posts.emptyDesc')}
         actions={(row) => (
@@ -208,7 +211,7 @@ export function AdminPosts() {
                   required
                   maxLength={5000}
                 />
-                <p className="text-xs text-text-muted text-end">
+                <p className="text-xs text-muted-foreground dark:text-gray-300 text-end">
                   {editFormData.content.length}/5000
                 </p>
               </div>
@@ -269,7 +272,15 @@ export function AdminPosts() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <DialogContent>
+        <DialogContent className="relative">
+          {deleteMutation.isPending && (
+            <div className="absolute inset-0 bg-background/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-lg">
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">{t('common.loading')}</p>
+              </div>
+            </div>
+          )}
           <DialogHeader>
             <DialogTitle>{t('admin.posts.deleteConfirmTitle')}</DialogTitle>
             <DialogDescription>
